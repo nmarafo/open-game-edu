@@ -4,7 +4,7 @@ Esta guía explica paso a paso cómo dinamizar partidas en el aula en cualquiera
 
 ---
 
-## 1. El Flujo de Trabajo en el Aula
+## 1. El Flujo de Trabajo en 4 Fases con NotebookLM
 
 > [!IMPORTANT]
 > ### ⚠️ PASO 0 (OBLIGATORIO): PREPARAR LAS FUENTES EN NOTEBOOKLM
@@ -23,25 +23,38 @@ Esta guía explica paso a paso cómo dinamizar partidas en el aula en cualquiera
                              │
                              ▼
   ┌────────────────────────────────────────────────────────┐
-  │ PASO 1: Pedir el instalador a NotebookLM               │
-  │ Indicar materias, temas y Modalidad de juego.          │
-  └──────────────────────────┬─────────────────────────────┘
-                             │ Copiar el bloque Codigo.gs
-                             ▼
-  ┌────────────────────────────────────────────────────────┐
-  │ PASO 2: Pegar en Google Sheets                         │
-  │ Abrir hoja en blanco > Extensiones > Apps Script.       │
-  │ Pegar el código y ejecutar 'inicializarEcosistema'.   │
-  │ ──► Menú nativo '🎮 open-game-edu' activado.           │
-  │ ──► Pestañas Puntuaciones_Online y Lobby creadas.      │
+  │ FASE 1: Solicitud Inicial del Docente                  │
+  │ Indicar etapa, nivel, materias, palabras clave y tema. │
   └──────────────────────────┬─────────────────────────────┘
                              │
                              ▼
   ┌────────────────────────────────────────────────────────┐
-  │ PASO 3: Publicar y Lanzar en el Aula                   │
+  │ FASE 2: Propuesta Pedagógica de NotebookLM (Sin Código)│
+  │ • Explica la narrativa y mecánica del juego.           │
+  │ • Concreta Criterios LOMLOE y Saberes por materia.     │
+  │ • El docente revisa y responde "Conforme".             │
+  └──────────────────────────┬─────────────────────────────┘
+                             │ Docente conforme
+                             ▼
+  ┌────────────────────────────────────────────────────────┐
+  │ FASE 3: Código Backend Google Apps Script (Codigo.gs)  │
+  │ • Pegar en Apps Script > Codigo.gs.                    │
+  │ • Ejecutar 'inicializarEcosistema' para crear hojas.   │
+  └──────────────────────────┬─────────────────────────────┘
+                             │ Docente pide la Fase 4
+                             ▼
+  ┌────────────────────────────────────────────────────────┐
+  │ FASE 4: Código Frontend Web (Index.html)               │
+  │ • En Apps Script: Archivos (+) > HTML > Nombrar 'Index'│
+  │ • Pegar el código de Index.html y guardar.             │
+  └──────────────────────────┬─────────────────────────────┘
+                             │
+                             ▼
+  ┌────────────────────────────────────────────────────────┐
+  │ ¡LISTO PARA EL AULA!                                   │
   │ • Proyectar en la Pizarra Digital (PDI).               │
-  │ • Alumnos se conectan con sus tablets o móviles.       │
-  │ ──► ¡Partida multijugador y registro automático!       │
+  │ • Alumnos juegan desde sus dispositivos.               │
+  │ ──► ¡Partida multijugador y registro de notas en vivo! │
   └────────────────────────────────────────────────────────┘
 ```
 

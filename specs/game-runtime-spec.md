@@ -113,3 +113,21 @@ function enviarPuntuacionFinal(nombreJugador, puntos, vidas, tiempoTotal, aciert
 }
 ```
 Esto escribe una fila instantánea en la pestaña `Puntuaciones_Online` de la hoja de cálculo del profesorado.
+
+---
+
+## 5. Estructura del Archivo Frontend `Index.html` (Fase 4)
+
+El archivo `Index.html` generado en la Fase 4 contiene toda la presentación y el cliente web sin dependencias externas:
+1. **`<style>`**: Variables CSS para paletas por etapa (Primaria/Secundaria), layout de pistas, tarjetas de materias y diálogo accesible.
+2. **`<body>`**:
+   - Barra superior con selector de modo: `▶️ RUN`, `🏁 Carrera en Vivo` y `✏️ Proponer Reto`.
+   - Cabecera con estadísticas (`vidas`, `puntuación`).
+   - Escenario interactivo (`#stage` o `#gameStage`).
+3. **`<script>`**:
+   - Bootstrap de datos: `window.GAME_DATA = <?!= initialDataJson ?>;`
+   - Sintetizador de audio con Web Audio API (`AudioFX`).
+   - Máquina de estados del jugador (`vidas`, `puntos`, `casilla`, `avatar`, `completados`).
+   - Bucle de sondeo multijugador cada 3 segundos (`obtenerEstadoLobbyMemoria()`).
+   - RPCs asíncronos con `google.script.run`.
+

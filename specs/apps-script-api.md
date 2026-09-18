@@ -20,7 +20,9 @@ Google Sheets por sí solo tiene una latencia de escritura de 300-800 ms por cel
 
 ---
 
-## 2. Endpoints HTTP Canónicos (`doGet`)
+## 2. Endpoints HTTP Canónicos (`doGet`) y Servicio de `Index.html`
+
+En la arquitectura por fases de `open-game-edu`, el backend (`Codigo.gs`, generado en la Fase 3) sirve la interfaz de usuario (`Index.html`, generado en la Fase 4) mediante las plantillas nativas de `HtmlService`:
 
 ```javascript
 /**
@@ -30,7 +32,7 @@ function doGet(e) {
   try {
     var accion = (e && e.parameter && e.parameter.action) || 'app';
 
-    // 1. Endpoint Multijugador: responde con las posiciones en vivo del Lobby
+    // 1. Endpoint Multijugador: responde con las posiciones en vivo del Lobby (<80ms)
     if (accion === 'lobby') {
       var estadoLobby = obtenerEstadoLobbyMemoria();
       return ContentService.createTextOutput(JSON.stringify(estadoLobby))
@@ -44,10 +46,11 @@ function doGet(e) {
         .setMimeType(ContentService.MimeType.JSON);
     }
 
-    // 3. Endpoint de la Aplicación Web completa (HTML + CSS + JS)
+    // 3. Endpoint de la Aplicación Web: evalúa 'Index.html' e inyecta los datos iniciales
     var datos = obtenerDatosJuego();
-    var htmlContent = getGameHtml(JSON.stringify(datos));
-    var output = HtmlService.createHtmlOutput(htmlContent);
+    var template = HtmlService.createTemplateFromFile('Index');
+    template.initialDataJson = JSON.stringify(datos);
+    var output = template.evaluate();
     
     var titulo = (datos.meta && datos.meta.TITULO_JUEGO) 
       ? datos.meta.TITULO_JUEGO 
@@ -61,9 +64,36 @@ function doGet(e) {
   } catch (err) {
     return HtmlService.createHtmlOutput(
       '<div style="font-family:sans-serif;padding:30px;color:#c62828;">' +
-      '<h2>Error en la aplicación web</h2><p>' + err.message + '</p></div>'
+      '<h2>Error en la aplicación web</h2><p>' + err.message + '</p>' +
+      '<p>Asegúrate de haber creado el archivo <code>Index.html</code> en Apps Script.</p></div>'
     );
   }
+}
+
+/**
+ * Modal en Google Sheets para previsualizar el juego (Modo RUN).
+ */
+function mostrarJuegoModal() {
+  var datos = obtenerDatosJuego();
+  var template = HtmlService.createTemplateFromFile('Index');
+  template.initialDataJson = JSON.stringify(datos);
+  var html = template.evaluate()
+    .setWidth(840)
+    .setHeight(660);
+  SpreadsheetApp.getUi().showModalDialog(html, '🎮 Modo RUN - ' + (datos.meta.TITULO_JUEGO || 'Juego'));
+}
+
+/**
+ * Modal para proyectar la carrera o lobby multijugador en la PDI del aula.
+ */
+function mostrarCarreraModal() {
+  var datos = obtenerDatosJuego();
+  var template = HtmlService.createTemplateFromFile('Index');
+  template.initialDataJson = JSON.stringify(datos);
+  var html = template.evaluate()
+    .setWidth(860)
+    .setHeight(660);
+  SpreadsheetApp.getUi().showModalDialog(html, '🏁 Pantalla de Carrera Multijugador');
 }
 ```
 

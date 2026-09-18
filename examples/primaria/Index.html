@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg-color: #0d1b2a;
+      --card-bg: #1b263b;
+      --card-border: #415a77;
+      --text-main: #f0f4f8;
+      --text-muted: #a0aec0;
+      --color-gold: #ffd166;
+      --color-green: #06d6a0;
+      --color-blue: #118ab2;
+      --color-red: #ef476f;
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body {
+      background: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 14px;
+    }
+    #app {
+      width: 100%;
+      max-width: 800px;
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .top-nav {
+      background: #060d17;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .nav-btn {
+      background: #24344d;
+      color: #fff;
+      border: 1px solid var(--card-border);
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-btn.active, .nav-btn:hover { background: var(--color-gold); color: #000; border-color: var(--color-gold); }
+    .run-pulse { background: var(--color-green); color: #000; border: none; }
+    header {
+      background: #0b132b;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--card-border);
+    }
+    .logo-text { font-size: 1.2rem; font-weight: 800; color: var(--color-gold); }
+    .stats-pill { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1rem; }
+    .score-chip { background: var(--color-blue); color: white; padding: 5px 12px; border-radius: 20px; }
+    main { padding: 22px; min-height: 420px; display: flex; flex-direction: column; justify-content: center; }
+    .criterio-badge {
+      background: rgba(17, 138, 178, 0.2);
+      border-left: 4px solid var(--color-blue);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #90e0ef;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .author-badge { font-size: 0.82rem; color: var(--color-gold); margin-bottom: 12px; font-weight: 600; }
+    .dialogue-card {
+      background: rgba(13, 27, 42, 0.85);
+      border: 2px solid var(--color-gold);
+      padding: 18px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .speaker-name { color: var(--color-gold); font-size: 1rem; font-weight: 800; margin-bottom: 6px; }
+    .options-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+    .option-btn {
+      background: #24344d;
+      border: 2px solid #415a77;
+      color: white;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s;
+      min-height: 52px;
+    }
+    .option-btn:hover { background: #324b6d; border-color: var(--color-gold); transform: translateY(-2px); }
+    .option-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+    .btn-action {
+      background: var(--color-gold);
+      color: #000;
+      font-weight: 800;
+      border: none;
+      padding: 14px 26px;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      cursor: pointer;
+      align-self: flex-start;
+      margin-top: 14px;
+    }
+    .btn-action:hover { background: #e0b443; }
+    .feedback-box { padding: 16px; border-radius: 10px; margin-top: 12px; font-size: 0.95rem; line-height: 1.5; }
+    .fb-ok { background: rgba(6, 214, 160, 0.2); border: 2px solid var(--color-green); color: #80ed99; }
+    .fb-err { background: rgba(239, 71, 111, 0.2); border: 2px solid var(--color-red); color: #ffb4a2; }
+    .subject-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+    @media(max-width: 600px) { .subject-grid { grid-template-columns: 1fr; } }
+    .subject-card {
+      background: #0d1b2a;
+      border: 2px solid var(--card-border);
+      border-radius: 12px;
+      padding: 18px;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .subject-card:hover { border-color: var(--color-gold); transform: translateY(-3px); }
+    .subject-card.done { opacity: 0.6; border-color: var(--color-green); }
+    /* Pista Multijugador en Vivo */
+    .track-container {
+      background: #060d17;
+      border: 2px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+    .track-lane {
+      background: #111d2e;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      height: 48px;
+      border-left: 4px solid var(--color-blue);
+    }
+    .lane-avatar {
+      position: absolute;
+      font-size: 1.8rem;
+      transition: left 0.6s ease-in-out;
+    }
+    .form-group { margin-bottom: 12px; text-align: left; }
+    .form-group label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: var(--color-gold); }
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      background: #0d1b2a;
+      color: #fff;
+      font-size: 0.95rem;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="top-nav">
+      <div>
+        <button class="nav-btn run-pulse" id="btnNavRun" onclick="AudioFX.click(); activarModo('run');">▶️ RUN / Misión</button>
+        <button class="nav-btn" id="btnNavCarrera" onclick="AudioFX.click(); activarModo('carrera');">🏁 Carrera en Vivo</button>
+        <button class="nav-btn" id="btnNavForm" onclick="AudioFX.click(); activarModo('form');">✏️ Proponer Reto</button>
+      </div>
+      <label style="font-size:0.8rem;color:var(--text-muted);display:flex;align-items:center;gap:6px;">
+        <input type="checkbox" id="chkTodos" onchange="alternarFiltroPendientes()"> Ver borradores
+      </label>
+    </div>
+    <header>
+      <div class="logo-text" id="headerTitle">🌿 Eco-Patrulla</div>
+      <div class="stats-pill">
+        <span id="heartsBox">❤️❤️❤️❤️</span>
+        <span class="score-chip"><span id="scoreVal">0</span> pts</span>
+      </div>
+    </header>
+    <main id="stage"></main>
+  </div>
+
+  <script>
+    window.GAME_DATA = <?!= initialDataJson ?>;
+    if (!window.GAME_DATA && typeof google !== 'undefined' && google.script && google.script.run) {
+      google.script.run.withSuccessHandler(function(d){ window.GAME_DATA = d; if(typeof renderRegistroJugador === 'function') renderRegistroJugador(); }).obtenerDatosJuego();
+    }
+    var modoActual = "run";
+    var verBorradores = false;
+    var timerPoll = null;
+
+    var AudioFX = (function() {
+      var ctx = null;
+      function getC() { if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); return ctx; }
+      function tone(f, type, dur, delay) {
+        try {
+          var c = getC();
+          var osc = c.createOscillator();
+          var g = c.createGain();
+          osc.type = type || "sine";
+          osc.frequency.setValueAtTime(f, c.currentTime + (delay || 0));
+          g.gain.setValueAtTime(0.12, c.currentTime + (delay || 0));
+          g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + (delay || 0) + dur);
+          osc.connect(g); g.connect(c.destination);
+          osc.start(c.currentTime + (delay || 0));
+          osc.stop(c.currentTime + (delay || 0) + dur);
+        } catch(e) {}
+      }
+      return {
+        click: function() { tone(440, "triangle", 0.05); },
+        winTone: function() { [523, 659, 784, 1046].forEach(function(f, i){ tone(f, "triangle", 0.25, i*0.12); }); },
+        okTone: function() { tone(523, "sine", 0.1, 0); tone(659, "sine", 0.12, 0.09); tone(784, "sine", 0.25, 0.18); },
+        errTone: function() { tone(240, "sawtooth", 0.15, 0); tone(200, "sawtooth", 0.2, 0.12); }
+      };
+    })();
+
+    var Game = {
+      jugador: "",
+      avatar: "🦊",
+      casilla: 0,
+      vidas: 4,
+      puntos: 0,
+      puntosMeta: 75,
+      tiempoInicio: Date.now(),
+      completados: {},
+      aciertosPorMateria: {},
+      materia: null,
+      retoIdx: 0
+    };
+
+    function alternarFiltroPendientes() {
+      verBorradores = document.getElementById("chkTodos").checked;
+      if (modoActual === "run") renderSelector();
+    }
+
+    function activarModo(modo) {
+      modoActual = modo;
+      if (timerPoll) { clearInterval(timerPoll); timerPoll = null; }
+      document.getElementById("btnNavRun").className = (modo === "run") ? "nav-btn run-pulse active" : "nav-btn";
+      document.getElementById("btnNavCarrera").className = (modo === "carrera") ? "nav-btn active" : "nav-btn";
+      document.getElementById("btnNavForm").className = (modo === "form") ? "nav-btn active" : "nav-btn";
+
+      if (modo === "run") {
+        if (!Game.jugador) renderRegistroJugador();
+        else renderInicio();
+      } else if (modo === "carrera") {
+        renderPantallaCarrera();
+      } else {
+        renderFormularioPropuesta();
+      }
+    }
+
+    function actualizarBarra() {
+      var h = "";
+      for (var i = 0; i < Game.vidas; i++) h += "❤️";
+      document.getElementById("heartsBox").innerText = h || "💔";
+      document.getElementById("scoreVal").innerText = Game.puntos;
+    }
+
+    function filtrarRetosMateria(nom) {
+      var lista = (window.GAME_DATA.materias && window.GAME_DATA.materias[nom]) || [];
+      if (verBorradores) return lista;
+      return lista.filter(function(r) { return r.Estado_Revision === "APROBADO" || !r.Estado_Revision; });
+    }
+
+    function renderRegistroJugador() {
+      var stage = document.getElementById("stage");
+      stage.innerHTML = 
+        '<h2 style="color:var(--color-gold);margin-bottom:8px;">🎒 ¡Bienvenido/a a la Misión!</h2>' +
+        '<p style="color:var(--text-muted);margin-bottom:16px;">Escribe tu nombre o el de tu equipo para registrar tus puntuaciones en el cuaderno del profe:</p>' +
+        '<div class="dialogue-card">' +
+          '<div class="form-group">' +
+            '<label>Nombre o Equipo:</label>' +
+            '<input type="text" id="regNombre" class="form-control" placeholder="Ej. Equipo 3 - Los Linces" required>' +
+          '</div>' +
+          '<div class="form-group">' +
+            '<label>Elige tu Avatar:</label>' +
+            '<select id="regAvatar" class="form-control">' +
+              '<option value="🦊">🦊 Zorro Veloz</option>' +
+              '<option value="🦉">🦉 Búho Sabio</option>' +
+              '<option value="🐸">🐸 Nutria Ágil</option>' +
+              '<option value="🚀">🚀 Nave Exploradora</option>' +
+              '<option value="⛵">⛵ Barco Velero</option>' +
+            '</select>' +
+          '</div>' +
+          '<button class="btn-action" onclick="guardarRegistroLocal()">Entrar al Juego ➔</button>' +
+        '</div>';
+    }
+
+    function guardarRegistroLocal() {
+      var n = document.getElementById("regNombre").value.trim();
+      if (!n) { alert("Por favor, introduce tu nombre o el de tu equipo"); return; }
+      Game.jugador = n;
+      Game.avatar = document.getElementById("regAvatar").value;
+      Game.tiempoInicio = Date.now();
+      AudioFX.click();
+      sincronizarLobby();
+      renderInicio();
+    }
+
+    function sincronizarLobby() {
+      if (typeof google !== "undefined" && google.script && google.script.run && Game.jugador) {
+        google.script.run.actualizarPosicionLobby(Game.jugador, Game.avatar, Game.casilla, Game.puntos);
+      }
+    }
+
+    function renderInicio() {
+      var m = window.GAME_DATA.meta || {};
+      Game.vidas = parseInt(m.VIDAS_INICIALES, 10) || 4;
+      Game.puntosMeta = parseInt(m.PUNTOS_VICTORIA, 10) || 75;
+      document.getElementById("headerTitle").innerText = m.TITULO_JUEGO || "🌿 La Eco-Patrulla";
+      actualizarBarra();
+
+      var stage = document.getElementById("stage");
+      stage.innerHTML = 
+        '<h2 style="font-size:1.5rem;color:var(--color-gold);margin-bottom:6px;">' + (m.TITULO_JUEGO || "Misión Ambiental") + '</h2>' +
+        '<p style="color:var(--color-gold);font-weight:700;margin-bottom:10px;">Jugando como: ' + Game.avatar + ' ' + Game.jugador + '</p>' +
+        '<div class="dialogue-card">' + (m.DESCRIPCION || "¡Bienvenido a la aventura!") + '</div>' +
+        '<button class="btn-action" onclick="AudioFX.click(); renderSelector();">🚀 Comenzar Misión (RUN)</button>';
+    }
+
+    function renderSelector() {
+      actualizarBarra();
+      if (Game.vidas <= 0) { renderGameOver(); return; }
+      if (Game.puntos >= Game.puntosMeta) { renderVictoria(); return; }
+
+      var stage = document.getElementById("stage");
+      var mats = window.GAME_DATA.materias || {};
+      var nombres = Object.keys(mats);
+
+      var html = '<h2 style="color:var(--color-gold);font-size:1.4rem;margin-bottom:6px;">🗺️ Elige Rincón del Bosque</h2>' +
+                 '<div class="subject-grid">';
+
+      nombres.forEach(function(nom) {
+        var lista = filtrarRetosMateria(nom);
+        var done = lista.length > 0 && lista.every(function(item) { return Game.completados[item.ID]; });
+        var cName = done ? "subject-card done" : "subject-card";
+        var estado = done ? "✅ ¡Rincón protegido!" : ("⭐ " + lista.length + " retos disponibles");
+
+        html += '<div class="' + cName + '" onclick="AudioFX.click(); abrirRincon('' + nom + '')">' +
+                  '<h3 style="color:var(--color-gold);font-size:1.15rem;margin-bottom:4px;">' + nom.replace("_", " ") + '</h3>' +
+                  '<p style="font-size:0.9rem;color:var(--text-muted);">' + estado + '</p>' +
+                '</div>';
+      });
+      html += '</div>';
+      stage.innerHTML = html;
+    }
+
+    function abrirRincon(nom) {
+      Game.materia = nom;
+      var lista = filtrarRetosMateria(nom);
+      if (lista.length === 0) {
+        alert("No hay retos aprobados en esta materia aún.");
+        return;
+      }
+      var primerNoHecho = 0;
+      for (var i = 0; i < lista.length; i++) {
+        if (!Game.completados[lista[i].ID]) { primerNoHecho = i; break; }
+      }
+      Game.retoIdx = primerNoHecho;
+      renderPregunta();
+    }
+
+    function renderPregunta() {
+      var lista = filtrarRetosMateria(Game.materia);
+      if (Game.retoIdx >= lista.length) { renderSelector(); return; }
+
+      var reto = lista[Game.retoIdx];
+      var stage = document.getElementById("stage");
+      var personaje = reto.Personaje || "Guía";
+
+      var badgeCurricular = reto.Criterio_Evaluacion ? ('<div class="criterio-badge">🎯 ' + reto.Criterio_Evaluacion + '</div>') : '';
+      var badgeAutor = reto.Autor_O_Equipo ? ('<div class="author-badge">💡 Diseñado por: <strong>' + reto.Autor_O_Equipo + '</strong></div>') : '';
+
+      var html = '<h3 style="color:var(--color-blue);font-size:1.25rem;margin-bottom:6px;">📍 ' + (reto.Etapa || Game.materia) + '</h3>' +
+        badgeCurricular + badgeAutor +
+        '<div class="dialogue-card">' +
+          '<div class="speaker-name">' + personaje + '</div>' +
+          '<div>' + reto.Texto_Narrativo + '</div>' +
+        '</div>' +
+        '<div class="options-grid">' +
+          '<button class="option-btn" onclick="contestar('A', this)">' + reto.Opcion_A + '</button>' +
+          '<button class="option-btn" onclick="contestar('B', this)">' + reto.Opcion_B + '</button>' +
+          '<button class="option-btn" onclick="contestar('C', this)">' + reto.Opcion_C + '</button>' +
+        '</div>' +
+        '<div id="fbBox"></div>';
+
+      stage.innerHTML = html;
+    }
+
+    function contestar(opc, btn) {
+      var lista = filtrarRetosMateria(Game.materia);
+      var reto = lista[Game.retoIdx];
+      var fb = document.getElementById("fbBox");
+      var btns = document.querySelectorAll(".option-btn");
+      btns.forEach(function(b) { b.disabled = true; });
+
+      var correcta = String(reto.Respuesta_Correcta || "").trim().toUpperCase();
+      var didactico = reto.Feedback_Didactico || "";
+      var saber = reto.Saber_Basico ? ('<br><small style="color:#94a3b8">📚 Saber curricular: ' + reto.Saber_Basico + '</small>') : '';
+
+      if (opc === correcta) {
+        AudioFX.okTone();
+        var p = parseInt(reto.Puntos, 10) || 25;
+        Game.puntos += p;
+        Game.casilla += 1;
+        Game.completados[reto.ID] = true;
+        Game.aciertosPorMateria[Game.materia] = (Game.aciertosPorMateria[Game.materia] || 0) + 1;
+        actualizarBarra();
+        sincronizarLobby();
+        fb.innerHTML = '<div class="feedback-box fb-ok">' +
+          '<strong>🎉 ¡Muy bien hecho! (+' + p + ' pts - Avanzas en la carrera)</strong><br>' + didactico + saber +
+        '</div>' +
+        '<button class="btn-action" onclick="avanzar()">Continuar Explorando ➔</button>';
+      } else {
+        AudioFX.errTone();
+        Game.vidas -= 1;
+        actualizarBarra();
+        fb.innerHTML = '<div class="feedback-box fb-err">' +
+          '<strong>💪 ¡Casi! Revisa la pista:</strong><br>' + didactico + saber +
+        '</div>' +
+        '<button class="btn-action" onclick="avanzar()">Seguir Adelante ➔</button>';
+      }
+    }
+
+    function avanzar() {
+      AudioFX.click();
+      if (Game.vidas <= 0) { renderGameOver(); return; }
+      if (Game.puntos >= Game.puntosMeta) { renderVictoria(); return; }
+
+      Game.retoIdx++;
+      var lista = filtrarRetosMateria(Game.materia);
+      if (Game.retoIdx < lista.length) renderPregunta();
+      else renderSelector();
+    }
+
+    function registrarFinPartida(resultado) {
+      var tSeg = Math.round((Date.now() - Game.tiempoInicio) / 1000);
+      var desglose = Object.keys(Game.aciertosPorMateria).map(function(m){
+        return m.replace('_', ' ') + ': ' + Game.aciertosPorMateria[m];
+      }).join(', ');
+
+      if (typeof google !== "undefined" && google.script && google.script.run && Game.jugador) {
+        google.script.run.registrarPartidaOnline({
+          jugador: Game.jugador,
+          puntos: Game.puntos,
+          vidas: Game.vidas,
+          tiempo: tSeg,
+          desglose: desglose,
+          resultado: resultado
+        });
+      }
+    }
+
+    function renderGameOver() {
+      AudioFX.errTone();
+      registrarFinPartida("DERROTA");
+      var stage = document.getElementById("stage");
+      stage.innerHTML = 
+        '<h2 style="color:var(--color-red);font-size:1.5rem;margin-bottom:8px;">🌱 Misión en Pausa</h2>' +
+        '<div class="dialogue-card">Has gastado tus corazones, ¡pero tus puntos han quedado guardados en el registro!</div>' +
+        '<p style="color:var(--text-muted);margin-bottom:14px;">Puntuación final: ' + Game.puntos + ' pts.</p>' +
+        '<button class="btn-action" onclick="AudioFX.click(); renderInicio();">🔄 Intentar de Nuevo (RUN)</button>';
+    }
+
+    function renderVictoria() {
+      AudioFX.winTone();
+      registrarFinPartida("VICTORIA_PODIO");
+      var stage = document.getElementById("stage");
+      stage.innerHTML = 
+        '<h2 style="color:var(--color-gold);font-size:1.6rem;margin-bottom:8px;">🏆 ¡Misión y Carrera Cumplidas!</h2>' +
+        '<div class="dialogue-card">¡Extraordinario trabajo, ' + Game.jugador + '! Has protegido el bosque y tu puntuación ya está en el cuaderno del docente.</div>' +
+        '<p style="color:var(--text-muted);margin-bottom:16px;">Puntos finales: <strong>' + Game.puntos + ' pts</strong></p>' +
+        '<button class="btn-action" onclick="AudioFX.click(); renderInicio();">✨ Volver a Jugar</button>';
+    }
+
+    /* PANTALLA DE CARRERA MULTIJUGADOR EN VIVO */
+    function renderPantallaCarrera() {
+      var stage = document.getElementById("stage");
+      stage.innerHTML = 
+        '<h2 style="color:var(--color-gold);margin-bottom:6px;">🏁 Carrera Multijugador del Aula</h2>' +
+        '<p style="color:var(--text-muted);margin-bottom:14px;font-size:0.9rem;">Visualización en vivo de los equipos. Los avatares avanzan con cada respuesta correcta (refresco cada 3 seg):</p>' +
+        '<div id="pistaContainer" class="track-container">Cargando posiciones del aula...</div>';
+
+      refrescarPista();
+      timerPoll = setInterval(refrescarPista, 3000);
+    }
+
+    function refrescarPista() {
+      if (typeof google !== "undefined" && google.script && google.script.run) {
+        google.script.run.withSuccessHandler(pintarPista).obtenerEstadoLobbyMemoria();
+      } else {
+        // Simulación visual en entorno local
+        var fake = {
+          "Equipo Los Linces": { avatar: "🦊", casilla: 7, puntos: 75 },
+          "Equipo Nutrias": { avatar: "🐸", casilla: 5, puntos: 50 },
+          "Equipo Búhos": { avatar: "🦉", casilla: 8, puntos: 80 }
+        };
+        if (Game.jugador) fake[Game.jugador] = { avatar: Game.avatar, casilla: Game.casilla, puntos: Game.puntos };
+        pintarPista(fake);
+      }
+    }
+
+    function pintarPista(lobby) {
+      var cont = document.getElementById("pistaContainer");
+      if (!cont) return;
+      var keys = Object.keys(lobby || {});
+      if (keys.length === 0) {
+        cont.innerHTML = "<p style='color:#94a3b8;'>Esperando a que los equipos se conecten y respondan retos...</p>";
+        return;
+      }
+      var metaCasillas = 10;
+      var html = "";
+      keys.forEach(function(k) {
+        var j = lobby[k];
+        var c = Math.min(metaCasillas, j.casilla || 0);
+        var pct = (c / metaCasillas) * 85;
+        html += '<div class="track-lane">' +
+          '<strong style="color:#fff;font-size:0.9rem;width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + k + '</strong>' +
+          '<div style="flex:1;position:relative;height:100%;margin:0 10px;">' +
+            '<span class="lane-avatar" style="left:' + pct + '%;">' + (j.avatar || "🦊") + '</span>' +
+          '</div>' +
+          '<span style="color:var(--color-gold);font-weight:bold;font-size:0.85rem;">' + (j.puntos || 0) + ' pts (C' + c + ')</span>' +
+        '</div>';
+      });
+      cont.innerHTML = html;
+    }
+
+    /* FORMULARIO DE PROPUESTAS */
+    function renderFormularioPropuesta() {
+      var stage = document.getElementById("stage");
+      var mats = Object.keys(window.GAME_DATA.materias || {});
+      var optMaterias = mats.map(function(m){ return '<option value="' + m + '">' + m.replace('_', ' ') + '</option>'; }).join('');
+
+      stage.innerHTML = 
+        '<h2 style="color:var(--color-gold);margin-bottom:6px;">✏️ Enviar Propuesta de Reto</h2>' +
+        '<form id="formReto" onsubmit="enviarFormulario(event)">' +
+          '<div class="form-row">' +
+            '<div class="form-group">' +
+              '<label>Materia:</label>' +
+              '<select id="f_materia" class="form-control">' + optMaterias + '</select>' +
+            '</div>' +
+            '<div class="form-group">' +
+              '<label>Autor / Equipo:</label>' +
+              '<input type="text" id="f_autor" class="form-control" value="' + (Game.jugador || "") + '" placeholder="Nombre del equipo" required>' +
+            '</div>' +
+          '</div>' +
+          '<div class="form-group">' +
+            '<label>Criterio de Evaluación:</label>' +
+            '<input type="text" id="f_criterio" class="form-control" placeholder="Ej. CE.CMN.5.2 - Cadenas tróficas">' +
+          '</div>' +
+          '<div class="form-group">' +
+            '<label>Pregunta del Reto:</label>' +
+            '<textarea id="f_texto" class="form-control" rows="2" placeholder="Escribe aquí el reto..." required></textarea>' +
+          '</div>' +
+          '<div class="form-row">' +
+            '<div class="form-group"><label>Opción A:</label><input type="text" id="f_opA" class="form-control" required></div>' +
+            '<div class="form-group"><label>Opción B:</label><input type="text" id="f_opB" class="form-control" required></div>' +
+          '</div>' +
+          '<div class="form-row">' +
+            '<div class="form-group"><label>Opción C:</label><input type="text" id="f_opC" class="form-control" required></div>' +
+            '<div class="form-group"><label>Respuesta Correcta:</label>' +
+              '<select id="f_correcta" class="form-control"><option value="A">Opción A</option><option value="B">Opción B</option><option value="C">Opción C</option></select>' +
+            '</div>' +
+          '</div>' +
+          '<div class="form-group">' +
+            '<label>Explicación Didáctica:</label>' +
+            '<input type="text" id="f_feedback" class="form-control" placeholder="Por qué es la opción correcta..." required>' +
+          '</div>' +
+          '<button type="submit" class="btn-action" id="btnSubmitForm">🚀 Enviar a Revisión Docente</button>' +
+          '<div id="formMsg" style="margin-top:14px;font-weight:bold;"></div>' +
+        '</form>';
+    }
+
+    function enviarFormulario(e) {
+      e.preventDefault();
+      AudioFX.click();
+      var btn = document.getElementById("btnSubmitForm");
+      var msg = document.getElementById("formMsg");
+      btn.disabled = true;
+      btn.innerText = "Enviando a Google Sheets...";
+
+      var materia = document.getElementById("f_materia").value;
+      var reto = {
+        Autor_O_Equipo: document.getElementById("f_autor").value,
+        Criterio_Evaluacion: document.getElementById("f_criterio").value,
+        Texto_Narrativo: document.getElementById("f_texto").value,
+        Opcion_A: document.getElementById("f_opA").value,
+        Opcion_B: document.getElementById("f_opB").value,
+        Opcion_C: document.getElementById("f_opC").value,
+        Respuesta_Correcta: document.getElementById("f_correcta").value,
+        Feedback_Didactico: document.getElementById("f_feedback").value,
+        Puntos: 25
+      };
+
+      if (typeof google !== "undefined" && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            btn.disabled = false;
+            btn.innerText = "🚀 Enviar a Revisión Docente";
+            if (res.ok) {
+              AudioFX.okTone();
+              msg.innerHTML = '<span style="color:var(--color-green);">' + res.mensaje + '</span>';
+              document.getElementById("formReto").reset();
+            } else {
+              AudioFX.errTone();
+              msg.innerHTML = '<span style="color:var(--color-red);">Error: ' + res.error + '</span>';
+            }
+          })
+          .guardarPropuestaReto(materia, reto);
+      } else {
+        btn.disabled = false;
+        btn.innerText = "🚀 Enviar a Revisión Docente";
+        msg.innerHTML = '<span style="color:var(--color-green);">Simulación local: Propuesta registrada en la hoja.</span>';
+      }
+    }
+
+    window.onload = function() { renderRegistroJugador(); };
+  </script>
+</body>
+</html>

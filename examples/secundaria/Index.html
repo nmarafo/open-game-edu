@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg-dark: #0a1128;
+      --card-bg: #132247;
+      --card-border: #1c3d73;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-gold: #f59e0b;
+      --accent-blue: #38bdf8;
+      --success-green: #10b981;
+      --danger-red: #ef4444;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+    }
+    #app {
+      width: 100%;
+      max-width: 800px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Barra Superior de Navegación */
+    .top-nav {
+      background: #060d1d;
+      padding: 10px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .nav-btn {
+      background: #1e293b;
+      color: #fff;
+      border: 1px solid var(--card-border);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-btn.active, .nav-btn:hover { background: var(--accent-gold); color: #000; border-color: var(--accent-gold); }
+    .run-pulse { background: var(--success-green); color: #000; border: none; }
+    /* Header */
+    header {
+      background: #0b1736;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .title-badge { font-weight: 700; font-size: 1.1rem; color: var(--accent-gold); display: flex; align-items: center; gap: 8px; }
+    .stats-bar { display: flex; align-items: center; gap: 14px; font-weight: 600; font-size: 0.95rem; }
+    .score-badge { background: #0284c7; color: white; padding: 4px 10px; border-radius: 20px; }
+    main { padding: 24px; min-height: 400px; display: flex; flex-direction: column; justify-content: center; }
+    .card-title { font-size: 1.4rem; color: var(--accent-blue); margin-bottom: 10px; }
+    .curriculum-pill {
+      background: rgba(56, 189, 248, 0.1);
+      border-left: 3px solid var(--accent-blue);
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 0.83rem;
+      color: var(--accent-blue);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .author-pill {
+      font-size: 0.82rem;
+      color: var(--accent-gold);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    .narrative-box {
+      background: rgba(6, 13, 29, 0.8);
+      border-left: 4px solid var(--accent-gold);
+      padding: 16px;
+      border-radius: 6px;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      white-space: pre-line;
+    }
+    .speaker { font-weight: bold; color: var(--accent-gold); font-size: 0.9rem; text-transform: uppercase; margin-bottom: 6px; }
+    .options-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+    .opt-btn {
+      background: #1c2d52;
+      border: 2px solid #284175;
+      color: white;
+      padding: 14px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+    .opt-btn:hover { background: #284175; border-color: var(--accent-blue); transform: translateY(-2px); }
+    .opt-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+    .feedback-banner {
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 14px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      animation: fadeIn 0.3s ease;
+    }
+    .feedback-correct { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success-green); color: #6ee7b7; }
+    .feedback-wrong { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger-red); color: #fca5a5; }
+    .action-btn {
+      background: var(--accent-gold);
+      color: #000;
+      border: none;
+      font-weight: 700;
+      padding: 14px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 16px;
+      align-self: flex-start;
+      transition: background 0.2s;
+    }
+    .action-btn:hover { background: #d97706; }
+    .hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+    @media(max-width: 600px) { .hub-grid { grid-template-columns: 1fr; } }
+    .hub-card {
+      background: #0f1c3f;
+      border: 1px solid var(--card-border);
+      padding: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .hub-card:hover { border-color: var(--accent-gold); transform: translateY(-3px); }
+    .hub-card.completed { opacity: 0.6; border-color: var(--success-green); }
+    /* Pista Multijugador Regata */
+    .track-container {
+      background: #060d1d;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+    .track-lane {
+      background: #0e1938;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      height: 48px;
+      border-left: 4px solid var(--accent-blue);
+    }
+    .lane-avatar {
+      position: absolute;
+      font-size: 1.8rem;
+      transition: left 0.6s ease-in-out;
+    }
+    /* Formulario */
+    .form-group { margin-bottom: 14px; text-align: left; }
+    .form-group label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: var(--accent-gold); }
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--card-border);
+      background: #0a142e;
+      color: #fff;
+      font-size: 0.95rem;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="top-nav">
+      <div>
+        <button class="nav-btn run-pulse" id="btnNavRun" onclick="Sound.click(); activarModo('run');">▶️ RUN / Travesía</button>
+        <button class="nav-btn" id="btnNavCarrera" onclick="Sound.click(); activarModo('carrera');">🏁 Flota en Vivo</button>
+        <button class="nav-btn" id="btnNavForm" onclick="Sound.click(); activarModo('form');">✏️ Proponer Reto</button>
+      </div>
+      <label style="font-size:0.8rem;color:var(--text-muted);display:flex;align-items:center;gap:6px;">
+        <input type="checkbox" id="chkTodos" onchange="alternarFiltroPendientes()"> Ver borradores
+      </label>
+    </div>
+    <header>
+      <div class="title-badge">⚓ <span id="headerTitle">La Flota de Indias</span></div>
+      <div class="stats-bar">
+        <span id="heartsContainer">❤️❤️❤️</span>
+        <span class="score-badge"><span id="scoreDisplay">0</span> pts</span>
+      </div>
+    </header>
+    <main id="gameStage"></main>
+  </div>
+
+  <script>
+    window.GAME_DATA = <?!= initialDataJson ?>;
+    if (!window.GAME_DATA && typeof google !== 'undefined' && google.script && google.script.run) {
+      google.script.run.withSuccessHandler(function(d){ window.GAME_DATA = d; if(typeof renderRegistroJugador === 'function') renderRegistroJugador(); }).obtenerDatosJuego();
+    }
+    var modoActual = "run";
+    var verBorradores = false;
+    var timerPoll = null;
+
+    var Sound = (function() {
+      var ctx = null;
+      function init() { if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+      function play(f, type, dur, delay) {
+        try {
+          init();
+          var osc = ctx.createOscillator();
+          var g = ctx.createGain();
+          osc.type = type || "sine";
+          osc.frequency.setValueAtTime(f, ctx.currentTime + (delay || 0));
+          g.gain.setValueAtTime(0.12, ctx.currentTime + (delay || 0));
+          g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (delay || 0) + dur);
+          osc.connect(g); g.connect(ctx.destination);
+          osc.start(ctx.currentTime + (delay || 0));
+          osc.stop(ctx.currentTime + (delay || 0) + dur);
+        } catch(e) {}
+      }
+      return {
+        click: function() { play(400, "triangle", 0.05); },
+        correct: function() { play(523, "sine", 0.1, 0); play(659, "sine", 0.1, 0.08); play(784, "sine", 0.25, 0.16); },
+        wrong: function() { play(220, "sawtooth", 0.15, 0); play(180, "sawtooth", 0.25, 0.12); },
+        win: function() { [523, 659, 784, 1046].forEach(function(f, i) { play(f, "triangle", 0.3, i * 0.14); }); }
+      };
+    })();
+
+    var State = {
+      jugador: "",
+      avatar: "⛵",
+      casilla: 0,
+      vidas: 3,
+      puntos: 0,
+      puntosMeta: 80,
+      tiempoInicio: Date.now(),
+      completados: {},
+      aciertosPorMateria: {},
+      materiaActual: null,
+      indiceReto: 0
+    };
+
+    function alternarFiltroPendientes() {
+      verBorradores = document.getElementById("chkTodos").checked;
+      if (modoActual === "run") renderHub();
+    }
+
+    function activarModo(modo) {
+      modoActual = modo;
+      if (timerPoll) { clearInterval(timerPoll); timerPoll = null; }
+      document.getElementById("btnNavRun").className = (modo === "run") ? "nav-btn run-pulse active" : "nav-btn";
+      document.getElementById("btnNavCarrera").className = (modo === "carrera") ? "nav-btn active" : "nav-btn";
+      document.getElementById("btnNavForm").className = (modo === "form") ? "nav-btn active" : "nav-btn";
+
+      if (modo === "run") {
+        if (!State.jugador) renderRegistroJugador();
+        else renderTitle();
+      } else if (modo === "carrera") {
+        renderPantallaCarrera();
+      } else {
+        renderFormularioPropuesta();
+      }
+    }
+
+    function actualizarStats() {
+      var hearts = "";
+      for (var i = 0; i < State.vidas; i++) hearts += "❤️";
+      document.getElementById("heartsContainer").innerText = hearts || "💀";
+      document.getElementById("scoreDisplay").innerText = State.puntos;
+    }
+
+    function filtrarRetosMateria(nom) {
+      var lista = (window.GAME_DATA.materias && window.GAME_DATA.materias[nom]) || [];
+      if (verBorradores) return lista;
+      return lista.filter(function(r) { return r.Estado_Revision === "APROBADO" || !r.Estado_Revision; });
+    }
+
+    function renderRegistroJugador() {
+      var stage = document.getElementById("gameStage");
+      stage.innerHTML = 
+        '<h2 class="card-title">⚓ Registro de la Flota (3.º ESO)</h2>' +
+        '<p style="color:var(--text-muted);margin-bottom:16px;">Introduce el nombre de tu tripulación y elige tu navío para la Regata de Indias:</p>' +
+        '<div class="narrative-box">' +
+          '<div class="form-group">' +
+            '<label>Nombre del Alférez o Tripulación:</label>' +
+            '<input type="text" id="regNombre" class="form-control" placeholder="Ej. Equipo 1 - Los Corsarios" required>' +
+          '</div>' +
+          '<div class="form-group">' +
+            '<label>Navío Insignia:</label>' +
+            '<select id="regAvatar" class="form-control">' +
+              '<option value="⛵">⛵ Galeón San Cristóbal</option>' +
+              '<option value="⚓">⚓ Fragata Fortuna</option>' +
+              '<option value="🧭">🧭 Nao Victoria</option>' +
+              '<option value="📜">📜 Carabela del Saber</option>' +
+              '<option value="🗺️">🗺️ Bergantín Veloz</option>' +
+            '</select>' +
+          '</div>' +
+          '<button class="action-btn" onclick="guardarRegistroLocal()">Zarpar hacia el Océano ➔</button>' +
+        '</div>';
+    }
+
+    function guardarRegistroLocal() {
+      var n = document.getElementById("regNombre").value.trim();
+      if (!n) { alert("Por favor, introduce el nombre de la tripulación."); return; }
+      State.jugador = n;
+      State.avatar = document.getElementById("regAvatar").value;
+      State.tiempoInicio = Date.now();
+      Sound.click();
+      sincronizarLobby();
+      renderTitle();
+    }
+
+    function sincronizarLobby() {
+      if (typeof google !== "undefined" && google.script && google.script.run && State.jugador) {
+        google.script.run.actualizarPosicionLobby(State.jugador, State.avatar, State.casilla, State.puntos);
+      }
+    }
+
+    function renderTitle() {
+      var stage = document.getElementById("gameStage");
+      var meta = window.GAME_DATA.meta || {};
+      State.vidas = parseInt(meta.VIDAS_INICIALES, 10) || 3;
+      State.puntosMeta = parseInt(meta.PUNTOS_VICTORIA, 10) || 80;
+      document.getElementById("headerTitle").innerText = meta.TITULO_JUEGO || "La Flota de Indias";
+      actualizarStats();
+
+      var subtitulo = meta.ETAPA_CURSO ? ('<p style="color:var(--accent-gold);margin-bottom:8px;font-weight:600;">Etapa: ' + meta.ETAPA_CURSO + '</p>') : '';
+      stage.innerHTML = 
+        '<h2 class="card-title">📜 ' + (meta.TITULO_JUEGO || "Expedición") + '</h2>' +
+        subtitulo +
+        '<p style="color:var(--accent-gold);font-weight:700;margin-bottom:12px;">Navío al mando: ' + State.avatar + ' ' + State.jugador + '</p>' +
+        '<div class="narrative-box">' + (meta.DESCRIPCION || "Bienvenido a la aventura.") + '</div>' +
+        '<p style="color:var(--text-muted);margin-bottom:16px;">Supera los retos curriculares para alcanzar ' + State.puntosMeta + ' puntos y llevar tu flota a puerto.</p>' +
+        '<button class="action-btn" onclick="Sound.click(); renderHub();">🚀 Comenzar Travesía (RUN)</button>';
+    }
+
+    function renderHub() {
+      actualizarStats();
+      var stage = document.getElementById("gameStage");
+      var materias = window.GAME_DATA.materias || {};
+      var keys = Object.keys(materias);
+
+      if (State.vidas <= 0) { renderGameOver(); return; }
+      if (State.puntos >= State.puntosMeta) { renderVictory(); return; }
+
+      var html = '<h2 class="card-title">🗺️ Cuaderno de Bitácora: Elige Misión</h2>' +
+                 '<p style="color:var(--text-muted);margin-bottom:12px;">Selecciona la materia que deseas explorar:</p>' +
+                 '<div class="hub-grid">';
+
+      keys.forEach(function(m) {
+        var lista = filtrarRetosMateria(m);
+        var done = lista.length > 0 && lista.every(function(item) { return State.completados[item.ID]; });
+        var cssClass = done ? "hub-card completed" : "hub-card";
+        var tag = done ? "✅ Superada" : ("📌 " + lista.length + " retos aprobados");
+        
+        html += '<div class="' + cssClass + '" onclick="Sound.click(); abrirMateria('' + m + '')">' +
+                  '<h3 style="color:var(--accent-gold);margin-bottom:6px;">' + m.replace("_", " ") + '</h3>' +
+                  '<p style="font-size:0.88rem;color:var(--text-muted);">' + tag + '</p>' +
+                '</div>';
+      });
+      html += '</div>';
+      stage.innerHTML = html;
+    }
+
+    function abrirMateria(nombreMateria) {
+      State.materiaActual = nombreMateria;
+      var lista = filtrarRetosMateria(nombreMateria);
+      if (lista.length === 0) {
+        alert("No hay retos aprobados en esta materia aún. ¡Envía una propuesta en la pestaña superior!");
+        return;
+      }
+      var idx = 0;
+      for (var i = 0; i < lista.length; i++) {
+        if (!State.completados[lista[i].ID]) { idx = i; break; }
+      }
+      State.indiceReto = idx;
+      renderReto();
+    }
+
+    function renderReto() {
+      var lista = filtrarRetosMateria(State.materiaActual);
+      if (State.indiceReto >= lista.length) { renderHub(); return; }
+
+      var reto = lista[State.indiceReto];
+      var stage = document.getElementById("gameStage");
+      var emisor = reto.Personaje || reto.Enclave || reto.Desafío_Cálculo || "Oficial de Cubierta";
+      var texto = reto.Texto_Narrativo || reto.Situacion_Problema || "";
+
+      var criterioHtml = reto.Criterio_Evaluacion 
+        ? ('<div class="curriculum-pill">🎯 <strong>Criterio Curricular:</strong> ' + reto.Criterio_Evaluacion + '</div>')
+        : '';
+      var autorHtml = reto.Autor_O_Equipo
+        ? ('<div class="author-pill">💡 Reto diseñado por: <strong>' + reto.Autor_O_Equipo + '</strong></div>')
+        : '';
+
+      var html = '<h2 class="card-title">⚓ ' + (reto.Etapa || State.materiaActual) + '</h2>' +
+        criterioHtml +
+        autorHtml +
+        '<div class="narrative-box">' +
+          '<div class="speaker">🗣️ ' + emisor + '</div>' +
+          '<div>' + texto + '</div>' +
+        '</div>' +
+        '<div class="options-list" id="optsContainer">' +
+          '<button class="opt-btn" onclick="responder('A', this)">' + reto.Opcion_A + '</button>' +
+          '<button class="opt-btn" onclick="responder('B', this)">' + reto.Opcion_B + '</button>' +
+          '<button class="opt-btn" onclick="responder('C', this)">' + reto.Opcion_C + '</button>' +
+        '</div>' +
+        '<div id="feedbackContainer"></div>';
+
+      stage.innerHTML = html;
+    }
+
+    function responder(opcion, btn) {
+      var lista = filtrarRetosMateria(State.materiaActual);
+      var reto = lista[State.indiceReto];
+      var fb = document.getElementById("feedbackContainer");
+      
+      var btns = document.querySelectorAll(".opt-btn");
+      btns.forEach(function(b) { b.disabled = true; });
+
+      var correcta = String(reto.Respuesta_Correcta || "").trim().toUpperCase();
+      var didactico = reto.Feedback_Didactico || "";
+      var saber = reto.Saber_Basico ? ('<br><small style="color:#94a3b8">📚 Saber básico: ' + reto.Saber_Basico + '</small>') : '';
+
+      if (opcion === correcta) {
+        Sound.correct();
+        var pts = parseInt(reto.Puntos, 10) || 25;
+        State.puntos += pts;
+        State.casilla += 1;
+        State.completados[reto.ID] = true;
+        State.aciertosPorMateria[State.materiaActual] = (State.aciertosPorMateria[State.materiaActual] || 0) + 1;
+        actualizarStats();
+        sincronizarLobby();
+        fb.innerHTML = '<div class="feedback-banner feedback-correct">' +
+          '<strong>✅ ¡Acertado! (+' + pts + ' pts - Tu navío avanza en la regata)</strong><br>' + didactico + saber +
+        '</div>' +
+        '<button class="action-btn" onclick="siguienteReto()">Continuar Travesía ➔</button>';
+      } else {
+        Sound.wrong();
+        State.vidas -= 1;
+        actualizarStats();
+        fb.innerHTML = '<div class="feedback-banner feedback-wrong">' +
+          '<strong>❌ Respuesta incorrecta (-1 vida)</strong><br>' + didactico + saber +
+        '</div>' +
+        '<button class="action-btn" onclick="siguienteReto()">Avanzar ➔</button>';
+      }
+    }
+
+    function siguienteReto() {
+      Sound.click();
+      if (State.vidas <= 0) { renderGameOver(); return; }
+      if (State.puntos >= State.puntosMeta) { renderVictory(); return; }
+
+      State.indiceReto++;
+      var lista = filtrarRetosMateria(State.materiaActual);
+      if (State.indiceReto < lista.length) {
+        renderReto();
+      } else {
+        renderHub();
+      }
+    }
+
+    function registrarFinPartida(resultado) {
+      var tSeg = Math.round((Date.now() - State.tiempoInicio) / 1000);
+      var desglose = Object.keys(State.aciertosPorMateria).map(function(m){
+        return m.replace('_', ' ') + ': ' + State.aciertosPorMateria[m];
+      }).join(', ');
+
+      if (typeof google !== "undefined" && google.script && google.script.run && State.jugador) {
+        google.script.run.registrarPartidaOnline({
+          jugador: State.jugador,
+          curso: "3.º ESO",
+          puntos: State.puntos,
+          vidas: State.vidas,
+          tiempo: tSeg,
+          desglose: desglose,
+          resultado: resultado
+        });
+      }
+    }
+
+    function renderGameOver() {
+      Sound.wrong();
+      registrarFinPartida("NAUFRAGIO");
+      var meta = window.GAME_DATA.meta || {};
+      var stage = document.getElementById("gameStage");
+      stage.innerHTML = 
+        '<h2 class="card-title" style="color:var(--danger-red)">💀 Fin de la Travesía</h2>' +
+        '<div class="narrative-box">' + (meta.MENSAJE_DERROTA || "Has agotado todas tus vidas en el océano. Tus resultados quedan registrados.") + '</div>' +
+        '<p style="color:var(--text-muted);margin-bottom:16px;">Puntos finales: ' + State.puntos + ' pts.</p>' +
+        '<button class="action-btn" onclick="Sound.click(); renderTitle();">🔄 Intentar de Nuevo (RUN)</button>';
+    }
+
+    function renderVictory() {
+      Sound.win();
+      registrarFinPartida("VICTORIA_PUERTO");
+      var meta = window.GAME_DATA.meta || {};
+      var stage = document.getElementById("gameStage");
+      stage.innerHTML = 
+        '<h2 class="card-title" style="color:var(--accent-gold)">🏆 ¡Victoria Gloriosa!</h2>' +
+        '<div class="narrative-box">' + (meta.MENSAJE_VICTORIA || "¡Has arribado al puerto con éxito y honores!") + '</div>' +
+        '<p style="color:var(--text-muted);margin-bottom:16px;">¡Puntuación final registrada: <strong>' + State.puntos + ' pts</strong>!</p>' +
+        '<button class="action-btn" onclick="Sound.click(); renderTitle();">✨ Volver a Jugar</button>';
+    }
+
+    /* PANTALLA DE REGATA MULTIJUGADOR EN VIVO */
+    function renderPantallaCarrera() {
+      var stage = document.getElementById("gameStage");
+      stage.innerHTML = 
+        '<h2 class="card-title">🏁 Regata de Indias: Flotas en Vivo</h2>' +
+        '<p style="color:var(--text-muted);margin-bottom:14px;font-size:0.9rem;">Visualización en tiempo real en la pantalla del aula. Cada acierto impulsa el navío:</p>' +
+        '<div id="pistaContainer" class="track-container">Cargando posiciones de la flota...</div>';
+
+      refrescarPista();
+      timerPoll = setInterval(refrescarPista, 3000);
+    }
+
+    function refrescarPista() {
+      if (typeof google !== "undefined" && google.script && google.script.run) {
+        google.script.run.withSuccessHandler(pintarPista).obtenerEstadoLobbyMemoria();
+      } else {
+        var fake = {
+          "Equipo Los Corsarios": { avatar: "⛵", casilla: 8, puntos: 80 },
+          "Equipo Fénix": { avatar: "🧭", casilla: 6, puntos: 60 },
+          "Galeones del Sur": { avatar: "⚓", casilla: 5, puntos: 50 }
+        };
+        if (State.jugador) fake[State.jugador] = { avatar: State.avatar, casilla: State.casilla, puntos: State.puntos };
+        pintarPista(fake);
+      }
+    }
+
+    function pintarPista(lobby) {
+      var cont = document.getElementById("pistaContainer");
+      if (!cont) return;
+      var keys = Object.keys(lobby || {});
+      if (keys.length === 0) {
+        cont.innerHTML = "<p style='color:#94a3b8;'>Esperando a que las tripulaciones se conecten...</p>";
+        return;
+      }
+      var metaCasillas = 10;
+      var html = "";
+      keys.forEach(function(k) {
+        var j = lobby[k];
+        var c = Math.min(metaCasillas, j.casilla || 0);
+        var pct = (c / metaCasillas) * 85;
+        html += '<div class="track-lane">' +
+          '<strong style="color:#fff;font-size:0.9rem;width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + k + '</strong>' +
+          '<div style="flex:1;position:relative;height:100%;margin:0 10px;">' +
+            '<span class="lane-avatar" style="left:' + pct + '%;">' + (j.avatar || "⛵") + '</span>' +
+          '</div>' +
+          '<span style="color:var(--accent-gold);font-weight:bold;font-size:0.85rem;">' + (j.puntos || 0) + ' pts (C' + c + ')</span>' +
+        '</div>';
+      });
+      cont.innerHTML = html;
+    }
+
+    /* FORMULARIO DE PROPUESTAS DE RETOS */
+    function renderFormularioPropuesta() {
+      var stage = document.getElementById("gameStage");
+      var mats = Object.keys(window.GAME_DATA.materias || {});
+      var optMaterias = mats.map(function(m){ return '<option value="' + m + '">' + m.replace('_', ' ') + '</option>'; }).join('');
+
+      stage.innerHTML = 
+        '<h2 class="card-title">✏️ Enviar Propuesta de Reto</h2>' +
+        '<p style="color:var(--text-muted);margin-bottom:16px;font-size:0.9rem;">Crea un nuevo desafío curricular para el juego. Quedará en espera de aprobación por el profesorado.</p>' +
+        '<form id="formReto" onsubmit="enviarFormulario(event)">' +
+          '<div class="form-row">' +
+            '<div class="form-group">' +
+              '<label>Materia:</label>' +
+              '<select id="f_materia" class="form-control">' + optMaterias + '</select>' +
+            '</div>' +
+            '<div class="form-group">' +
+              '<label>Autor / Equipo:</label>' +
+              '<input type="text" id="f_autor" class="form-control" placeholder="Ej. Equipo 2 - Los Galeones" required>' +
+            '</div>' +
+          '</div>' +
+          '<div class="form-group">' +
+            '<label>Criterio de Evaluación / Saber:</label>' +
+            '<input type="text" id="f_criterio" class="form-control" placeholder="Ej. CE.LCL.3.2 - Teatro del Siglo de Oro">' +
+          '</div>' +
+          '<div class="form-group">' +
+            '<label>Pregunta / Reto Narrativo:</label>' +
+            '<textarea id="f_texto" class="form-control" rows="2" placeholder="Planteamiento de la situación o dilema..." required></textarea>' +
+          '</div>' +
+          '<div class="form-row">' +
+            '<div class="form-group"><label>Opción A:</label><input type="text" id="f_opA" class="form-control" required></div>' +
+            '<div class="form-group"><label>Opción B:</label><input type="text" id="f_opB" class="form-control" required></div>' +
+          '</div>' +
+          '<div class="form-row">' +
+            '<div class="form-group"><label>Opción C:</label><input type="text" id="f_opC" class="form-control" required></div>' +
+            '<div class="form-group"><label>Respuesta Correcta:</label>' +
+              '<select id="f_correcta" class="form-control"><option value="A">Opción A</option><option value="B">Opción B</option><option value="C">Opción C</option></select>' +
+            '</div>' +
+          '</div>' +
+          '<div class="form-group">' +
+            '<label>Feedback Didáctico:</label>' +
+            '<input type="text" id="f_feedback" class="form-control" placeholder="Explicación educativa de la respuesta..." required>' +
+          '</div>' +
+          '<button type="submit" class="action-btn" id="btnSubmitForm">🚀 Enviar a Revisión Docente</button>' +
+          '<div id="formMsg" style="margin-top:14px;font-weight:bold;"></div>' +
+        '</form>';
+    }
+
+    function enviarFormulario(e) {
+      e.preventDefault();
+      Sound.click();
+      var btn = document.getElementById("btnSubmitForm");
+      var msg = document.getElementById("formMsg");
+      btn.disabled = true;
+      btn.innerText = "Enviando a Google Sheets...";
+
+      var materia = document.getElementById("f_materia").value;
+      var reto = {
+        Autor_O_Equipo: document.getElementById("f_autor").value,
+        Criterio_Evaluacion: document.getElementById("f_criterio").value,
+        Texto_Narrativo: document.getElementById("f_texto").value,
+        Opcion_A: document.getElementById("f_opA").value,
+        Opcion_B: document.getElementById("f_opB").value,
+        Opcion_C: document.getElementById("f_opC").value,
+        Respuesta_Correcta: document.getElementById("f_correcta").value,
+        Feedback_Didactico: document.getElementById("f_feedback").value,
+        Puntos: 25
+      };
+
+      if (typeof google !== "undefined" && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            btn.disabled = false;
+            btn.innerText = "🚀 Enviar a Revisión Docente";
+            if (res.ok) {
+              Sound.correct();
+              msg.innerHTML = '<span style="color:var(--success-green);">' + res.mensaje + '</span>';
+              document.getElementById("formReto").reset();
+            } else {
+              Sound.wrong();
+              msg.innerHTML = '<span style="color:var(--danger-red);">Error: ' + res.error + '</span>';
+            }
+          })
+          .withFailureHandler(function(err) {
+            btn.disabled = false;
+            btn.innerText = "🚀 Enviar a Revisión Docente";
+            Sound.wrong();
+            msg.innerHTML = '<span style="color:var(--danger-red);">Error: ' + err.message + '</span>';
+          })
+          .guardarPropuestaReto(materia, reto);
+      } else {
+        btn.disabled = false;
+        btn.innerText = "🚀 Enviar a Revisión Docente";
+        msg.innerHTML = '<span style="color:var(--success-green);">Simulación local: Propuesta registrada en Google Sheets.</span>';
+      }
+    }
+
+    window.onload = function() { renderRegistroJugador(); };
+  </script>
+</body>
+</html>
