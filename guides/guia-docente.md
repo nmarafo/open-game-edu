@@ -4,12 +4,27 @@ Esta guía explica paso a paso cómo dinamizar partidas en el aula en cualquiera
 
 ---
 
-## 1. El Flujo de Trabajo en 3 Pasos
+## 1. El Flujo de Trabajo en el Aula
+
+> [!IMPORTANT]
+> ### ⚠️ PASO 0 (OBLIGATORIO): PREPARAR LAS FUENTES EN NOTEBOOKLM
+> **Google NotebookLM no tiene acceso a internet y no puede buscar decretos por su cuenta.**
+> Antes de pedirle nada, debes entrar en [NotebookLM](https://notebooklm.google.com/) y pulsar **+ Añadir fuentes**:
+> 1. Añade los archivos del repositorio `open-game-edu`.
+> 2. **Sube el PDF o documento con el Decreto de Currículo autonómico o los currículos de las materias que van a participar.**
+> Si no subes los currículos, NotebookLM no podrá extraer los Criterios de Evaluación y Saberes Básicos oficiales.
 
 ```
   ┌────────────────────────────────────────────────────────┐
+  │ PASO 0: Subir Fuentes Curriculares a NotebookLM        │
+  │ • Archivos de open-game-edu.                           │
+  │ • PDF de Decretos Curriculares de las materias.        │
+  └──────────────────────────┬─────────────────────────────┘
+                             │
+                             ▼
+  ┌────────────────────────────────────────────────────────┐
   │ PASO 1: Pedir el instalador a NotebookLM               │
-  │ Indicar materias, temas, Criterios y Modalidad.        │
+  │ Indicar materias, temas y Modalidad de juego.          │
   └──────────────────────────┬─────────────────────────────┘
                              │ Copiar el bloque Codigo.gs
                              ▼
