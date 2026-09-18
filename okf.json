@@ -1,0 +1,62 @@
+{
+  "okfVersion": "1.0.0",
+  "name": "open-game-edu",
+  "title": "Open Game Edu: Motor de Videojuegos Interdepartamentales con Google Sheets y Apps Script",
+  "description": "Especificación de Infrastructure as Code (IaC) educativa para generar videojuegos web interactivos multi-materia usando Google Sheets como base de datos y Google Apps Script como backend/frontend monolítico sin servidores externos, orquestado por NotebookLM.",
+  "repository": "https://github.com/nmarafo/open-game-edu",
+  "license": "MIT",
+  "targetAudience": [
+    "Docentes de Educación Secundaria Obligatoria (ESO)",
+    "Docentes de Bachillerato",
+    "Equipos directivos y coordinadores TIC / Innovación Educativa",
+    "Modelos de Lenguaje (NotebookLM, Gemini, Claude, ChatGPT)"
+  ],
+  "sources": [
+    {
+      "path": "prompts/prompt-maestro.md",
+      "type": "system_prompt",
+      "description": "Instrucción maestra para NotebookLM que define el rol de Diseñador Técnico en Jefe y las restricciones de generación monolítica."
+    },
+    {
+      "path": "specs/sheets-scaffold-spec.md",
+      "type": "specification",
+      "description": "Especificación de la API SpreadsheetApp, estructura de pestañas por materia, paletas cromáticas, validación y datos semilla."
+    },
+    {
+      "path": "specs/apps-script-api.md",
+      "type": "specification",
+      "description": "Especificación de la API de Apps Script: doGet, HtmlService, inyección bootstrap de datos JSON y despliegue como Aplicación Web."
+    },
+    {
+      "path": "specs/game-runtime-spec.md",
+      "type": "specification",
+      "description": "Especificación del motor en Vanilla JavaScript y CSS: máquina de estados, renderizado modular, sonido Web Audio API y compatibilidad offline/proxy escolar."
+    },
+    {
+      "path": "guides/catalogo-mecanicas.md",
+      "type": "guide",
+      "description": "Matriz curricular que mapea cada asignatura escolar a mecánicas de juego específicas (narrativa, cálculo, combate, inventario)."
+    },
+    {
+      "path": "guides/guia-docente.md",
+      "type": "guide",
+      "description": "Manual de implantación en 3 pasos para el claustro docente, gestión de permisos en Google Workspace y trabajo colaborativo con estudiantes."
+    }
+  ],
+  "llmRecommendations": {
+    "temperature": 0.2,
+    "topP": 0.95,
+    "instructionsRole": "Técnico en Jefe de Desarrollo de Videojuegos Educativos e Infraestructura como Código (IaC) para Google Workspace."
+  },
+  "tags": [
+    "educational-gaming",
+    "google-apps-script",
+    "google-sheets",
+    "notebooklm",
+    "infrastructure-as-code",
+    "gamificacion-educativa",
+    "gamification",
+    "interdepartamental",
+    "vanilla-js"
+  ]
+}
