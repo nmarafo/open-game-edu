@@ -1,14 +1,20 @@
 # Catálogo Curricular de Mecánicas de Juego (catalogo-mecanicas)
 
-Este catálogo actúa como la **matriz de diseño lúdico-pedagógico** para NotebookLM y el profesorado. Describe cómo traducir los saberes básicos y los **Criterios de Evaluación (CE)** de los Decretos Autonómicos tanto en **Educación Primaria** como en **Educación Secundaria y Bachillerato** a mecánicas jugables operativas en Google Sheets.
+Este catálogo actúa como la **matriz de diseño lúdico-pedagógico** para NotebookLM y el profesorado. Describe cómo traducir los saberes básicos y los **Criterios de Evaluación (CE)** de los Decretos Autonómicos tanto en **Educación Primaria** como en **Educación Secundaria y Bachillerato** a mecánicas jugables, integrando el rol de los estudiantes como diseñadores de retos (*Pull Request Escolar*).
 
 ---
 
-## 1. Matriz para Educación Primaria (1.º a 6.º)
+## 1. El Alumnado como Diseñador de Retos (Roles de Aula)
 
-En Primaria, las mecánicas deben apoyarse fuertemente en la narrativa vivencial, la intuición espacial, la visualización mediante iconos y la retroalimentación constructiva inmediata.
+En `open-game-edu`, los estudiantes no son solo jugadores pasivos: asumen el rol de **Diseñadores de Experiencias Educativas**:
 
-### A. Asignaturas LOMLOE de Primaria y Mecánicas de Juego
+- **Rol de Guionistas / Investigadores (Letras y Humanidades)**: Redactan los textos narrativos, ambientaciones históricas y diálogos de personajes en `Lengua`, `Historia` o `Filosofía`.
+- **Rol de Diseñadores de Mecánicas / Balanceadores (STEM)**: Formulan los problemas numéricos, proporciones, recetas de crafteo o probabilidades en `Matemáticas`, `Física y Química` y `Biología`.
+- **Rol de Control de Calidad y Revisores**: Comprueban que los retos cumplan las reglas de validación, no tengan erratas y aporten una explicación didáctica (`Feedback_Didactico`) clara antes de enviarlos a revisión docente.
+
+---
+
+## 2. Matriz para Educación Primaria (1.º a 6.º)
 
 | Asignatura de Primaria | Mecánica en el Videojuego | Equivalente en la Hoja de Sheets | Criterios de Evaluación Típicos (Decretos Autonómicos) |
 | :--- | :--- | :--- | :--- |
@@ -18,25 +24,11 @@ En Primaria, las mecánicas deben apoyarse fuertemente en la narrativa vivencial
 | **Educación Artística (Plástica y Música)** | Identificación de mezclas cromáticas, texturas, familias de instrumentos musicales, ritmos y melodías sintetizadas. | Opciones con ruedas de color, instrumentos tradicionales y secuencias de notas de la Web Audio API. | *Explorar las posibilidades del sonido y la imagen, reconocer manifestaciones culturales y artísticas.* |
 | **Lengua Extranjera (Inglés/Francés)** | Pistas en el idioma meta, saludos, descripciones físicas de personajes, identificación de animales y colores. | Diálogos bilingües donde el alumno elige la traducción o respuesta adecuada para abrir un paso. | *Comprender mensajes breves en lengua extranjera, utilizar vocabulario temático contextualizado.* |
 | **Educación Física y Hábitos Saludables** | Gestión de barrita de energía/estamina, elección de menús saludables (pirámide alimentaria), calentamiento previo. | Preguntas sobre descanso, hidratación y elecciones nutricionales antes de superar un esfuerzo físico. | *Adoptar hábitos de vida activa y saludable, gestionar la energía y el trabajo en equipo.* |
-| **Educación en Valores Cívicos y Éticos** | Dilemas de convivencia escolar, resolución pacífica de conflictos, empatía con compañeros y cuidado del entorno. | Árboles de decisiones sociales sin penalización punitiva, pero con recompensas de karma/convivencia. | *Desarrollar actitudes de respeto, empatía, inclusión e igualdad en el ámbito escolar y comunitario.* |
+| **Educación en Valores Cívicos y Éticos** | Dilemas de convivencia escolar, resolución pacífica de conflictos, empatía con compañeros y cuidado del entorno. | Árboles de decisiones sociales sin penalización punitiva, pero con recompensas de convivencia. | *Desarrollar actitudes de respeto, empatía, inclusión e igualdad en el ámbito escolar y comunitario.* |
 
 ---
 
-### B. Progresión por Ciclos de Primaria
-
-1. **Primer Ciclo (1.º y 2.º de Primaria)**:
-   - *Foco*: Conciencia fonológica, ortografía natural, conteo, sumas y restas con objetos, seres vivos del entorno inmediato.
-   - *Interfaz*: Frases muy breves, abundancia de iconos/emojis (🦁, 🍎, 🏠, 🔢) y opciones con palabras claras.
-2. **Segundo Ciclo (3.º y 4.º de Primaria)**:
-   - *Foco*: Comprensión lectora de textos descriptivos, tablas de multiplicar, unidades de medida (kg, l, km), ecosistemas locales y profesiones.
-   - *Interfaz*: Retos estructurados con pistas amables en caso de error.
-3. **Tercer Ciclo (5.º y 6.º de Primaria)**:
-   - *Foco*: Fracciones sencillas, porcentajes de descuento, cadenas tróficas complejas, épocas históricas (Prehistoria, Al-Ándalus, etc.) y ortografía (acentuación, b/v, g/j).
-   - *Interfaz*: Rutas de exploración no lineales, con contador de puntuación y misiones secundarias.
-
----
-
-## 2. Matriz para Educación Secundaria y Bachillerato
+## 3. Matriz para Educación Secundaria y Bachillerato
 
 | Asignatura | Mecánica Lúdica en el Motor | Criterios de Evaluación Típicos |
 | :--- | :--- | :--- |
@@ -49,14 +41,15 @@ En Primaria, las mecánicas deben apoyarse fuertemente en la narrativa vivencial
 
 ---
 
-## 3. Ejemplos de Sinergias Interdepartamentales
+## 4. Ejemplos de Sinergias con Flujo de Aprobación
 
-### Sinergia Primaria: "La Eco-Patrulla del Parque Natural" (5.º Primaria)
-- **Conocimiento del Medio**: Salvar una especie en peligro identificando su hábitat y depredadores (Criterio: *relaciones en los ecosistemas*).
-- **Matemáticas**: Calcular la superficie repoblada con árboles usando fracciones y áreas de rectángulos (Criterio: *fracciones y medidas de superficie*).
-- **Lengua Castellana**: Redactar un bando municipal informativo con adjetivos y conectores lógicos (Criterio: *producción de textos expositivos*).
+1. **"La Eco-Patrulla del Bosque Mágico" (5.º Primaria)**:
+   - Los alumnos investigan en la biblioteca del colegio sobre animales en peligro.
+   - Envían sus retos mediante el formulario web como `PENDIENTE` indicando el nombre de su equipo (*"Equipo Los Linces"*).
+   - El docente revisa la propuesta en Google Sheets, añade un comentario formativo y pulsa `APROBADO`.
+   - Al pulsar el botón `▶️ RUN`, el nuevo reto aparece dentro de la misión ecológica oficial.
 
-### Sinergia Secundaria: "El Galeón del Siglo de Oro" (3.º ESO)
-- **Lengua**: Superar duelos poéticos y desafíos de teatro barroco (Criterio: *análisis del teatro barroco*).
-- **Historia**: Trazar las rutas atlánticas de la Flota de Indias y la Casa de Contratación (Criterio: *el comercio de ultramar en la Edad Moderna*).
-- **Matemáticas**: Calcular la probabilidad de sufrir averías y repartir víveres mediante fracciones y porcentajes (Criterio: *cálculo de probabilidades simples*).
+2. **"La Flota de Indias" (3.º ESO)**:
+   - Los estudiantes de Historia elaboran mapas de rutas y galeones.
+   - Los de Matemáticas calculan probabilidades de averías y proporciones de carga.
+   - Tras la aprobación del claustro, los retos se integran en la expedición que juegan todos los grupos.

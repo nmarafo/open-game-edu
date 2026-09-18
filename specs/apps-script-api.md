@@ -1,190 +1,158 @@
-# Especificación Técnica: Apps Script API y Despliegue Web (apps-script-api)
+# Especificación Técnica: Apps Script API y Menú Nativo (apps-script-api)
 
-Esta especificación describe el protocolo del backend en Google Apps Script, el funcionamiento del punto de entrada `doGet(e)` y la arquitectura de inyección de datos para servir el videojuego educativo como Web App sin servidores externos.
-
----
-
-## 1. Ciclo de Vida del Backend
-
-El backend en Apps Script cumple dos funciones fundamentales:
-1. **Instalador y configurador de la base de datos** (`inicializarEcosistema`).
-2. **Servidor HTTP y despachador de la Web App** (`doGet`).
-
-```
-[Navegador del Alumno]
-        │
-        ▼ HTTP GET
-┌────────────────────────────────────────────────────────┐
-│                      doGet(e)                          │
-├────────────────────────────────────────────────────────┤
-│ ¿e.parameter.action === 'data'?                        │
-│   ├── SI  ──► ContentService (JSON crudo de las hojas) │
-│   └── NO  ──► HtmlService (Web App con datos inyectados)│
-└────────────────────────────────────────────────────────┘
-        │
-        ▼
-[Lectura de Google Sheets: obtenerDatosJuego()]
-```
+Esta especificación describe los puntos de entrada, el disparador `onOpen()`, las funciones RPC para el flujo de revisión de propuestas y la arquitectura de la Web App en Google Apps Script.
 
 ---
 
-## 2. Implementación Canónica de `doGet(e)`
+## 1. Menú Nativo en Google Sheets (`onOpen`)
+
+El archivo monolítico `Codigo.gs` debe implementar el disparador `onOpen()` para dotar a la hoja de cálculo de herramientas de previsualización y revisión accesibles con un solo clic:
 
 ```javascript
 /**
- * Punto de entrada HTTP GET para la Aplicación Web.
- * @param {Object} e - Objeto de evento de Apps Script.
- * @return {GoogleAppsScript.HTML.HtmlOutput|GoogleAppsScript.Content.TextOutput}
+ * Disparador automático al abrir la hoja de Google Sheets.
  */
-function doGet(e) {
-  try {
-    var datosJuego = obtenerDatosJuego();
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu('🎮 open-game-edu')
+    .addItem('▶️ Run / Previsualizar Juego', 'mostrarJuegoModal')
+    .addItem('📋 Panel de Revisión de Propuestas', 'mostrarPanelRevision')
+    .addSeparator()
+    .addItem('⚙️ Reinicializar Ecosistema', 'inicializarEcosistema')
+    .addToUi();
+}
 
-    // Modo API: si se solicita ?action=data, responde JSON crudo
-    if (e && e.parameter && e.parameter.action === 'data') {
-      return ContentService.createTextOutput(JSON.stringify(datosJuego))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-
-    // Modo Web App: genera el HTML e inyecta los datos directamente
-    var datosJsonString = JSON.stringify(datosJuego);
-    var htmlContent = getGameHtml(datosJsonString);
-
-    var output = HtmlService.createHtmlOutput(htmlContent);
-    
-    // Título de la pestaña del navegador
-    var titulo = (datosJuego.meta && datosJuego.meta.TITULO_JUEGO) 
-      ? datosJuego.meta.TITULO_JUEGO 
-      : 'Aventura Educativa Interdepartamental';
-    
-    output.setTitle(titulo);
-    output.addMetaTag('viewport', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-    
-    // Permite embeber el juego en Google Sites, Moodle o Classroom mediante iframes
-    output.setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-
-    return output;
-  } catch (error) {
-    return HtmlService.createHtmlOutput(
-      '<div style="font-family:sans-serif;padding:24px;color:#c62828;">' +
-      '<h2>Error cargando el juego educativo</h2>' +
-      '<p>Asegúrate de haber ejecutado <code>inicializarEcosistema()</code> primero.</p>' +
-      '<pre>' + error.message + '\n' + error.stack + '</pre></div>'
-    );
-  }
+/**
+ * Abre una ventana modal flotante en Google Sheets con el juego interactivo en vivo.
+ */
+function mostrarJuegoModal() {
+  var datosJuego = obtenerDatosJuego();
+  var html = getGameHtml(JSON.stringify(datosJuego));
+  var modal = HtmlService.createHtmlOutput(html)
+    .setWidth(820)
+    .setHeight(640);
+  SpreadsheetApp.getUi().showModalDialog(modal, '🎮 Previsualización del Videojuego');
 }
 ```
 
 ---
 
-## 3. Extractor Universal de Datos: `obtenerDatosJuego()`
+## 2. Funciones Backend de Inserción y Revisión (RPC)
 
-Esta función recorre dinámicamente todas las pestañas existentes en la hoja y las empaqueta en una estructura JSON limpia:
+Para soportar el envío de propuestas desde el formulario web y su posterior moderación por el docente:
 
 ```javascript
 /**
- * Lee todas las pestañas de la hoja y las convierte en un objeto JSON unificado.
- * @return {Object} Estructura con { meta: {...}, materias: { NombrePestana: [filas...] } }
+ * Guarda una nueva propuesta de reto en la hoja indicada con estado PENDIENTE.
+ * @param {string} nombreMateria - Nombre de la pestaña (ej. "Lengua_Teatro")
+ * @param {Object} reto - Datos del reto enviados desde el formulario web
+ * @return {Object} Respuesta con estado de éxito o error
+ */
+function guardarPropuestaReto(nombreMateria, reto) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var hoja = ss.getSheetByName(nombreMateria);
+    if (!hoja) throw new Error('No se encontró la pestaña: ' + nombreMateria);
+
+    var nuevoId = reto.ID || (nombreMateria.substring(0, 3).toUpperCase() + '_' + Utilities.getUuid().substring(0, 4));
+    
+    var nuevaFila = [
+      nuevoId,
+      reto.Etapa_O_Lugar || 'Nuevo Escenario',
+      reto.Criterio_Evaluacion || '',
+      reto.Saber_Basico || '',
+      reto.Autor_O_Equipo || 'Estudiante Anónimo',
+      'PENDIENTE', // Siempre entra como PENDIENTE de revisión
+      '',          // Feedback_Docente vacío inicialmente
+      reto.Emisor_O_Personaje || 'Guía',
+      reto.Texto_Narrativo || '',
+      reto.Opcion_A || '',
+      reto.Opcion_B || '',
+      reto.Opcion_C || '',
+      (reto.Respuesta_Correcta || 'A').toUpperCase(),
+      reto.Feedback_Didactico || '',
+      parseInt(reto.Puntos, 10) || 25
+    ];
+
+    hoja.appendRow(nuevaFila);
+    return { ok: true, id: nuevoId, mensaje: 'Propuesta enviada con éxito. Pendiente de aprobación docente.' };
+  } catch(err) {
+    return { ok: false, error: err.message };
+  }
+}
+
+/**
+ * Actualiza el estado de revisión de un reto (Aprobar o Solicitar Cambios).
+ */
+function cambiarEstadoReto(nombreMateria, idReto, nuevoEstado, feedbackDocente) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var hoja = ss.getSheetByName(nombreMateria);
+  if (!hoja) return { ok: false, error: 'Hoja no encontrada' };
+
+  var datos = hoja.getDataRange().getValues();
+  for (var i = 1; i < datos.length; i++) {
+    if (String(datos[i][0]).trim() === String(idReto).trim()) {
+      var filaNum = i + 1;
+      hoja.getRange(filaNum, 6).setValue(nuevoEstado); // Columna F: Estado_Revision
+      if (feedbackDocente) {
+        hoja.getRange(filaNum, 7).setValue(feedbackDocente); // Columna G: Feedback_Docente
+      }
+      return { ok: true, mensaje: 'Reto actualizado a ' + nuevoEstado };
+    }
+  }
+  return { ok: false, error: 'ID no encontrado' };
+}
+```
+
+---
+
+## 3. Extractor de Datos con Filtrado de Calidad: `obtenerDatosJuego()`
+
+```javascript
+/**
+ * Lee las pestañas y estructura los datos para la Web App.
+ * @return {Object} Paquete con { meta: {...}, materias: {...} }
  */
 function obtenerDatosJuego() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var hojas = ss.getSheets();
-  var resultado = {
-    meta: {},
-    materias: {}
-  };
+  var resultado = { meta: {}, materias: {} };
 
   for (var h = 0; h < hojas.length; h++) {
     var hoja = hojas[h];
-    var nombreHoja = hoja.getName();
+    var nombre = hoja.getName();
     var datos = hoja.getDataRange().getValues();
-
     if (datos.length === 0) continue;
 
-    // Caso Especial: Pestaña de Configuración (Clave - Valor)
-    if (nombreHoja === 'Config_Juego') {
+    if (nombre === 'Config_Juego') {
       for (var r = 1; r < datos.length; r++) {
-        var clave = String(datos[r][0] || '').trim();
-        var valor = datos[r][1];
-        if (clave) {
-          resultado.meta[clave] = valor;
-        }
+        var k = String(datos[r][0] || '').trim();
+        if (k) resultado.meta[k] = datos[r][1];
       }
-      continue;
-    }
+    } else {
+      var cabeceras = datos[0].map(function(c) { return String(c || '').trim(); });
+      var filas = [];
 
-    // Pestañas de Materias: Fila 1 son las cabeceras, Filas 2..N son objetos
-    var cabeceras = datos[0].map(function(c) { return String(c || '').trim(); });
-    var filas = [];
+      for (var f = 1; f < datos.length; f++) {
+        var fila = datos[f];
+        var tieneContenido = fila.some(function(celda) { return celda !== '' && celda !== null; });
+        if (!tieneContenido) continue;
 
-    for (var f = 1; f < datos.length; f++) {
-      var filaActual = datos[f];
-      // Ignorar filas completamente vacías
-      var tieneContenido = filaActual.some(function(celda) { return celda !== '' && celda !== null; });
-      if (!tieneContenido) continue;
-
-      var filaObjeto = {};
-      for (var c = 0; c < cabeceras.length; c++) {
-        var key = cabeceras[c] || ('columna_' + (c + 1));
-        var val = filaActual[c];
-        
-        // Formatear fechas si fuera necesario
-        if (val instanceof Date) {
-          val = Utilities.formatDate(val, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+        var obj = {};
+        for (var c = 0; c < cabeceras.length; c++) {
+          obj[cabeceras[c]] = fila[c];
         }
-        filaObjeto[key] = val;
+        filas.push(obj);
       }
-      filas.push(filaObjeto);
+      resultado.materias[nombre] = filas;
     }
-
-    resultado.materias[nombreHoja] = filas;
   }
-
   return resultado;
 }
 ```
 
 ---
 
-## 4. Técnica de Inyección Instantánea (Bootstrap Zero-Latency)
+## 4. Servidor Web App: `doGet(e)`
 
-En lugar de que el cliente realice una petición asíncrona adicional con `google.script.run` (la cual puede tardar entre 2 y 6 segundos por la latencia de Apps Script), los datos de la hoja se incrustan como una variable global dentro del `<script>` del juego:
-
-```javascript
-function getGameHtml(datosJsonString) {
-  return '<!DOCTYPE html>\n' +
-    '<html lang="es">\n' +
-    '<head>\n' +
-    '  <meta charset="UTF-8">\n' +
-    '  <style>/* Estilos CSS del juego */</style>\n' +
-    '</head>\n' +
-    '<body>\n' +
-    '  <div id="app"></div>\n' +
-    '  <script>\n' +
-    '    // Inyección de datos desde el backend sin llamadas asíncronas lentas:\n' +
-    '    window.GAME_DATA = ' + datosJsonString + ';\n' +
-    '    // Iniciar el motor:\n' +
-    '    window.onload = function() { iniciarMotorJuego(); };\n' +
-    '  </script>\n' +
-    '</body>\n' +
-    '</html>';
-}
-```
-
-> **Seguridad de Escapado:** `JSON.stringify(datosJuego)` en el servidor produce un literal JSON válido en JavaScript. Al estar dentro de una cadena de Apps Script, se inyecta directamente.
-
----
-
-## 5. Parámetros de Despliegue en Google Workspace
-
-Para que el videojuego esté operativo y accesible para los estudiantes:
-
-1. En el editor de Apps Script, hacer clic en **Implementar > Nueva implementación**.
-2. Seleccionar el tipo de engranaje: **Aplicación web**.
-3. Configurar los campos:
-   - **Descripción**: `v1 - Producción Aula`.
-   - **Ejecutar como**: `Yo (tu correo docente)` *(Crucial: permite a los alumnos leer las hojas sin necesidad de tener permisos individuales de edición sobre el script)*.
-   - **Quién tiene acceso**:
-     - `Cualquier usuario de la organización` (si los alumnos tienen cuentas de correo de centro Google Workspace for Education).
-     - `Cualquier persona` (si los alumnos acceden desde dispositivos propios sin iniciar sesión).
-4. Copiar la URL generada (`https://script.google.com/macros/s/.../exec`).
+La función `doGet(e)` despacha la aplicación web inyectando los datos de las hojas, sirviendo tanto el formulario de propuestas como el botón **RUN** para previsualizar el juego en vivo.
