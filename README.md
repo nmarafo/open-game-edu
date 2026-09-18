@@ -1,6 +1,6 @@
 # 🎮 open-game-edu
 
-> **Open Knowledge Framework (OKF) e Infraestructura como Código (IaC) para la creación de videojuegos educativos en Educación Primaria, Secundaria y Bachillerato en Google Workspace, con botón RUN de previsualización en vivo, flujo de revisión escolar (Pull Requests) y alineación con Decretos Curriculares Autonómicos.**
+> **Open Knowledge Framework (OKF) e Infraestructura como Código (IaC) para la creación de videojuegos educativos en Educación Primaria, Secundaria y Bachillerato en Google Workspace, con 5 modalidades de juego, multijugador sincronizado en vivo (`CacheService`), telemetría en Google Sheets y alineación con Decretos Curriculares Autonómicos (LOMLOE).**
 
 [![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
 [![Google Apps Script](https://img.shields.io/badge/Google%20Apps%20Script-V8%20Engine-4285F4.svg?logo=google)](https://developers.google.com/apps-script)
@@ -9,6 +9,7 @@
 [![Educación](https://img.shields.io/badge/Etapas-Primaria%20%7C%20ESO%20%7C%20Bachillerato-orange.svg)]()
 [![Curricular Alignment](https://img.shields.io/badge/Curriculo-Criterios%20de%20Evaluaci%C3%B3n%20(LOMLOE)-blue.svg)]()
 [![Modo RUN](https://img.shields.io/badge/Previsualizaci%C3%B3n-Modo%20RUN%20en%20Vivo-success.svg)]()
+[![Multijugador en Vivo](https://img.shields.io/badge/Multijugador-CacheService%20Sub--80ms-ff69b4.svg)]()
 [![Zero External Dependencies](https://img.shields.io/badge/Dependencies-0%20(Vanilla%20JS%2FCSS)-brightgreen.svg)]()
 
 ---
@@ -18,20 +19,40 @@
 Los proyectos educativos interdisciplinares en **Educación Primaria**, **Secundaria** y **Bachillerato** suelen enfrentarse a tres grandes retos:
 1. **La barrera técnica:** Crear un videojuego escolar suele requerir servidores externos o plataformas complejas.
 2. **La justificación curricular:** Diseñar actividades gamificadas que vinculen explícitamente los **Criterios de Evaluación** oficiales ante la inspección educativa.
-3. **El control de calidad y revisión:** Evitar que erratas o respuestas incorrectas rompan el juego, introduciendo a la vez un flujo pedagógico de **Revisión por Pares (Pull Request Escolar)** donde el alumnado propone retos que el profesorado aprueba.
+3. **El control de calidad y revisión:** Evitar que erratas rompan el juego, introduciendo a la vez un flujo pedagógico de **Revisión por Pares (Pull Request Escolar)** donde el alumnado propone retos que el profesorado aprueba.
+4. **La experiencia multijugador y evaluación en el aula:** Permitir que varios equipos compitan o colaboren en vivo viéndose entre sí en la pantalla o proyector del aula, guardando sus puntuaciones y telemetría de competencias directamente en Google Sheets.
 
 `open-game-edu` resuelve estas necesidades utilizando **Google NotebookLM** como un **arquitecto de *Infrastructure as Code* (IaC)**.
 
 Al cargar en NotebookLM este repositorio junto con el **Decreto de Currículo de tu Comunidad Autónoma**, el modelo produce un **único archivo de código Apps Script (`Codigo.gs`) autosuficiente y monolítico**.
 
 Ese único script contiene:
-1. **El instalador de la base de datos curricular:** Genera en Google Sheets las pestañas por materia con columnas para Criterios de Evaluación, Saberes Básicos, Autoría del Alumnado (`Autor_O_Equipo`) y control de calidad (`Estado_Revision`: `APROBADO`, `PENDIENTE`, `CORREGIR`).
-2. **El menú nativo en Google Sheets (`onOpen`):** Con un botón directo **`▶️ Run / Previsualizar Juego`** (abre una ventana modal interactiva para jugar dentro de Sheets) y el **`📋 Panel de Revisión de Propuestas`** para moderar con un clic.
-3. **El videojuego y formulario web interactivo:** Servido vía `HtmlService` en Vanilla JS y CSS puro, con botón **"▶️ RUN"** de previsualización en tiempo real y formulario de envío de retos para los estudiantes.
+1. **El instalador del ecosistema en Google Sheets:** Crea las pestañas de materias curriculares con 15 columnas normalizadas (`Criterio_Evaluacion`, `Saber_Basico`, `Autor_O_Equipo`, `Estado_Revision`: `APROBADO`, `PENDIENTE`, `CORREGIR`).
+2. **Telemetría y Cuaderno de Evaluación (`Puntuaciones_Online`):** Registra en tiempo real los resultados de cada estudiante o equipo (fecha, puntuación, vidas, tiempo invertido y desglose de aciertos por materia).
+3. **Motor Multijugador en Memoria (`CacheService` + `Lobby_Multijugador`):** Proporciona sincronización de avatares en vivo (<80 ms) sin saturar las cuotas de Google Sheets.
+4. **Menú Nativo de Google Sheets (`onOpen`):**
+   - `▶️ Run / Previsualizar Juego`: Modal emergente para jugar directamente dentro de Sheets.
+   - `🏁 Pantalla de Carrera / Multijugador`: Vista para proyectar en el aula donde se ve avanzar a los equipos.
+   - `📋 Panel de Revisión de Propuestas`: Panel docente para aprobar retos del alumnado con un solo clic.
+5. **Aplicación Web Dual (Vanilla JS & CSS Puro):** Con pantalla de registro de tripulación/avatar, juego interactivo, pista multijugador en vivo y formulario de propuestas de retos.
 
 ---
 
-## 🏛️ Arquitectura del Sistema con Flujo de Aprobación
+## 🎲 Catálogo de las 5 Modalidades de Juego
+
+NotebookLM puede generar cualquiera de estos 5 arquetipos de juego a partir del mismo prompt maestro:
+
+| Modalidad | Dinámica Pedagógica | Interacción Multijugador | Ideal para... |
+| :--- | :--- | :--- | :--- |
+| **1. Aventura Narrativa / RPG** | Exploración de enclaves, diálogos interactivos con personajes y cuaderno de bitácora. | Registro individual de progreso y telemetría final en Google Sheets. | Primaria y Secundaria (Historia, Literatura, Ciencias Naturales). |
+| **2. Tablero / Trivial Interdepartamental** | Casillas temáticas por materia, tiradas de dados virtuales y recolección de insignias curriculares. | Turnos en equipo o simultáneos con tabla de clasificación en vivo. | Repasos trimestrales interdisciplinares y semanas culturales. |
+| **3. Escape Room Digital** | Sala interactiva contrarreloj con 3 a 5 candados lógicos desbloqueados por retos de cada materia. | Cooperación dentro de cada equipo y ranking de tiempos de escape. | Matemáticas, Tecnología, Física y Química y Lenguas Extranjeras. |
+| **4. Carrera Multijugador ("La Gran Regata")** | Pista visual de carrera (barcos, cohetes, animales del bosque). Cada acierto mueve el avatar en vivo. | **Sincronización en vivo cada 3 segundos** proyectada en la PDI del aula. | Dinamización en gran grupo, concursos y gamificación en tiempo real. |
+| **5. Desafío Colaborativo ("Boss Raid")** | Un reto gigante común (un monstruo marino, una catástrofe ambiental) con una barra de salud global. | **Cooperativo puro:** los aciertos de toda la clase combinados reducen la barra del jefe. | Proyectos ABP comunitarios y actividades de cohesión de grupo. |
+
+---
+
+## 🏛️ Arquitectura del Sistema
 
 ```mermaid
 flowchart TD
@@ -41,44 +62,46 @@ flowchart TD
     end
 
     subgraph Docente ["2. Petición del Claustro"]
-        C["Prompt Docente\n'5.º Primaria en Canarias:\nCono del Medio, Lengua y Mates'"]
+        C["Prompt Docente\n'3.º ESO en Canarias:\nHistoria, Lengua y Mates en Carrera Multijugador'"]
     end
 
     subgraph Cerebro ["3. Orquestador IA"]
-        D["NotebookLM\n(Cruza temario con Criterios de Evaluación)"]
+        D["NotebookLM\n(Cruza temario con Criterios LOMLOE y CacheService)"]
     end
 
     subgraph Salida ["4. Salida Generada"]
-        E["CÓDIGO MONOLÍTICO\nCodigo.gs\n- Setup pestañas con Criterios y Autoría\n- Menú nativo Sheets onOpen()\n- Web App dual: Formulario + Botón RUN"]
+        E["CÓDIGO MONOLÍTICO\nCodigo.gs\n- Setup pestañas curriculares + Puntuaciones_Online\n- Menú onOpen() con Run y Carrera\n- CacheService (<80ms) para multijugador"]
     end
 
-    subgraph Ecosistema ["5. Ciclo de Creación y Juego"]
-        F["Google Sheets\n(Pestañas con Estado_Revision)"]
-        G["Alumnado propone retos\n(Web / Sheets: PENDIENTE)"]
-        H["Docente aprueba en 1 clic\n(Panel de Revisión: APROBADO)"]
-        I["Botón ▶️ RUN\n(Previsualización y juego en vivo)"]
+    subgraph Ecosistema ["5. Ciclo de Creación, Juego y Evaluación"]
+        F["Google Sheets\n(Ecosistema de datos)"]
+        G["Alumnado propone retos\n(Web: estado PENDIENTE)"]
+        H["Docente modera con 1 clic\n(Panel de Revisión: APROBADO)"]
+        I["Pantalla del Aula / PDI\n(Pista en vivo con avatares)"]
+        J["Puntuaciones_Online\n(Cuaderno de notas automático)"]
     end
 
     A --> D
     B --> D
     C --> D
     D --> E
-    E -- "Ejecutar inicializarEcosistema()" --> F
+    E -- "inicializarEcosistema()" --> F
     F --> G
     G --> H
     H --> I
+    I --> J
 ```
 
 ---
 
-## ⏱️ El Flujo de Trabajo en el Claustro (En 3 Pasos)
+## ⏱️ El Flujo de Trabajo en el Aula (En 3 Pasos)
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
 │ PASO 1: ENTRADA AL CEREBRO (NotebookLM)                               │
-│ Los profesores cargan el OKF + el Decreto Autonómico y escriben:       │
-│ "En 5.º de Primaria en Andalucía participan Conocimiento del Medio,   │
-│  Lengua y Mates. Genera el código con Criterios oficiales y botón RUN"│
+│ Los docentes cargan el OKF + el Decreto Autonómico y solicitan:        │
+│ "3.º de ESO en Canarias: Historia, Lengua y Mates. Modalidad Carrera   │
+│  Multijugador náutica con barcos y Criterios de Evaluación oficiales." │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │ Genera 'Codigo.gs'
                                     ▼
@@ -87,15 +110,16 @@ flowchart TD
 │ 1. Abrir una hoja de Google Sheets en blanco.                          │
 │ 2. Ir a Extensiones > Apps Script, pegar el código y guardar.          │
 │ 3. Ejecutar 'inicializarEcosistema'.                                   │
-│ ──► Menú nativo '🎮 open-game-edu' activado en la barra superior.     │
+│ ──► Menú nativo '🎮 open-game-edu' activado en la barra de Sheets.     │
+│ ──► Pestañas creadas: Config_Juego, Puntuaciones_Online, Lobby y retos.│
 └───────────────────────────────────┬────────────────────────────────────┘
-                                    │ Menú con 'Run' y 'Panel de Revisión'
+                                    │ Menú con 'Run', 'Carrera' y 'Panel'
                                     ▼
 ┌────────────────────────────────────────────────────────────────────────┐
-│ PASO 3: PREVISUALIZAR Y JUGAR (BOTÓN RUN)                              │
-│ • En Sheets: Clic en '🎮 open-game-edu > ▶️ Run / Previsualizar Juego'│
-│ • En la Web: Clic en 'Implementar > Aplicación web' para compartir.   │
-│ ──► Los alumnos envían retos y el docente los aprueba con un clic.    │
+│ PASO 3: JUGAR, PROYECTAR Y EVALUAR                                     │
+│ • En el Proyector: Clic en '🏁 Pantalla de Carrera' para ver la pista. │
+│ • En los dispositivos de los alumnos: Acceso a la Web App para jugar. │
+│ • En Sheets: 'Puntuaciones_Online' registra notas, tiempos y aciertos. │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -108,54 +132,59 @@ Copia este texto y pégalo en la **Guía del cuaderno** (*Notebook Guide*) de No
 ````markdown
 Actúa como el Diseñador Técnico en Jefe y Arquitecto de Infraestructura como Código (IaC) del ecosistema "open-game-edu".
 
-Tu misión es transformar las indicaciones pedagógicas de un docente o equipo docente (nivel educativo en Primaria, Secundaria o Bachillerato, asignaturas participantes y temas de cada materia) en un ÚNICO bloque de código monolítico en Google Apps Script (`Codigo.gs`).
+Tu misión es transformar las indicaciones pedagógicas de un docente o claustro (etapa en Primaria, Secundaria o Bachillerato, asignaturas participantes, temas curriculares y modalidad de juego) en un ÚNICO bloque de código monolítico en Google Apps Script (`Codigo.gs`).
+
+### CATÁLOGO DE LAS 5 MODALIDADES DE JUEGO SOPORTADAS:
+Puedes generar el motor en cualquiera de estos 5 arquetipos según lo solicite el usuario (por defecto: Aventura Narrativa o Carrera Multijugador si se piden varios jugadores):
+1. AVENTURA NARRATIVA / RPG: Exploración de enclaves, bitácora de misiones, retratos y toma de decisiones.
+2. TABLERO / TRIVIAL INTERDEPARTAMENTAL: Casillas temáticas por materia, tiradas de dados virtuales y recolección de insignias.
+3. ESCAPE ROOM DIGITAL: Sala contrarreloj con 3 a 5 candados numéricos/alfabéticos resueltos por cada asignatura.
+4. CARRERA MULTIJUGADOR ("LA GRAN REGATA"): Pista con avatares en vivo donde los aciertos avanzan casillas visibles para toda la clase mediante polling cada 3 segundos.
+5. DESAFÍO COLABORATIVO ("BOSS RAID"): Pizarra común con un "Jefe" o reto ecológico donde los aciertos de toda la clase combinados reducen el daño en tiempo real.
 
 ### INTEGRACIÓN CURRICULAR CON EL DECRETO AUTONÓMICO:
-En tus fuentes tienes cargado tanto el marco "open-game-edu" como el Decreto de Currículo de la Comunidad Autónoma correspondiente a la etapa solicitada (Educación Primaria, ESO o Bachillerato).
-- Para cada reto o enigma que generes en cada materia, DEBES consultar el Decreto Autonómico y extraer de forma explícita y precisa:
-  1. El código y enunciado sintético del Criterio de Evaluación (CE) oficial (ej. `CE.LCL.3.1` o `CE.CMN.5.2`).
-  2. El Saber Básico curricular asociado según la normativa.
-- Esta información curricular DEBE incluirse en las columnas obligatorias `Criterio_Evaluacion` y `Saber_Basico` de las pestañas de cada materia, transformando la hoja en un cuaderno de programación y evaluación formal para el docente.
+En tus fuentes tienes cargado tanto el marco "open-game-edu" como el Decreto de Currículo de la Comunidad Autónoma correspondiente (Primaria, ESO o Bachillerato).
+- Para cada reto, DEBES extraer del Decreto:
+  1. El código y enunciado del Criterio de Evaluación (CE) oficial (ej. `CE.LCL.3.1` o `CE.CMN.5.2`).
+  2. El Saber Básico curricular correspondiente.
+- Inclúyelos en las columnas obligatorias `Criterio_Evaluacion` y `Saber_Basico` de las hojas.
 
-### FLUJO DE CALIDAD Y PULL REQUEST ESCOLAR (STAGING Y APROBACIÓN):
-Cada pestaña de materia debe incluir las columnas de control:
-- `Autor_O_Equipo`: Reconoce al alumno o equipo que diseñó el reto (ej. "Equipo 2 - Los Astrónomos").
-- `Estado_Revision`: Desplegable con validación de lista `APROBADO`, `PENDIENTE`, `CORREGIR`.
-- `Feedback_Docente`: Campo para observaciones y comentarios de mejora del profesorado.
-- Por defecto, el juego en modo oficial solo ejecuta los retos con estado `APROBADO`.
+### TELEMETRÍA Y MULTIJUGADOR EN VIVO (GOOGLE SHEETS):
+El código generado DEBE incluir:
+1. Pestaña `Puntuaciones_Online`: Registra automáticamente fecha, equipo, puntuación, tiempo, vidas y desglose de aciertos por materia como cuaderno de evaluación automático.
+2. Pestaña `Lobby_Multijugador` + `CacheService`: Almacena las posiciones de los avatares en memoria caché (<80ms) para la visualización multijugador en vivo sin saturar cuotas.
+3. Función `registrarPartidaOnline(partida)` y `actualizarPosicionLobby(equipo, avatar, pos, puntos)`.
+4. Endpoint `doGet?action=lobby`: Responde con el JSON de la sala para el refresco multijugador de la clase.
 
-### DOBLE ENTORNO CON BOTÓN "RUN" Y FORMULARIO DE PROPUESTAS:
-El código generado DEBE permitir previsualizar y enriquecer el juego de dos formas:
-1. DESDE GOOGLE SHEETS: Disparador `onOpen()` que crea el menú nativo `🎮 open-game-edu` con la opción `▶️ Run / Previsualizar Juego` (abre una ventana modal flotante para jugar de inmediato sin salir de Sheets) y `📋 Panel de Revisión de Propuestas`.
-2. DESDE LA WEB APP: Barra superior con conmutador:
-   - `✏️ Enviar Reto`: Formulario visual para que alumnos o docentes envíen nuevas propuestas a la hoja con estado `PENDIENTE` mediante `google.script.run.guardarPropuestaReto(...)`.
-   - `▶️ RUN / Previsualizar Juego`: Botón destacado que lanza la simulación interactiva con los retos aprobados, mostrando la insignia del Criterio de Evaluación, el autor del reto y los sonidos sintetizados.
+### FLUJO DE CALIDAD Y PULL REQUEST ESCOLAR:
+Cada materia incluye las columnas de control:
+- `Autor_O_Equipo`: Acredita al estudiante o equipo creador.
+- `Estado_Revision`: Desplegable con `APROBADO`, `PENDIENTE`, `CORREGIR`.
+- `Feedback_Docente`: Comentarios de mejora del profesorado.
+- El juego en modo RUN oficial solo ejecuta los retos con estado `APROBADO`.
 
-### ADAPTACIÓN SEGÚN LA ETAPA EDUCATIVA:
-1. EDUCACIÓN PRIMARIA (1.º a 6.º):
-   - Materias: Conocimiento del Medio, Lengua Castellana, Matemáticas, Educación Artística, Lengua Extranjera, Educación Física.
-   - Tono amigable, motivador, con apoyos visuales con emojis y botones táctiles anchos (mínimo 52px).
-2. EDUCACIÓN SECUNDARIA Y BACHILLERATO:
-   - Materias por departamentos especializados (Geografía e Historia, Biología, Física y Química, Filosofía, etc.).
-   - Mayor rigor analítico, dilemas con matices históricos y problemas con razonamiento formal.
+### DOBLE ENTORNO CON BOTÓN "RUN" Y MENÚ SHEETS:
+1. DESDE GOOGLE SHEETS: Disparador `onOpen()` con menú `🎮 open-game-edu`:
+   - `▶️ Run / Previsualizar Juego` (modal flotante interactivo de 840x660px).
+   - `🏁 Pantalla de Carrera Multijugador` (pantalla de espectador para proyectar en el aula).
+   - `📋 Panel de Revisión de Propuestas`.
+2. DESDE LA WEB APP: Barra superior con:
+   - `▶️ RUN / Travesía`: Inicia la partida interactiva con registro de jugador y telemetría.
+   - `🏁 Carrera en Vivo`: Pista de avance de todos los equipos del aula en tiempo real.
+   - `✏️ Proponer Reto`: Formulario para que el alumnado envíe nuevas preguntas (estado `PENDIENTE`).
 
 ### REGLAS INVIOLABLES DE GENERACIÓN:
-1. UN SOLO ARCHIVO: Tu respuesta de código debe contener exclusivamente un único bloque de código Apps Script (`Codigo.gs`). No generes archivos separados ni pidas crear archivos `.html` adicionales en el editor.
-2. CERO DEPENDENCIAS EXTERNAS: Sin CDNs externos. Todo el CSS y JavaScript debe ser Vanilla puro embebido dentro del HTML servido.
-3. ESTRUCTURA OBLIGATORIA DEL SCRIPT:
-   - Disparador `onOpen()` con menú de previsualización y revisión en Google Sheets.
-   - Función `inicializarEcosistema()`: Crea las pestañas de materia con 15 columnas normalizadas (`ID`, `Etapa_O_Lugar`, `Criterio_Evaluacion`, `Saber_Basico`, `Autor_O_Equipo`, `Estado_Revision`, `Feedback_Docente`, `Emisor_O_Personaje`, `Texto_Narrativo`, `Opcion_A`, `Opcion_B`, `Opcion_C`, `Respuesta_Correcta`, `Feedback_Didactico`, `Puntos`) y al menos 3 filas semilla (la mayoría en `APROBADO` y al menos 1 en `PENDIENTE`). Incluye la pestaña `Config_Juego`.
-   - Funciones backend RPC: `guardarPropuestaReto(materia, reto)` y `cambiarEstadoReto(...)`.
-   - Función `doGet(e)` y `mostrarJuegoModal()`.
-   - Función `getGameHtml(datosJsonString)`: Frontend completo con barra superior (botón "RUN" + formulario de retos), motor de juego interactivo y Web Audio API con osciladores.
+1. UN SOLO ARCHIVO: Genera exclusivamente un único bloque `Codigo.gs`. Sin archivos separados ni carpetas externas.
+2. CERO DEPENDENCIAS EXTERNAS: Sin CDNs externos. Todo el CSS, JS y audio (Web Audio API nativo) debe ser Vanilla puro embebido.
+3. PESTAÑAS OBLIGATORIAS EN `inicializarEcosistema()`: `Config_Juego`, `Puntuaciones_Online`, `Lobby_Multijugador` y las pestañas de cada materia con 15 columnas normalizadas.
 
 ### FORMATO DE SALIDA:
-- Breve resumen pedagógico (2-3 líneas) indicando Criterios de Evaluación y mecánicas activadas.
-- Un único bloque de código rodeado por triple tilde invertida:
+- Breve resumen didáctico (2-3 líneas).
+- Un único bloque de código en triple tilde invertida:
   ```javascript
   // ====================================================================
-  // open-game-edu: Instalador y Motor Monolítico con Botón RUN y Aprobación
-  // Etapa: [Etapa y Curso] - CC.AA: [Comunidad]
+  // open-game-edu: Ecosistema Monolítico Multijugador y Curricular
+  // Modalidad: [Modalidad] - Etapa: [Etapa] - CC.AA: [Comunidad]
   // Licencia: CC BY-SA 4.0
   // ====================================================================
   ...
@@ -169,16 +198,16 @@ El código generado DEBE permitir previsualizar y enriquecer el juego de dos for
 
 | Archivo / Carpeta | Tipo | Descripción |
 | :--- | :--- | :--- |
-| [`LICENSE.md`](LICENSE.md) | Licencia | Términos de la licencia **Creative Commons Atribución-CompartirIgual 4.0 Internacional (CC BY-SA 4.0)**. |
-| [`okf.json`](okf.json) | Manifiesto | Metadatos formales del paquete OKF, fuentes canónicas y configuración recomendada para LLMs. |
-| [`prompts/prompt-maestro.md`](prompts/prompt-maestro.md) | Prompt de Sistema | La instrucción maestra para NotebookLM que orquesta la extracción de Criterios de Evaluación, el botón RUN y el formato monolítico. |
-| [`specs/sheets-scaffold-spec.md`](specs/sheets-scaffold-spec.md) | Especificación | API de `SpreadsheetApp`, paleta cromática, 15 columnas normalizadas con `Estado_Revision` y autoría. |
-| [`specs/apps-script-api.md`](specs/apps-script-api.md) | Especificación | Protocolo `doGet`, menú nativo `onOpen`, diálogos modales `showModalDialog` y RPC de propuestas. |
-| [`specs/game-runtime-spec.md`](specs/game-runtime-spec.md) | Especificación | Arquitectura del motor Vanilla JS: botón RUN, filtro de aprobados, formulario de retos y audio nativo. |
-| [`guides/catalogo-mecanicas.md`](guides/catalogo-mecanicas.md) | Guía Pedagógica | Matriz que traduce materias de Primaria y Secundaria a mecánicas lúdicas, con roles de alumnado y coevaluación. |
-| [`guides/guia-docente.md`](guides/guia-docente.md) | Guía de Usuario | Manual paso a paso para docentes: uso del botón RUN en Sheets/Web y dinámica de aprobación de retos. |
-| [`examples/Codigo-primaria-ejemplo.gs`](examples/Codigo-primaria-ejemplo.gs) | Ejemplo Primaria | **Script monolítico funcional para 5.º de Primaria** (*La Eco-Patrulla del Bosque Mágico*) con botón RUN y panel de propuestas. |
-| [`examples/Codigo-3eso-ejemplo.gs`](examples/Codigo-3eso-ejemplo.gs) | Ejemplo Secundaria | **Script monolítico funcional para 3.º de ESO** (*La Flota de Indias: Crónicas del Siglo de Oro*) con botón RUN y panel de propuestas. |
+| [`LICENSE.md`](LICENSE.md) | Licencia | Términos de la licencia **Creative Commons Atribución-CompartirIgual 4.0 Internacional (CC BY-SA 4.0)** con cláusula de atribución. |
+| [`okf.json`](okf.json) | Manifiesto | Metadatos formales del paquete OKF, modalidades soportadas, compatibilidad LOMLOE y configuración LLM. |
+| [`prompts/prompt-maestro.md`](prompts/prompt-maestro.md) | Prompt de Sistema | La instrucción maestra para NotebookLM que orquesta las 5 modalidades, multijugador con `CacheService`, telemetría y código monolítico. |
+| [`specs/sheets-scaffold-spec.md`](specs/sheets-scaffold-spec.md) | Especificación | Esquema de base de datos en Sheets: `Config_Juego`, `Puntuaciones_Online`, `Lobby_Multijugador` y 15 columnas de materia. |
+| [`specs/apps-script-api.md`](specs/apps-script-api.md) | Especificación | API backend: endpoints `doGet` (`?action=lobby`), RPCs de propuestas, sincronización de posiciones y menús nativos. |
+| [`specs/game-runtime-spec.md`](specs/game-runtime-spec.md) | Especificación | Motor Vanilla JS/CSS: bucle de polling multijugador, renderizado de pistas de avance, telemetría y audio Web Audio API. |
+| [`guides/catalogo-mecanicas.md`](guides/catalogo-mecanicas.md) | Guía Pedagógica | Catálogo exhaustivo de las 5 modalidades, matriz Primaria/Secundaria, roles de autoría de estudiantes y rúbricas. |
+| [`guides/guia-docente.md`](guides/guia-docente.md) | Guía de Usuario | Manual paso a paso para el profesorado: proyección en PDI, moderación de propuestas y lectura del cuaderno de notas online. |
+| [`examples/Codigo-primaria-ejemplo.gs`](examples/Codigo-primaria-ejemplo.gs) | Ejemplo Primaria | **Script monolítico para 5.º de Primaria** (*La Eco-Patrulla del Bosque Mágico*): carrera multijugador con avatares de animales, telemetría y moderación. |
+| [`examples/Codigo-3eso-ejemplo.gs`](examples/Codigo-3eso-ejemplo.gs) | Ejemplo Secundaria | **Script monolítico para 3.º de ESO** (*La Flota de Indias: Crónicas del Siglo de Oro*): regata náutica multijugador en vivo, telemetría y moderación. |
 
 ---
 
@@ -187,8 +216,11 @@ El código generado DEBE permitir previsualizar y enriquecer el juego de dos for
 1. Abre una hoja de cálculo nueva en [Google Sheets](https://sheets.new).
 2. Ve a **Extensiones > Apps Script**.
 3. Copia el código de [`examples/Codigo-primaria-ejemplo.gs`](examples/Codigo-primaria-ejemplo.gs) (Primaria) o [`examples/Codigo-3eso-ejemplo.gs`](examples/Codigo-3eso-ejemplo.gs) (Secundaria).
-4. Guarda y ejecuta `inicializarEcosistema`.
-5. Vuelve a Google Sheets: verás las pestañas coloreadas y el menú **`🎮 open-game-edu > ▶️ Run / Previsualizar Juego`**. ¡Pulsa para jugar dentro de la hoja!
+4. Guarda y ejecuta `inicializarEcosistema` desde la barra de herramientas de Apps Script (concede permisos la primera vez).
+5. Vuelve a Google Sheets: verás las pestañas formateadas (`Config_Juego`, `Puntuaciones_Online`, `Lobby_Multijugador`, etc.) y el menú **`🎮 open-game-edu`**:
+   - Pulsa **`▶️ Run / Previsualizar Juego`** para jugar dentro de Sheets.
+   - Pulsa **`🏁 Pantalla de Carrera / Regata`** para ver el avance de los equipos en la pantalla del aula.
+   - Pulsa **`📋 Panel de Revisión de Propuestas`** para moderar retos del alumnado.
 
 ---
 

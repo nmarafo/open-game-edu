@@ -1,7 +1,8 @@
 // ====================================================================
-// open-game-edu: Instalador y Motor Monolítico de Referencia
+// open-game-edu: Ecosistema Monolítico con Multijugador y Telemetría
 // Etapa: 5.º de Educación Primaria - Decreto Curricular LOMLOE
 // Materias: Conocimiento del Medio, Lengua Castellana, Matemáticas
+// Modalidad: Aventura con Pista de Carrera Multijugador en Línea
 // Licencia: Creative Commons Atribución-CompartirIgual 4.0 (CC BY-SA 4.0)
 // Basado en proyectos de Norberto Martín Afonso (OpenDidactia / open-game-edu)
 // ====================================================================
@@ -13,6 +14,7 @@ function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu('🎮 open-game-edu')
     .addItem('▶️ Run / Previsualizar Juego', 'mostrarJuegoModal')
+    .addItem('🏁 Pantalla de Carrera Multijugador', 'mostrarCarreraModal')
     .addItem('📋 Panel de Revisión de Propuestas', 'mostrarPanelRevision')
     .addSeparator()
     .addItem('⚙️ Reinicializar Ecosistema', 'inicializarEcosistema')
@@ -20,14 +22,25 @@ function onOpen() {
 }
 
 /**
- * Abre el juego en una ventana modal flotante dentro de Google Sheets.
+ * Abre el juego en una ventana modal interactiva dentro de Google Sheets.
  */
 function mostrarJuegoModal() {
   var datos = obtenerDatosJuego();
   var html = HtmlService.createHtmlOutput(getGameHtml(JSON.stringify(datos)))
-    .setWidth(820)
-    .setHeight(640);
-  SpreadsheetApp.getUi().showModalDialog(html, '🎮 Previsualización del Videojuego - Modo RUN');
+    .setWidth(840)
+    .setHeight(660);
+  SpreadsheetApp.getUi().showModalDialog(html, '🎮 Modo RUN - La Eco-Patrulla');
+}
+
+/**
+ * Abre la pantalla de proyección de la Carrera Multijugador para el aula.
+ */
+function mostrarCarreraModal() {
+  var datos = obtenerDatosJuego();
+  var html = HtmlService.createHtmlOutput(getGameHtml(JSON.stringify(datos)))
+    .setWidth(860)
+    .setHeight(660);
+  SpreadsheetApp.getUi().showModalDialog(html, '🏁 Pantalla de Carrera Multijugador en Vivo');
 }
 
 /**
@@ -76,21 +89,29 @@ function mostrarPanelRevision() {
 }
 
 /**
- * 2. CONFIGURADOR DEL ECOSISTEMA DE BASE DE DATOS EN SHEETS (5.º PRIMARIA)
+ * 2. CONFIGURADOR DEL ECOSISTEMA DE BASE DE DATOS EN SHEETS
  */
 function inicializarEcosistema() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
 
+  // --- A. Pestaña de Configuración ---
   configurarPestanaConfig(ss, [
     ['TITULO_JUEGO', '🌿 La Eco-Patrulla del Bosque Mágico', 'Título visible en la cabecera'],
     ['ETAPA_CURSO', '5.º de Educación Primaria', 'Etapa y curso educativo'],
     ['COMUNIDAD_AUTONOMA', 'Decreto Autonómico de Educación Primaria (LOMLOE)', 'Normativa curricular de referencia'],
-    ['DESCRIPCION', '¡Hola, explorador/a! Únete a la patrulla ambiental para proteger la fauna, descifrar mensajes en la naturaleza y calcular recursos ecológicos.', 'Sinopsis para el alumnado'],
-    ['VIDAS_INICIALES', 4, 'Intentos o vidas disponibles (adaptado a Primaria)'],
+    ['MODALIDAD_JUEGO', 'CARRERA_MULTIJUGADOR', 'Modalidad: AVENTURA o CARRERA_MULTIJUGADOR'],
+    ['DESCRIPCION', '¡Hola, explorador/a! Únete a la patrulla ambiental para proteger la fauna y competir en la Gran Regata del bosque.', 'Sinopsis'],
+    ['VIDAS_INICIALES', 4, 'Intentos o vidas disponibles'],
     ['PUNTOS_VICTORIA', 75, 'Puntos necesarios para completar la misión'],
-    ['MENSAJE_VICTORIA', '🌟 ¡Enhorabuena! Has conseguido la insignia de Guardián Mayor del Bosque.', 'Mensaje final de victoria'],
-    ['MENSAJE_DERROTA', '🌱 ¡Ánimo! El bosque necesita más investigación. ¡Vuelve a intentarlo!', 'Mensaje de motivación al perder']
+    ['MENSAJE_VICTORIA', '🌟 ¡Enhorabuena! Has conseguido la insignia de Guardián Mayor del Bosque.', 'Mensaje final'],
+    ['MENSAJE_DERROTA', '🌱 ¡Ánimo! El bosque necesita más investigación. ¡Vuelve a intentarlo!', 'Mensaje al perder']
   ]);
+
+  // --- B. Pestaña de Puntuaciones y Telemetría en Vivo ---
+  configurarPestanaPuntuaciones(ss);
+
+  // --- C. Pestaña de Lobby Multijugador ---
+  configurarPestanaLobby(ss);
 
   var cabecerasMateria = [
     'ID', 'Etapa', 'Criterio_Evaluacion', 'Saber_Basico', 'Autor_O_Equipo', 
@@ -190,8 +211,61 @@ function inicializarEcosistema() {
 }
 
 /**
- * 3. FUNCIONES BACKEND RPC (Envío y Moderación de Propuestas)
+ * 3. FUNCIONES BACKEND RPC: MULTIJUGADOR, TELEMETRÍA Y PROPUESTAS
  */
+function actualizarPosicionLobby(nombreEquipo, avatar, nuevaCasilla, puntos) {
+  try {
+    var cache = CacheService.getScriptCache();
+    var raw = cache.get('LOBBY_STATE');
+    var lobby = raw ? JSON.parse(raw) : {};
+
+    lobby[nombreEquipo] = {
+      equipo: nombreEquipo,
+      avatar: avatar || '🦊',
+      casilla: parseInt(nuevaCasilla, 10) || 0,
+      puntos: parseInt(puntos, 10) || 0,
+      timestamp: Date.now()
+    };
+
+    cache.put('LOBBY_STATE', JSON.stringify(lobby), 7200);
+    return { ok: true, lobby: lobby };
+  } catch(e) {
+    return { ok: false, error: e.message };
+  }
+}
+
+function obtenerEstadoLobbyMemoria() {
+  var cache = CacheService.getScriptCache();
+  var raw = cache.get('LOBBY_STATE');
+  if (raw) return JSON.parse(raw);
+  return {};
+}
+
+function registrarPartidaOnline(partida) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var hoja = ss.getSheetByName('Puntuaciones_Online');
+    if (!hoja) return { ok: false, error: 'Pestaña Puntuaciones_Online no encontrada' };
+
+    var ahora = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm:ss');
+    var fila = [
+      ahora,
+      partida.jugador || 'Anónimo',
+      partida.curso || '5.º Primaria',
+      parseInt(partida.puntos, 10) || 0,
+      parseInt(partida.vidas, 10) || 0,
+      parseInt(partida.tiempo, 10) || 0,
+      partida.desglose || '',
+      partida.resultado || 'FINALIZADO'
+    ];
+
+    hoja.appendRow(fila);
+    return { ok: true, mensaje: 'Partida guardada en el cuaderno de evaluación.' };
+  } catch(err) {
+    return { ok: false, error: err.message };
+  }
+}
+
 function guardarPropuestaReto(nombreMateria, reto) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -217,7 +291,7 @@ function guardarPropuestaReto(nombreMateria, reto) {
       parseInt(reto.Puntos, 10) || 25
     ];
     hoja.appendRow(fila);
-    return { ok: true, id: id, mensaje: '¡Genial! Tu reto ha sido enviado al buzón docente y está pendiente de aprobación.' };
+    return { ok: true, id: id, mensaje: '¡Reto enviado! Queda pendiente de aprobación por el profesor.' };
   } catch(e) {
     return { ok: false, error: e.message };
   }
@@ -245,9 +319,16 @@ function cambiarEstadoReto(nombreMateria, idReto, nuevoEstado, feedbackDocente) 
  */
 function doGet(e) {
   try {
+    var accion = (e && e.parameter && e.parameter.action) || 'app';
+
+    if (accion === 'lobby') {
+      return ContentService.createTextOutput(JSON.stringify(obtenerEstadoLobbyMemoria()))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
     var datosJuego = obtenerDatosJuego();
 
-    if (e && e.parameter && e.parameter.action === 'data') {
+    if (accion === 'data') {
       return ContentService.createTextOutput(JSON.stringify(datosJuego))
         .setMimeType(ContentService.MimeType.JSON);
     }
@@ -263,14 +344,13 @@ function doGet(e) {
   } catch (err) {
     return HtmlService.createHtmlOutput(
       '<div style="font-family:sans-serif;padding:30px;color:#d32f2f;">' +
-      '<h2>Error cargando el juego</h2>' +
-      '<p>Asegúrate de ejecutar primero la función <code>inicializarEcosistema()</code>.</p></div>'
+      '<h2>Error cargando la aplicación</h2><p>' + err.message + '</p></div>'
     );
   }
 }
 
 /**
- * 5. EXTRACTOR DE DATOS
+ * 5. EXTRACTOR DE DATOS DE SHEETS
  */
 function obtenerDatosJuego() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -288,7 +368,7 @@ function obtenerDatosJuego() {
         var k = String(valores[r][0] || '').trim();
         if (k) paquete.meta[k] = valores[r][1];
       }
-    } else {
+    } else if (nombre !== 'Puntuaciones_Online' && nombre !== 'Lobby_Multijugador') {
       var headers = valores[0].map(function(h) { return String(h || '').trim(); });
       var items = [];
       for (var row = 1; row < valores.length; row++) {
@@ -309,7 +389,7 @@ function obtenerDatosJuego() {
 }
 
 /**
- * 6. GENERADOR FRONTEND MONOLÍTICO CON BOTÓN "RUN" Y FORMULARIO DE PROPUESTAS
+ * 6. GENERADOR FRONTEND MONOLÍTICO: JUEGO, MULTIJUGADOR Y FORMULARIO
  */
 function getGameHtml(initialDataJson) {
   return '<!DOCTYPE html>\n' +
@@ -338,11 +418,11 @@ function getGameHtml(initialDataJson) {
 '      display: flex;\n' +
 '      flex-direction: column;\n' +
 '      align-items: center;\n' +
-'      padding: 16px;\n' +
+'      padding: 14px;\n' +
 '    }\n' +
 '    #app {\n' +
 '      width: 100%;\n' +
-'      max-width: 780px;\n' +
+'      max-width: 800px;\n' +
 '      background: var(--card-bg);\n' +
 '      border: 2px solid var(--card-border);\n' +
 '      border-radius: var(--radius);\n' +
@@ -351,81 +431,75 @@ function getGameHtml(initialDataJson) {
 '      display: flex;\n' +
 '      flex-direction: column;\n' +
 '    }\n' +
-'    /* Barra Superior de Modos */\n' +
 '    .top-nav {\n' +
 '      background: #060d17;\n' +
-'      padding: 10px 18px;\n' +
+'      padding: 10px 16px;\n' +
 '      display: flex;\n' +
 '      justify-content: space-between;\n' +
 '      align-items: center;\n' +
 '      border-bottom: 1px solid var(--card-border);\n' +
-'      gap: 10px;\n' +
+'      gap: 8px;\n' +
+'      flex-wrap: wrap;\n' +
 '    }\n' +
 '    .nav-btn {\n' +
 '      background: #24344d;\n' +
 '      color: #fff;\n' +
 '      border: 1px solid var(--card-border);\n' +
-'      padding: 8px 16px;\n' +
+'      padding: 8px 14px;\n' +
 '      border-radius: 20px;\n' +
 '      font-weight: 700;\n' +
-'      font-size: 0.9rem;\n' +
+'      font-size: 0.88rem;\n' +
 '      cursor: pointer;\n' +
 '      transition: all 0.2s;\n' +
 '    }\n' +
 '    .nav-btn.active, .nav-btn:hover { background: var(--color-gold); color: #000; border-color: var(--color-gold); }\n' +
 '    .run-pulse { background: var(--color-green); color: #000; border: none; }\n' +
-'    /* Header */\n' +
 '    header {\n' +
 '      background: #0b132b;\n' +
-'      padding: 14px 22px;\n' +
+'      padding: 12px 20px;\n' +
 '      display: flex;\n' +
 '      justify-content: space-between;\n' +
 '      align-items: center;\n' +
 '      border-bottom: 2px solid var(--card-border);\n' +
 '    }\n' +
-'    .logo-text { font-size: 1.25rem; font-weight: 800; color: var(--color-gold); }\n' +
-'    .stats-pill { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.05rem; }\n' +
-'    .score-chip { background: var(--color-blue); color: white; padding: 6px 14px; border-radius: 20px; }\n' +
-'    main { padding: 26px; min-height: 420px; display: flex; flex-direction: column; justify-content: center; }\n' +
+'    .logo-text { font-size: 1.2rem; font-weight: 800; color: var(--color-gold); }\n' +
+'    .stats-pill { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1rem; }\n' +
+'    .score-chip { background: var(--color-blue); color: white; padding: 5px 12px; border-radius: 20px; }\n' +
+'    main { padding: 22px; min-height: 420px; display: flex; flex-direction: column; justify-content: center; }\n' +
 '    .criterio-badge {\n' +
 '      background: rgba(17, 138, 178, 0.2);\n' +
 '      border-left: 4px solid var(--color-blue);\n' +
-'      padding: 10px 14px;\n' +
+'      padding: 8px 12px;\n' +
 '      border-radius: 6px;\n' +
-'      font-size: 0.88rem;\n' +
+'      font-size: 0.85rem;\n' +
 '      color: #90e0ef;\n' +
 '      margin-bottom: 8px;\n' +
 '      line-height: 1.4;\n' +
 '    }\n' +
-'    .author-badge {\n' +
-'      font-size: 0.82rem;\n' +
-'      color: var(--color-gold);\n' +
-'      margin-bottom: 12px;\n' +
-'      font-weight: 600;\n' +
-'    }\n' +
+'    .author-badge { font-size: 0.82rem; color: var(--color-gold); margin-bottom: 12px; font-weight: 600; }\n' +
 '    .dialogue-card {\n' +
 '      background: rgba(13, 27, 42, 0.85);\n' +
 '      border: 2px solid var(--color-gold);\n' +
-'      padding: 20px;\n' +
+'      padding: 18px;\n' +
 '      border-radius: 12px;\n' +
-'      font-size: 1.15rem;\n' +
+'      font-size: 1.1rem;\n' +
 '      line-height: 1.6;\n' +
-'      margin-bottom: 22px;\n' +
+'      margin-bottom: 20px;\n' +
 '    }\n' +
-'    .speaker-name { color: var(--color-gold); font-size: 1rem; font-weight: 800; margin-bottom: 8px; }\n' +
-'    .options-grid { display: flex; flex-direction: column; gap: 14px; margin-bottom: 18px; }\n' +
+'    .speaker-name { color: var(--color-gold); font-size: 1rem; font-weight: 800; margin-bottom: 6px; }\n' +
+'    .options-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }\n' +
 '    .option-btn {\n' +
 '      background: #24344d;\n' +
 '      border: 2px solid #415a77;\n' +
 '      color: white;\n' +
-'      padding: 16px 20px;\n' +
+'      padding: 14px 18px;\n' +
 '      border-radius: 12px;\n' +
 '      font-size: 1.05rem;\n' +
 '      font-weight: 600;\n' +
 '      text-align: left;\n' +
 '      cursor: pointer;\n' +
 '      transition: transform 0.15s, background 0.15s;\n' +
-'      min-height: 54px;\n' +
+'      min-height: 52px;\n' +
 '    }\n' +
 '    .option-btn:hover { background: #324b6d; border-color: var(--color-gold); transform: translateY(-2px); }\n' +
 '    .option-btn:disabled { opacity: 0.7; cursor: not-allowed; }\n' +
@@ -434,46 +508,63 @@ function getGameHtml(initialDataJson) {
 '      color: #000;\n' +
 '      font-weight: 800;\n' +
 '      border: none;\n' +
-'      padding: 16px 30px;\n' +
+'      padding: 14px 26px;\n' +
 '      border-radius: 12px;\n' +
-'      font-size: 1.1rem;\n' +
+'      font-size: 1.05rem;\n' +
 '      cursor: pointer;\n' +
 '      align-self: flex-start;\n' +
 '      margin-top: 14px;\n' +
 '    }\n' +
 '    .btn-action:hover { background: #e0b443; }\n' +
-'    .feedback-box {\n' +
-'      padding: 18px;\n' +
-'      border-radius: 10px;\n' +
-'      margin-top: 12px;\n' +
-'      font-size: 1rem;\n' +
-'      line-height: 1.5;\n' +
-'    }\n' +
+'    .feedback-box { padding: 16px; border-radius: 10px; margin-top: 12px; font-size: 0.95rem; line-height: 1.5; }\n' +
 '    .fb-ok { background: rgba(6, 214, 160, 0.2); border: 2px solid var(--color-green); color: #80ed99; }\n' +
 '    .fb-err { background: rgba(239, 71, 111, 0.2); border: 2px solid var(--color-red); color: #ffb4a2; }\n' +
-'    .subject-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }\n' +
+'    .subject-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }\n' +
 '    @media(max-width: 600px) { .subject-grid { grid-template-columns: 1fr; } }\n' +
 '    .subject-card {\n' +
 '      background: #0d1b2a;\n' +
 '      border: 2px solid var(--card-border);\n' +
 '      border-radius: 12px;\n' +
-'      padding: 20px;\n' +
+'      padding: 18px;\n' +
 '      cursor: pointer;\n' +
 '      transition: transform 0.2s, border-color 0.2s;\n' +
 '    }\n' +
 '    .subject-card:hover { border-color: var(--color-gold); transform: translateY(-3px); }\n' +
 '    .subject-card.done { opacity: 0.6; border-color: var(--color-green); }\n' +
-'    /* Estilos del Formulario */\n' +
-'    .form-group { margin-bottom: 14px; text-align: left; }\n' +
-'    .form-group label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.95rem; color: var(--color-gold); }\n' +
+'    /* Pista Multijugador en Vivo */\n' +
+'    .track-container {\n' +
+'      background: #060d17;\n' +
+'      border: 2px solid var(--card-border);\n' +
+'      border-radius: 12px;\n' +
+'      padding: 16px;\n' +
+'      margin-top: 14px;\n' +
+'    }\n' +
+'    .track-lane {\n' +
+'      background: #111d2e;\n' +
+'      margin-bottom: 10px;\n' +
+'      border-radius: 8px;\n' +
+'      padding: 8px 12px;\n' +
+'      display: flex;\n' +
+'      align-items: center;\n' +
+'      position: relative;\n' +
+'      height: 48px;\n' +
+'      border-left: 4px solid var(--color-blue);\n' +
+'    }\n' +
+'    .lane-avatar {\n' +
+'      position: absolute;\n' +
+'      font-size: 1.8rem;\n' +
+'      transition: left 0.6s ease-in-out;\n' +
+'    }\n' +
+'    .form-group { margin-bottom: 12px; text-align: left; }\n' +
+'    .form-group label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: var(--color-gold); }\n' +
 '    .form-control {\n' +
 '      width: 100%;\n' +
-'      padding: 12px 14px;\n' +
+'      padding: 10px 12px;\n' +
 '      border-radius: 8px;\n' +
 '      border: 1px solid var(--card-border);\n' +
 '      background: #0d1b2a;\n' +
 '      color: #fff;\n' +
-'      font-size: 1rem;\n' +
+'      font-size: 0.95rem;\n' +
 '    }\n' +
 '    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }\n' +
 '  </style>\n' +
@@ -482,8 +573,9 @@ function getGameHtml(initialDataJson) {
 '  <div id="app">\n' +
 '    <div class="top-nav">\n' +
 '      <div>\n' +
-'        <button class="nav-btn run-pulse" id="btnNavRun" onclick="AudioFX.click(); activarModo(\\\'run\\\');">▶️ RUN / Previsualizar</button>\n' +
-'        <button class="nav-btn" id="btnNavForm" onclick="AudioFX.click(); activarModo(\\\'form\\\');">✏️ Enviar Reto (Alumnos)</button>\n' +
+'        <button class="nav-btn run-pulse" id="btnNavRun" onclick="AudioFX.click(); activarModo(\\\'run\\\');">▶️ RUN / Misión</button>\n' +
+'        <button class="nav-btn" id="btnNavCarrera" onclick="AudioFX.click(); activarModo(\\\'carrera\\\');">🏁 Carrera en Vivo</button>\n' +
+'        <button class="nav-btn" id="btnNavForm" onclick="AudioFX.click(); activarModo(\\\'form\\\');">✏️ Proponer Reto</button>\n' +
 '      </div>\n' +
 '      <label style="font-size:0.8rem;color:var(--text-muted);display:flex;align-items:center;gap:6px;">\n' +
 '        <input type="checkbox" id="chkTodos" onchange="alternarFiltroPendientes()"> Ver borradores\n' +
@@ -503,6 +595,7 @@ function getGameHtml(initialDataJson) {
 '    window.GAME_DATA = ' + initialDataJson + ';\n' +
 '    var modoActual = "run";\n' +
 '    var verBorradores = false;\n' +
+'    var timerPoll = null;\n' +
 '\n' +
 '    var AudioFX = (function() {\n' +
 '      var ctx = null;\n' +
@@ -530,10 +623,15 @@ function getGameHtml(initialDataJson) {
 '    })();\n' +
 '\n' +
 '    var Game = {\n' +
+'      jugador: "",\n' +
+'      avatar: "🦊",\n' +
+'      casilla: 0,\n' +
 '      vidas: 4,\n' +
 '      puntos: 0,\n' +
 '      puntosMeta: 75,\n' +
+'      tiempoInicio: Date.now(),\n' +
 '      completados: {},\n' +
+'      aciertosPorMateria: {},\n' +
 '      materia: null,\n' +
 '      retoIdx: 0\n' +
 '    };\n' +
@@ -545,10 +643,16 @@ function getGameHtml(initialDataJson) {
 '\n' +
 '    function activarModo(modo) {\n' +
 '      modoActual = modo;\n' +
+'      if (timerPoll) { clearInterval(timerPoll); timerPoll = null; }\n' +
 '      document.getElementById("btnNavRun").className = (modo === "run") ? "nav-btn run-pulse active" : "nav-btn";\n' +
+'      document.getElementById("btnNavCarrera").className = (modo === "carrera") ? "nav-btn active" : "nav-btn";\n' +
 '      document.getElementById("btnNavForm").className = (modo === "form") ? "nav-btn active" : "nav-btn";\n' +
+'\n' +
 '      if (modo === "run") {\n' +
-'        renderInicio();\n' +
+'        if (!Game.jugador) renderRegistroJugador();\n' +
+'        else renderInicio();\n' +
+'      } else if (modo === "carrera") {\n' +
+'        renderPantallaCarrera();\n' +
 '      } else {\n' +
 '        renderFormularioPropuesta();\n' +
 '      }\n' +
@@ -561,10 +665,51 @@ function getGameHtml(initialDataJson) {
 '      document.getElementById("scoreVal").innerText = Game.puntos;\n' +
 '    }\n' +
 '\n' +
-'    function filtrarRetosMateria(nombreMateria) {\n' +
-'      var todos = (window.GAME_DATA.materias && window.GAME_DATA.materias[nombreMateria]) || [];\n' +
-'      if (verBorradores) return todos;\n' +
-'      return todos.filter(function(r) { return r.Estado_Revision === "APROBADO" || !r.Estado_Revision; });\n' +
+'    function filtrarRetosMateria(nom) {\n' +
+'      var lista = (window.GAME_DATA.materias && window.GAME_DATA.materias[nom]) || [];\n' +
+'      if (verBorradores) return lista;\n' +
+'      return lista.filter(function(r) { return r.Estado_Revision === "APROBADO" || !r.Estado_Revision; });\n' +
+'    }\n' +
+'\n' +
+'    function renderRegistroJugador() {\n' +
+'      var stage = document.getElementById("stage");\n' +
+'      stage.innerHTML = \n' +
+'        \'<h2 style="color:var(--color-gold);margin-bottom:8px;">🎒 ¡Bienvenido/a a la Misión!</h2>\' +\n' +
+'        \'<p style="color:var(--text-muted);margin-bottom:16px;">Escribe tu nombre o el de tu equipo para registrar tus puntuaciones en el cuaderno del profe:</p>\' +\n' +
+'        \'<div class="dialogue-card">\' +\n' +
+'          \'<div class="form-group">\' +\n' +
+'            \'<label>Nombre o Equipo:</label>\' +\n' +
+'            \'<input type="text" id="regNombre" class="form-control" placeholder="Ej. Equipo 3 - Los Linces" required>\' +\n' +
+'          \'</div>\' +\n' +
+'          \'<div class="form-group">\' +\n' +
+'            \'<label>Elige tu Avatar:</label>\' +\n' +
+'            \'<select id="regAvatar" class="form-control">\' +\n' +
+'              \'<option value="🦊">🦊 Zorro Veloz</option>\' +\n' +
+'              \'<option value="🦉">🦉 Búho Sabio</option>\' +\n' +
+'              \'<option value="🐸">🐸 Nutria Ágil</option>\' +\n' +
+'              \'<option value="🚀">🚀 Nave Exploradora</option>\' +\n' +
+'              \'<option value="⛵">⛵ Barco Velero</option>\' +\n' +
+'            \'</select>\' +\n' +
+'          \'</div>\' +\n' +
+'          \'<button class="btn-action" onclick="guardarRegistroLocal()">Entrar al Juego ➔</button>\' +\n' +
+'        \'</div>\';\n' +
+'    }\n' +
+'\n' +
+'    function guardarRegistroLocal() {\n' +
+'      var n = document.getElementById("regNombre").value.trim();\n' +
+'      if (!n) { alert("Por favor, introduce tu nombre o el de tu equipo"); return; }\n' +
+'      Game.jugador = n;\n' +
+'      Game.avatar = document.getElementById("regAvatar").value;\n' +
+'      Game.tiempoInicio = Date.now();\n' +
+'      AudioFX.click();\n' +
+'      sincronizarLobby();\n' +
+'      renderInicio();\n' +
+'    }\n' +
+'\n' +
+'    function sincronizarLobby() {\n' +
+'      if (typeof google !== "undefined" && google.script && google.script.run && Game.jugador) {\n' +
+'        google.script.run.actualizarPosicionLobby(Game.jugador, Game.avatar, Game.casilla, Game.puntos);\n' +
+'      }\n' +
 '    }\n' +
 '\n' +
 '    function renderInicio() {\n' +
@@ -574,14 +719,12 @@ function getGameHtml(initialDataJson) {
 '      document.getElementById("headerTitle").innerText = m.TITULO_JUEGO || "🌿 La Eco-Patrulla";\n' +
 '      actualizarBarra();\n' +
 '\n' +
-'      var nivel = m.ETAPA_CURSO ? (\'<p style="color:var(--color-gold);font-weight:700;margin-bottom:10px;">🎒 \' + m.ETAPA_CURSO + \'</p>\') : \'\';\n' +
 '      var stage = document.getElementById("stage");\n' +
 '      stage.innerHTML = \n' +
-'        \'<h2 style="font-size:1.6rem;color:var(--color-gold);margin-bottom:8px;">\' + (m.TITULO_JUEGO || "Misión Ambiental") + \'</h2>\' +\n' +
-'        nivel +\n' +
-'        \'<div class="dialogue-card">\' + (m.DESCRIPCION || "¡Bienvenido a la aventura de la naturaleza!") + \'</div>\' +\n' +
-'        \'<p style="color:var(--text-muted);margin-bottom:18px;">Supera los retos curriculares creados por docentes y compañeros para alcanzar \' + Game.puntosMeta + \' puntos.</p>\' +\n' +
-'        \'<button class="btn-action" onclick="AudioFX.click(); renderSelector();">🚀 ¡Iniciar la Misión (RUN)!</button>\';\n' +
+'        \'<h2 style="font-size:1.5rem;color:var(--color-gold);margin-bottom:6px;">\' + (m.TITULO_JUEGO || "Misión Ambiental") + \'</h2>\' +\n' +
+'        \'<p style="color:var(--color-gold);font-weight:700;margin-bottom:10px;">Jugando como: \' + Game.avatar + \' \' + Game.jugador + \'</p>\' +\n' +
+'        \'<div class="dialogue-card">\' + (m.DESCRIPCION || "¡Bienvenido a la aventura!") + \'</div>\' +\n' +
+'        \'<button class="btn-action" onclick="AudioFX.click(); renderSelector();">🚀 Comenzar Misión (RUN)</button>\';\n' +
 '    }\n' +
 '\n' +
 '    function renderSelector() {\n' +
@@ -593,8 +736,7 @@ function getGameHtml(initialDataJson) {
 '      var mats = window.GAME_DATA.materias || {};\n' +
 '      var nombres = Object.keys(mats);\n' +
 '\n' +
-'      var html = \'<h2 style="color:var(--color-gold);font-size:1.5rem;margin-bottom:8px;">🗺️ Mapa del Territorio Natural</h2>\' +\n' +
-'                 \'<p style="color:var(--text-muted);margin-bottom:14px;">Elige el área que deseas explorar:</p>\' +\n' +
+'      var html = \'<h2 style="color:var(--color-gold);font-size:1.4rem;margin-bottom:6px;">🗺️ Elige Rincón del Bosque</h2>\' +\n' +
 '                 \'<div class="subject-grid">\';\n' +
 '\n' +
 '      nombres.forEach(function(nom) {\n' +
@@ -604,8 +746,8 @@ function getGameHtml(initialDataJson) {
 '        var estado = done ? "✅ ¡Rincón protegido!" : ("⭐ " + lista.length + " retos disponibles");\n' +
 '\n' +
 '        html += \'<div class="\' + cName + \'" onclick="AudioFX.click(); abrirRincon(\\\'\' + nom + \'\\\')">\' +\n' +
-'                  \'<h3 style="color:var(--color-gold);font-size:1.2rem;margin-bottom:6px;">\' + nom.replace("_", " ") + \'</h3>\' +\n' +
-'                  \'<p style="font-size:0.92rem;color:var(--text-muted);">\' + estado + \'</p>\' +\n' +
+'                  \'<h3 style="color:var(--color-gold);font-size:1.15rem;margin-bottom:4px;">\' + nom.replace("_", " ") + \'</h3>\' +\n' +
+'                  \'<p style="font-size:0.9rem;color:var(--text-muted);">\' + estado + \'</p>\' +\n' +
 '                \'</div>\';\n' +
 '      });\n' +
 '      html += \'</div>\';\n' +
@@ -616,7 +758,7 @@ function getGameHtml(initialDataJson) {
 '      Game.materia = nom;\n' +
 '      var lista = filtrarRetosMateria(nom);\n' +
 '      if (lista.length === 0) {\n' +
-'        alert("No hay retos aprobados en esta materia todavía. ¡Envía una propuesta en la pestaña superior!");\n' +
+'        alert("No hay retos aprobados en esta materia aún.");\n' +
 '        return;\n' +
 '      }\n' +
 '      var primerNoHecho = 0;\n' +
@@ -633,18 +775,13 @@ function getGameHtml(initialDataJson) {
 '\n' +
 '      var reto = lista[Game.retoIdx];\n' +
 '      var stage = document.getElementById("stage");\n' +
-'      var personaje = reto.Personaje || "Guía Forestal";\n' +
+'      var personaje = reto.Personaje || "Guía";\n' +
 '\n' +
-'      var badgeCurricular = reto.Criterio_Evaluacion\n' +
-'        ? (\'<div class="criterio-badge">🎯 <strong>Criterio Oficial:</strong> \' + reto.Criterio_Evaluacion + \'</div>\')\n' +
-'        : \'\';\n' +
-'      var badgeAutor = reto.Autor_O_Equipo\n' +
-'        ? (\'<div class="author-badge">💡 Reto diseñado por: <strong>\' + reto.Autor_O_Equipo + \'</strong></div>\')\n' +
-'        : \'\';\n' +
+'      var badgeCurricular = reto.Criterio_Evaluacion ? (\'<div class="criterio-badge">🎯 \' + reto.Criterio_Evaluacion + \'</div>\') : \'\';\n' +
+'      var badgeAutor = reto.Autor_O_Equipo ? (\'<div class="author-badge">💡 Diseñado por: <strong>\' + reto.Autor_O_Equipo + \'</strong></div>\') : \'\';\n' +
 '\n' +
-'      var html = \'<h3 style="color:var(--color-blue);font-size:1.3rem;margin-bottom:8px;">📍 \' + (reto.Etapa || Game.materia) + \'</h3>\' +\n' +
-'        badgeCurricular +\n' +
-'        badgeAutor +\n' +
+'      var html = \'<h3 style="color:var(--color-blue);font-size:1.25rem;margin-bottom:6px;">📍 \' + (reto.Etapa || Game.materia) + \'</h3>\' +\n' +
+'        badgeCurricular + badgeAutor +\n' +
 '        \'<div class="dialogue-card">\' +\n' +
 '          \'<div class="speaker-name">\' + personaje + \'</div>\' +\n' +
 '          \'<div>\' + reto.Texto_Narrativo + \'</div>\' +\n' +
@@ -667,16 +804,20 @@ function getGameHtml(initialDataJson) {
 '      btns.forEach(function(b) { b.disabled = true; });\n' +
 '\n' +
 '      var correcta = String(reto.Respuesta_Correcta || "").trim().toUpperCase();\n' +
+'      var didactico = reto.Feedback_Didactico || "";\n' +
 '      var saber = reto.Saber_Basico ? (\'<br><small style="color:#94a3b8">📚 Saber curricular: \' + reto.Saber_Basico + \'</small>\') : \'\';\n' +
 '\n' +
 '      if (opc === correcta) {\n' +
 '        AudioFX.okTone();\n' +
 '        var p = parseInt(reto.Puntos, 10) || 25;\n' +
 '        Game.puntos += p;\n' +
+'        Game.casilla += 1;\n' +
 '        Game.completados[reto.ID] = true;\n' +
+'        Game.aciertosPorMateria[Game.materia] = (Game.aciertosPorMateria[Game.materia] || 0) + 1;\n' +
 '        actualizarBarra();\n' +
+'        sincronizarLobby();\n' +
 '        fb.innerHTML = \'<div class="feedback-box fb-ok">\' +\n' +
-'          \'<strong>🎉 ¡Muy bien hecho! (+\' + p + \' puntos)</strong><br>\' + reto.Feedback_Didactico + saber +\n' +
+'          \'<strong>🎉 ¡Muy bien hecho! (+\' + p + \' pts - Avanzas en la carrera)</strong><br>\' + didactico + saber +\n' +
 '        \'</div>\' +\n' +
 '        \'<button class="btn-action" onclick="avanzar()">Continuar Explorando ➔</button>\';\n' +
 '      } else {\n' +
@@ -684,7 +825,7 @@ function getGameHtml(initialDataJson) {
 '        Game.vidas -= 1;\n' +
 '        actualizarBarra();\n' +
 '        fb.innerHTML = \'<div class="feedback-box fb-err">\' +\n' +
-'          \'<strong>💪 ¡Casi! Revisa la pista didáctica:</strong><br>\' + reto.Feedback_Didactico + saber +\n' +
+'          \'<strong>💪 ¡Casi! Revisa la pista:</strong><br>\' + didactico + saber +\n' +
 '        \'</div>\' +\n' +
 '        \'<button class="btn-action" onclick="avanzar()">Seguir Adelante ➔</button>\';\n' +
 '      }\n' +
@@ -697,36 +838,103 @@ function getGameHtml(initialDataJson) {
 '\n' +
 '      Game.retoIdx++;\n' +
 '      var lista = filtrarRetosMateria(Game.materia);\n' +
-'      if (Game.retoIdx < lista.length) {\n' +
-'        renderPregunta();\n' +
-'      } else {\n' +
-'        renderSelector();\n' +
+'      if (Game.retoIdx < lista.length) renderPregunta();\n' +
+'      else renderSelector();\n' +
+'    }\n' +
+'\n' +
+'    function registrarFinPartida(resultado) {\n' +
+'      var tSeg = Math.round((Date.now() - Game.tiempoInicio) / 1000);\n' +
+'      var desglose = Object.keys(Game.aciertosPorMateria).map(function(m){\n' +
+'        return m.replace(\'_\', \' \') + \': \' + Game.aciertosPorMateria[m];\n' +
+'      }).join(\', \');\n' +
+'\n' +
+'      if (typeof google !== "undefined" && google.script && google.script.run && Game.jugador) {\n' +
+'        google.script.run.registrarPartidaOnline({\n' +
+'          jugador: Game.jugador,\n' +
+'          puntos: Game.puntos,\n' +
+'          vidas: Game.vidas,\n' +
+'          tiempo: tSeg,\n' +
+'          desglose: desglose,\n' +
+'          resultado: resultado\n' +
+'        });\n' +
 '      }\n' +
 '    }\n' +
 '\n' +
 '    function renderGameOver() {\n' +
 '      AudioFX.errTone();\n' +
-'      var m = window.GAME_DATA.meta || {};\n' +
+'      registrarFinPartida("DERROTA");\n' +
 '      var stage = document.getElementById("stage");\n' +
 '      stage.innerHTML = \n' +
-'        \'<h2 style="color:var(--color-red);font-size:1.6rem;margin-bottom:8px;">🌱 Misión en Pausa</h2>\' +\n' +
-'        \'<div class="dialogue-card">\' + (m.MENSAJE_DERROTA || "Has gastado tus corazones, ¡pero has aprendido mucho!") + \'</div>\' +\n' +
-'        \'<p style="color:var(--text-muted);margin-bottom:16px;">Puntos alcanzados: \' + Game.puntos + \' pts.</p>\' +\n' +
-'        \'<button class="btn-action" onclick="AudioFX.click(); renderInicio();">🔄 Intentar Otra Vez (RUN)</button>\';\n' +
+'        \'<h2 style="color:var(--color-red);font-size:1.5rem;margin-bottom:8px;">🌱 Misión en Pausa</h2>\' +\n' +
+'        \'<div class="dialogue-card">Has gastado tus corazones, ¡pero tus puntos han quedado guardados en el registro!</div>\' +\n' +
+'        \'<p style="color:var(--text-muted);margin-bottom:14px;">Puntuación final: \' + Game.puntos + \' pts.</p>\' +\n' +
+'        \'<button class="btn-action" onclick="AudioFX.click(); renderInicio();">🔄 Intentar de Nuevo (RUN)</button>\';\n' +
 '    }\n' +
 '\n' +
 '    function renderVictoria() {\n' +
 '      AudioFX.winTone();\n' +
-'      var m = window.GAME_DATA.meta || {};\n' +
+'      registrarFinPartida("VICTORIA_PODIO");\n' +
 '      var stage = document.getElementById("stage");\n' +
 '      stage.innerHTML = \n' +
-'        \'<h2 style="color:var(--color-gold);font-size:1.6rem;margin-bottom:8px;">🏆 ¡Misión Cumplida!</h2>\' +\n' +
-'        \'<div class="dialogue-card">\' + (m.MENSAJE_VICTORIA || "¡Eres un auténtico Guardián del Bosque!") + \'</div>\' +\n' +
-'        \'<p style="color:var(--text-muted);margin-bottom:16px;">Puntuación de Honor: <strong>\' + Game.puntos + \' pts</strong></p>\' +\n' +
+'        \'<h2 style="color:var(--color-gold);font-size:1.6rem;margin-bottom:8px;">🏆 ¡Misión y Carrera Cumplidas!</h2>\' +\n' +
+'        \'<div class="dialogue-card">¡Extraordinario trabajo, \' + Game.jugador + \'! Has protegido el bosque y tu puntuación ya está en el cuaderno del docente.</div>\' +\n' +
+'        \'<p style="color:var(--text-muted);margin-bottom:16px;">Puntos finales: <strong>\' + Game.puntos + \' pts</strong></p>\' +\n' +
 '        \'<button class="btn-action" onclick="AudioFX.click(); renderInicio();">✨ Volver a Jugar</button>\';\n' +
 '    }\n' +
 '\n' +
-'    /* VISTA DE FORMULARIO PARA ALUMNOS / DOCENTES */\n' +
+'    /* PANTALLA DE CARRERA MULTIJUGADOR EN VIVO */\n' +
+'    function renderPantallaCarrera() {\n' +
+'      var stage = document.getElementById("stage");\n' +
+'      stage.innerHTML = \n' +
+'        \'<h2 style="color:var(--color-gold);margin-bottom:6px;">🏁 Carrera Multijugador del Aula</h2>\' +\n' +
+'        \'<p style="color:var(--text-muted);margin-bottom:14px;font-size:0.9rem;">Visualización en vivo de los equipos. Los avatares avanzan con cada respuesta correcta (refresco cada 3 seg):</p>\' +\n' +
+'        \'<div id="pistaContainer" class="track-container">Cargando posiciones del aula...</div>\';\n' +
+'\n' +
+'      refrescarPista();\n' +
+'      timerPoll = setInterval(refrescarPista, 3000);\n' +
+'    }\n' +
+'\n' +
+'    function refrescarPista() {\n' +
+'      if (typeof google !== "undefined" && google.script && google.script.run) {\n' +
+'        google.script.run.withSuccessHandler(pintarPista).obtenerEstadoLobbyMemoria();\n' +
+'      } else {\n' +
+'        // Simulación visual en entorno local\n' +
+'        var fake = {\n' +
+'          "Equipo Los Linces": { avatar: "🦊", casilla: 7, puntos: 75 },\n' +
+'          "Equipo Nutrias": { avatar: "🐸", casilla: 5, puntos: 50 },\n' +
+'          "Equipo Búhos": { avatar: "🦉", casilla: 8, puntos: 80 }\n' +
+'        };\n' +
+'        if (Game.jugador) fake[Game.jugador] = { avatar: Game.avatar, casilla: Game.casilla, puntos: Game.puntos };\n' +
+'        pintarPista(fake);\n' +
+'      }\n' +
+'    }\n' +
+'\n' +
+'    function pintarPista(lobby) {\n' +
+'      var cont = document.getElementById("pistaContainer");\n' +
+'      if (!cont) return;\n' +
+'      var keys = Object.keys(lobby || {});\n' +
+'      if (keys.length === 0) {\n' +
+'        cont.innerHTML = "<p style=\'color:#94a3b8;\'>Esperando a que los equipos se conecten y respondan retos...</p>";\n' +
+'        return;\n' +
+'      }\n' +
+'      var metaCasillas = 10;\n' +
+'      var html = "";\n' +
+'      keys.forEach(function(k) {\n' +
+'        var j = lobby[k];\n' +
+'        var c = Math.min(metaCasillas, j.casilla || 0);\n' +
+'        var pct = (c / metaCasillas) * 85;\n' +
+'        html += \'<div class="track-lane">\' +\n' +
+'          \'<strong style="color:#fff;font-size:0.9rem;width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">\' + k + \'</strong>\' +\n' +
+'          \'<div style="flex:1;position:relative;height:100%;margin:0 10px;">\' +\n' +
+'            \'<span class="lane-avatar" style="left:\' + pct + \'%;">\' + (j.avatar || "🦊") + \'</span>\' +\n' +
+'          \'</div>\' +\n' +
+'          \'<span style="color:var(--color-gold);font-weight:bold;font-size:0.85rem;">\' + (j.puntos || 0) + \' pts (C\' + c + \')</span>\' +\n' +
+'        \'</div>\';\n' +
+'      });\n' +
+'      cont.innerHTML = html;\n' +
+'    }\n' +
+'\n' +
+'    /* FORMULARIO DE PROPUESTAS */\n' +
 '    function renderFormularioPropuesta() {\n' +
 '      var stage = document.getElementById("stage");\n' +
 '      var mats = Object.keys(window.GAME_DATA.materias || {});\n' +
@@ -734,25 +942,24 @@ function getGameHtml(initialDataJson) {
 '\n' +
 '      stage.innerHTML = \n' +
 '        \'<h2 style="color:var(--color-gold);margin-bottom:6px;">✏️ Enviar Propuesta de Reto</h2>\' +\n' +
-'        \'<p style="color:var(--text-muted);margin-bottom:16px;font-size:0.9rem;">Crea un nuevo desafío didáctico. Se enviará a la hoja para ser aprobado por el profesorado.</p>\' +\n' +
 '        \'<form id="formReto" onsubmit="enviarFormulario(event)">\' +\n' +
 '          \'<div class="form-row">\' +\n' +
 '            \'<div class="form-group">\' +\n' +
-'              \'<label>Asignatura / Materia:</label>\' +\n' +
+'              \'<label>Materia:</label>\' +\n' +
 '              \'<select id="f_materia" class="form-control">\' + optMaterias + \'</select>\' +\n' +
 '            \'</div>\' +\n' +
 '            \'<div class="form-group">\' +\n' +
-'              \'<label>Tu Nombre o Equipo:</label>\' +\n' +
-'              \'<input type="text" id="f_autor" class="form-control" placeholder="Ej. Equipo 3 - Los Linces" required>\' +\n' +
+'              \'<label>Autor / Equipo:</label>\' +\n' +
+'              \'<input type="text" id="f_autor" class="form-control" value="\' + (Game.jugador || "") + \'" placeholder="Nombre del equipo" required>\' +\n' +
 '            \'</div>\' +\n' +
 '          \'</div>\' +\n' +
 '          \'<div class="form-group">\' +\n' +
-'            \'<label>Criterio de Evaluación / Saber:</label>\' +\n' +
+'            \'<label>Criterio de Evaluación:</label>\' +\n' +
 '            \'<input type="text" id="f_criterio" class="form-control" placeholder="Ej. CE.CMN.5.2 - Cadenas tróficas">\' +\n' +
 '          \'</div>\' +\n' +
 '          \'<div class="form-group">\' +\n' +
-'            \'<label>Pregunta o Enigma del Reto:</label>\' +\n' +
-'            \'<textarea id="f_texto" class="form-control" rows="2" placeholder="Escribe aquí el reto o la pregunta..." required></textarea>\' +\n' +
+'            \'<label>Pregunta del Reto:</label>\' +\n' +
+'            \'<textarea id="f_texto" class="form-control" rows="2" placeholder="Escribe aquí el reto..." required></textarea>\' +\n' +
 '          \'</div>\' +\n' +
 '          \'<div class="form-row">\' +\n' +
 '            \'<div class="form-group"><label>Opción A:</label><input type="text" id="f_opA" class="form-control" required></div>\' +\n' +
@@ -765,10 +972,10 @@ function getGameHtml(initialDataJson) {
 '            \'</div>\' +\n' +
 '          \'</div>\' +\n' +
 '          \'<div class="form-group">\' +\n' +
-'            \'<label>Explicación Didáctica (¿Por qué es la correcta?):</label>\' +\n' +
-'            \'<input type="text" id="f_feedback" class="form-control" placeholder="Explicación educativa tras responder..." required>\' +\n' +
+'            \'<label>Explicación Didáctica:</label>\' +\n' +
+'            \'<input type="text" id="f_feedback" class="form-control" placeholder="Por qué es la opción correcta..." required>\' +\n' +
 '          \'</div>\' +\n' +
-'          \'<button type="submit" class="btn-action" id="btnSubmitForm">🚀 Enviar Propuesta a Revisión</button>\' +\n' +
+'          \'<button type="submit" class="btn-action" id="btnSubmitForm">🚀 Enviar a Revisión Docente</button>\' +\n' +
 '          \'<div id="formMsg" style="margin-top:14px;font-weight:bold;"></div>\' +\n' +
 '        \'</form>\';\n' +
 '    }\n' +
@@ -798,7 +1005,7 @@ function getGameHtml(initialDataJson) {
 '        google.script.run\n' +
 '          .withSuccessHandler(function(res) {\n' +
 '            btn.disabled = false;\n' +
-'            btn.innerText = "🚀 Enviar Propuesta a Revisión";\n' +
+'            btn.innerText = "🚀 Enviar a Revisión Docente";\n' +
 '            if (res.ok) {\n' +
 '              AudioFX.okTone();\n' +
 '              msg.innerHTML = \'<span style="color:var(--color-green);">\' + res.mensaje + \'</span>\';\n' +
@@ -808,21 +1015,15 @@ function getGameHtml(initialDataJson) {
 '              msg.innerHTML = \'<span style="color:var(--color-red);">Error: \' + res.error + \'</span>\';\n' +
 '            }\n' +
 '          })\n' +
-'          .withFailureHandler(function(err) {\n' +
-'            btn.disabled = false;\n' +
-'            btn.innerText = "🚀 Enviar Propuesta a Revisión";\n' +
-'            AudioFX.errTone();\n' +
-'            msg.innerHTML = \'<span style="color:var(--color-red);">Error al conectar: \' + err.message + \'</span>\';\n' +
-'          })\n' +
 '          .guardarPropuestaReto(materia, reto);\n' +
 '      } else {\n' +
 '        btn.disabled = false;\n' +
-'        btn.innerText = "🚀 Enviar Propuesta a Revisión";\n' +
-'        msg.innerHTML = \'<span style="color:var(--color-green);">Simulación local: Propuesta registrada (en Apps Script se guarda en Sheets).</span>\';\n' +
+'        btn.innerText = "🚀 Enviar a Revisión Docente";\n' +
+'        msg.innerHTML = \'<span style="color:var(--color-green);">Simulación local: Propuesta registrada en la hoja.</span>\';\n' +
 '      }\n' +
 '    }\n' +
 '\n' +
-'    window.onload = function() { renderInicio(); };\n' +
+'    window.onload = function() { renderRegistroJugador(); };\n' +
 '  </script>\n' +
 '</body>\n' +
 '</html>';
@@ -833,11 +1034,8 @@ function getGameHtml(initialDataJson) {
  */
 function configurarPestana(ss, nombre, tabColor, headerBg, cabeceras, anchos, semillas) {
   var hoja = ss.getSheetByName(nombre);
-  if (!hoja) {
-    hoja = ss.insertSheet(nombre);
-  } else {
-    hoja.clear();
-  }
+  if (!hoja) hoja = ss.insertSheet(nombre);
+  else hoja.clear();
 
   hoja.setTabColor(tabColor);
   var rHeader = hoja.getRange(1, 1, 1, cabeceras.length);
@@ -857,9 +1055,7 @@ function configurarPestana(ss, nombre, tabColor, headerBg, cabeceras, anchos, se
 
   hoja.setFrozenRows(1);
   if (anchos && anchos.length === cabeceras.length) {
-    for (var i = 0; i < anchos.length; i++) {
-      hoja.setColumnWidth(i + 1, anchos[i]);
-    }
+    for (var i = 0; i < anchos.length; i++) hoja.setColumnWidth(i + 1, anchos[i]);
   }
 
   var colEstado = cabeceras.indexOf('Estado_Revision') + 1;
@@ -883,13 +1079,52 @@ function configurarPestana(ss, nombre, tabColor, headerBg, cabeceras, anchos, se
   }
 }
 
+function configurarPestanaPuntuaciones(ss) {
+  var hoja = ss.getSheetByName('Puntuaciones_Online');
+  if (!hoja) hoja = ss.insertSheet('Puntuaciones_Online');
+  else hoja.clear();
+
+  hoja.setTabColor('#00897B');
+  var cabeceras = ['Fecha_Hora', 'Jugador_O_Equipo', 'Curso_Grupo', 'Puntuacion_Final', 'Vidas_Restantes', 'Tiempo_Segundos', 'Desglose_Aciertos', 'Resultado_Mision'];
+  var anchos = [150, 180, 110, 110, 110, 120, 260, 130];
+
+  var rHeader = hoja.getRange(1, 1, 1, cabeceras.length);
+  rHeader.setValues([cabeceras]);
+  rHeader.setBackground('#004D40');
+  rHeader.setFontColor('#FFFFFF');
+  rHeader.setFontWeight('bold');
+  rHeader.setHorizontalAlignment('center');
+  rHeader.setVerticalAlignment('middle');
+  hoja.setRowHeight(1, 38);
+  hoja.setFrozenRows(1);
+  for (var i = 0; i < anchos.length; i++) hoja.setColumnWidth(i + 1, anchos[i]);
+}
+
+function configurarPestanaLobby(ss) {
+  var hoja = ss.getSheetByName('Lobby_Multijugador');
+  if (!hoja) hoja = ss.insertSheet('Lobby_Multijugador');
+  else hoja.clear();
+
+  hoja.setTabColor('#D81B60');
+  var cabeceras = ['ID_Sesion', 'Nombre_Equipo', 'Icono_Avatar', 'Posicion_Pista', 'Puntos_Acumulados', 'Ultima_Actualizacion'];
+  var anchos = [110, 180, 100, 110, 120, 160];
+
+  var rHeader = hoja.getRange(1, 1, 1, cabeceras.length);
+  rHeader.setValues([cabeceras]);
+  rHeader.setBackground('#880E4F');
+  rHeader.setFontColor('#FFFFFF');
+  rHeader.setFontWeight('bold');
+  rHeader.setHorizontalAlignment('center');
+  rHeader.setVerticalAlignment('middle');
+  hoja.setRowHeight(1, 38);
+  hoja.setFrozenRows(1);
+  for (var i = 0; i < anchos.length; i++) hoja.setColumnWidth(i + 1, anchos[i]);
+}
+
 function configurarPestanaConfig(ss, filasParametros) {
   var hoja = ss.getSheetByName('Config_Juego');
-  if (!hoja) {
-    hoja = ss.insertSheet('Config_Juego', 0);
-  } else {
-    hoja.clear();
-  }
+  if (!hoja) hoja = ss.insertSheet('Config_Juego', 0);
+  else hoja.clear();
 
   hoja.setTabColor('#1A73E8');
   var cabeceras = ['Parametro', 'Valor', 'Descripcion_Docente'];

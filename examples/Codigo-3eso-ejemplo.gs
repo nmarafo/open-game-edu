@@ -1,7 +1,8 @@
 // ====================================================================
-// open-game-edu: Instalador y Motor Monolítico de Referencia
-// Etapa: 3.º de ESO (Secundaria) - Decreto Curricular LOMLOE
+// open-game-edu: Ecosistema Monolítico con Multijugador y Telemetría
+// Etapa: 3.º de ESO (Educación Secundaria) - Decreto Curricular LOMLOE
 // Materias: Lengua Castellana (Siglo de Oro), Geografía e Historia (Comercio s.XVI), Matemáticas (Probabilidad)
+// Modalidad: Aventura Náutica y Carrera/Regata Multijugador en Línea
 // Licencia: Creative Commons Atribución-CompartirIgual 4.0 (CC BY-SA 4.0)
 // Basado en proyectos de Norberto Martín Afonso (OpenDidactia / open-game-edu)
 // ====================================================================
@@ -13,6 +14,7 @@ function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu('🎮 open-game-edu')
     .addItem('▶️ Run / Previsualizar Juego', 'mostrarJuegoModal')
+    .addItem('🏁 Pantalla de Regata de Indias (Multijugador)', 'mostrarCarreraModal')
     .addItem('📋 Panel de Revisión de Propuestas', 'mostrarPanelRevision')
     .addSeparator()
     .addItem('⚙️ Reinicializar Ecosistema', 'inicializarEcosistema')
@@ -20,14 +22,25 @@ function onOpen() {
 }
 
 /**
- * Abre el juego en una ventana modal flotante dentro de Google Sheets.
+ * Abre el juego en una ventana modal interactiva dentro de Google Sheets.
  */
 function mostrarJuegoModal() {
   var datos = obtenerDatosJuego();
   var html = HtmlService.createHtmlOutput(getGameHtml(JSON.stringify(datos)))
-    .setWidth(820)
-    .setHeight(640);
-  SpreadsheetApp.getUi().showModalDialog(html, '🎮 Previsualización del Videojuego - Modo RUN');
+    .setWidth(840)
+    .setHeight(660);
+  SpreadsheetApp.getUi().showModalDialog(html, '🎮 Modo RUN - La Flota de Indias (3.º ESO)');
+}
+
+/**
+ * Abre la pantalla de proyección de la Regata de Indias Multijugador para el aula.
+ */
+function mostrarCarreraModal() {
+  var datos = obtenerDatosJuego();
+  var html = HtmlService.createHtmlOutput(getGameHtml(JSON.stringify(datos)))
+    .setWidth(860)
+    .setHeight(660);
+  SpreadsheetApp.getUi().showModalDialog(html, '🏁 Pantalla de Regata Multijugador en Vivo');
 }
 
 /**
@@ -81,16 +94,24 @@ function mostrarPanelRevision() {
 function inicializarEcosistema() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
 
+  // --- A. Pestaña de Configuración ---
   configurarPestanaConfig(ss, [
-    ['TITULO_JUEGO', 'La Flota de Indias: Crónicas del Siglo de Oro', 'Título mostrado en la cabecera del juego'],
+    ['TITULO_JUEGO', '⚓ La Flota de Indias: Crónicas del Siglo de Oro', 'Título mostrado en la cabecera del juego'],
     ['ETAPA_CURSO', '3.º de ESO', 'Etapa y curso educativo'],
     ['COMUNIDAD_AUTONOMA', 'Decreto Autonómico de Educación Secundaria (LOMLOE)', 'Decreto autonómico de currículo aplicado'],
-    ['DESCRIPCION', 'Zarpa desde Sevilla en 1588. Supera enigmas literarios, calcula probabilidades náuticas y gestiona rutas comerciales.', 'Sinopsis de bienvenida'],
+    ['MODALIDAD_JUEGO', 'CARRERA_MULTIJUGADOR', 'Modalidad: AVENTURA o CARRERA_MULTIJUGADOR'],
+    ['DESCRIPCION', 'Zarpa desde Sevilla en 1588. Supera enigmas literarios, calcula probabilidades náuticas y compite en la Regata del Atlántico.', 'Sinopsis de bienvenida'],
     ['VIDAS_INICIALES', 3, 'Número de intentos disponibles para el alumno'],
     ['PUNTOS_VICTORIA', 80, 'Puntuación mínima para completar la expedición'],
     ['MENSAJE_VICTORIA', '¡Enhorabuena, Almirante! Tu flota ha arribado a Veracruz con honores y riqueza.', 'Mensaje al ganar'],
-    ['MENSAJE_DERROTA', 'La travesía ha sucumbido a las inclemencias y la falta de pericia.', 'Mensaje al agotar vidas']
+    ['MENSAJE_DERROTA', 'La travesía ha sucumbido a las tempestades y la falta de pericia.', 'Mensaje al agotar vidas']
   ]);
+
+  // --- B. Pestaña de Puntuaciones y Telemetría en Vivo ---
+  configurarPestanaPuntuaciones(ss);
+
+  // --- C. Pestaña de Lobby Multijugador ---
+  configurarPestanaLobby(ss);
 
   var cabecerasMateria = [
     'ID', 'Etapa', 'Criterio_Evaluacion', 'Saber_Basico', 'Autor_O_Equipo', 
@@ -146,7 +167,7 @@ function inicializarEcosistema() {
         'HIST_01', 'Aduana de Indias',
         'CE.GH.3.4: Analizar las instituciones de control del comercio marítimo en la Edad Moderna.',
         'La Casa de la Contratación y el monopolio', 'Equipo Docente', 'APROBADO', '',
-        'Casa de la Contratación',
+        'Oficial del Rey',
         '¿Qué institución fundada en Sevilla en 1503 monopolizaba el registro de mercancías, mapas y pilotos hacia el Nuevo Mundo?',
         'A) El Consejo de Indias', 'B) La Casa de la Contratación', 'C) El Consulado del Mar',
         'B',
@@ -156,7 +177,7 @@ function inicializarEcosistema() {
         'HIST_02', 'Paso de las Canarias',
         'CE.GH.3.2: Interpretar factores geográficos y vientos en las navegaciones oceánicas.',
         'Rutas transatlánticas y vientos alisios', 'Javier y Elena', 'APROBADO', 'Gran trabajo con los mapas',
-        'Isla de La Gomera',
+        'Piloto Mayor',
         'Las flotas españolas aprovechaban un sistema constante de vientos para cruzar el océano Atlántico hacia América. ¿Cuáles eran?',
         'A) Vientos Alisios', 'B) Vientos Polares del Este', 'C) Corriente de Humboldt',
         'A',
@@ -174,7 +195,7 @@ function inicializarEcosistema() {
         'MAT_01', 'Bodega del Galeón',
         'CE.MAT.3.1: Utilizar fracciones y proporciones para resolver problemas de inventario y pérdidas.',
         'Operaciones con fracciones', 'Equipo Docente', 'APROBADO', '',
-        'Reparto de Víveres',
+        'Maestre de Víveres',
         'De 60 quintales de grano almacenados, las ratas han dañado 15 quintales. ¿Qué fracción del cargamento de grano sigue intacta?',
         'A) 1/4', 'B) 3/4', 'C) 2/3',
         'B',
@@ -184,8 +205,8 @@ function inicializarEcosistema() {
         'MAT_02', 'Tormenta en el Atlántico',
         'CE.MAT.3.7: Calcular probabilidades de sucesos aleatorios simples mediante la regla de Laplace.',
         'Probabilidad simple y regla de Laplace', 'Equipo 4 - Pitágoras', 'APROBADO', '',
-        'Cálculo de Rumbo',
-        'Un anemómetro rudimentario indica 4 vientos probables de tempestad de un total de 16 cuadrantes de la rosa. Según la regla de Laplace, ¿cuál es la probabilidad de entrar en temporal?',
+        'Oficial Navegante',
+        'Un anemómetro rudimentario indica 4 vientos probables de tempestad de un total de 16 cuadrantes de la rosa náutica. Según la regla de Laplace, ¿cuál es la probabilidad de entrar en temporal?',
         'A) 1/4 (25%)', 'B) 1/2 (50%)', 'C) 1/8 (12.5%)',
         'A',
         '¡Bien calculado! Casos favorables / casos posibles = 4/16 = 1/4 = 25%.', 30
@@ -197,8 +218,61 @@ function inicializarEcosistema() {
 }
 
 /**
- * 3. FUNCIONES BACKEND RPC (Envío y Moderación de Propuestas)
+ * 3. FUNCIONES BACKEND RPC: MULTIJUGADOR, TELEMETRÍA Y PROPUESTAS
  */
+function actualizarPosicionLobby(nombreEquipo, avatar, nuevaCasilla, puntos) {
+  try {
+    var cache = CacheService.getScriptCache();
+    var raw = cache.get('LOBBY_STATE');
+    var lobby = raw ? JSON.parse(raw) : {};
+
+    lobby[nombreEquipo] = {
+      equipo: nombreEquipo,
+      avatar: avatar || '⛵',
+      casilla: parseInt(nuevaCasilla, 10) || 0,
+      puntos: parseInt(puntos, 10) || 0,
+      timestamp: Date.now()
+    };
+
+    cache.put('LOBBY_STATE', JSON.stringify(lobby), 7200);
+    return { ok: true, lobby: lobby };
+  } catch(e) {
+    return { ok: false, error: e.message };
+  }
+}
+
+function obtenerEstadoLobbyMemoria() {
+  var cache = CacheService.getScriptCache();
+  var raw = cache.get('LOBBY_STATE');
+  if (raw) return JSON.parse(raw);
+  return {};
+}
+
+function registrarPartidaOnline(partida) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var hoja = ss.getSheetByName('Puntuaciones_Online');
+    if (!hoja) return { ok: false, error: 'Pestaña Puntuaciones_Online no encontrada' };
+
+    var ahora = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm:ss');
+    var fila = [
+      ahora,
+      partida.jugador || 'Anónimo',
+      partida.curso || '3.º ESO',
+      parseInt(partida.puntos, 10) || 0,
+      parseInt(partida.vidas, 10) || 0,
+      parseInt(partida.tiempo, 10) || 0,
+      partida.desglose || '',
+      partida.resultado || 'FINALIZADO'
+    ];
+
+    hoja.appendRow(fila);
+    return { ok: true, mensaje: 'Partida guardada en el cuaderno de evaluación.' };
+  } catch(err) {
+    return { ok: false, error: err.message };
+  }
+}
+
 function guardarPropuestaReto(nombreMateria, reto) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -211,7 +285,7 @@ function guardarPropuestaReto(nombreMateria, reto) {
       reto.Etapa || 'Travesía de Indias',
       reto.Criterio_Evaluacion || '',
       reto.Saber_Basico || '',
-      reto.Autor_O_Equipo || 'Equipo Alumnado',
+      reto.Autor_O_Equipo || 'Equipo Alumnado 3.º ESO',
       'PENDIENTE',
       '',
       reto.Personaje || 'Oficial de Cubierta',
@@ -252,9 +326,16 @@ function cambiarEstadoReto(nombreMateria, idReto, nuevoEstado, feedbackDocente) 
  */
 function doGet(e) {
   try {
+    var accion = (e && e.parameter && e.parameter.action) || 'app';
+
+    if (accion === 'lobby') {
+      return ContentService.createTextOutput(JSON.stringify(obtenerEstadoLobbyMemoria()))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
     var datosJuego = obtenerDatosJuego();
 
-    if (e && e.parameter && e.parameter.action === 'data') {
+    if (accion === 'data') {
       return ContentService.createTextOutput(JSON.stringify(datosJuego))
         .setMimeType(ContentService.MimeType.JSON);
     }
@@ -277,7 +358,7 @@ function doGet(e) {
 }
 
 /**
- * 5. EXTRACTOR DE DATOS
+ * 5. EXTRACTOR DE DATOS DE SHEETS
  */
 function obtenerDatosJuego() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -295,7 +376,7 @@ function obtenerDatosJuego() {
         var k = String(valores[r][0] || '').trim();
         if (k) paquete.meta[k] = valores[r][1];
       }
-    } else {
+    } else if (nombre !== 'Puntuaciones_Online' && nombre !== 'Lobby_Multijugador') {
       var headers = valores[0].map(function(h) { return String(h || '').trim(); });
       var items = [];
       for (var row = 1; row < valores.length; row++) {
@@ -316,7 +397,7 @@ function obtenerDatosJuego() {
 }
 
 /**
- * 6. GENERADOR FRONTEND MONOLÍTICO CON BOTÓN "RUN" Y FORMULARIO DE PROPUESTAS
+ * 6. GENERADOR FRONTEND MONOLÍTICO: JUEGO, REGATA MULTIJUGADOR Y FORMULARIO
  */
 function getGameHtml(initialDataJson) {
   return '<!DOCTYPE html>\n' +
@@ -326,9 +407,9 @@ function getGameHtml(initialDataJson) {
 '  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
 '  <style>\n' +
 '    :root {\n' +
-'      --bg-dark: #0f172a;\n' +
-'      --card-bg: #1e293b;\n' +
-'      --card-border: #334155;\n' +
+'      --bg-dark: #0a1128;\n' +
+'      --card-bg: #132247;\n' +
+'      --card-border: #1c3d73;\n' +
 '      --text-main: #f8fafc;\n' +
 '      --text-muted: #94a3b8;\n' +
 '      --accent-gold: #f59e0b;\n' +
@@ -349,7 +430,7 @@ function getGameHtml(initialDataJson) {
 '    }\n' +
 '    #app {\n' +
 '      width: 100%;\n' +
-'      max-width: 780px;\n' +
+'      max-width: 800px;\n' +
 '      background: var(--card-bg);\n' +
 '      border: 1px solid var(--card-border);\n' +
 '      border-radius: var(--radius);\n' +
@@ -358,18 +439,19 @@ function getGameHtml(initialDataJson) {
 '      display: flex;\n' +
 '      flex-direction: column;\n' +
 '    }\n' +
-'    /* Barra Superior de Navegación / Modos */\n' +
+'    /* Barra Superior de Navegación */\n' +
 '    .top-nav {\n' +
-'      background: #090e17;\n' +
+'      background: #060d1d;\n' +
 '      padding: 10px 18px;\n' +
 '      display: flex;\n' +
 '      justify-content: space-between;\n' +
 '      align-items: center;\n' +
 '      border-bottom: 1px solid var(--card-border);\n' +
 '      gap: 10px;\n' +
+'      flex-wrap: wrap;\n' +
 '    }\n' +
 '    .nav-btn {\n' +
-'      background: #334155;\n' +
+'      background: #1e293b;\n' +
 '      color: #fff;\n' +
 '      border: 1px solid var(--card-border);\n' +
 '      padding: 8px 16px;\n' +
@@ -383,7 +465,7 @@ function getGameHtml(initialDataJson) {
 '    .run-pulse { background: var(--success-green); color: #000; border: none; }\n' +
 '    /* Header */\n' +
 '    header {\n' +
-'      background: #111827;\n' +
+'      background: #0b1736;\n' +
 '      padding: 14px 20px;\n' +
 '      display: flex;\n' +
 '      justify-content: space-between;\n' +
@@ -392,7 +474,6 @@ function getGameHtml(initialDataJson) {
 '    }\n' +
 '    .title-badge { font-weight: 700; font-size: 1.1rem; color: var(--accent-gold); display: flex; align-items: center; gap: 8px; }\n' +
 '    .stats-bar { display: flex; align-items: center; gap: 14px; font-weight: 600; font-size: 0.95rem; }\n' +
-'    .heart-icon { color: var(--danger-red); }\n' +
 '    .score-badge { background: #0284c7; color: white; padding: 4px 10px; border-radius: 20px; }\n' +
 '    main { padding: 24px; min-height: 400px; display: flex; flex-direction: column; justify-content: center; }\n' +
 '    .card-title { font-size: 1.4rem; color: var(--accent-blue); margin-bottom: 10px; }\n' +
@@ -413,7 +494,7 @@ function getGameHtml(initialDataJson) {
 '      font-weight: 600;\n' +
 '    }\n' +
 '    .narrative-box {\n' +
-'      background: rgba(15, 23, 42, 0.7);\n' +
+'      background: rgba(6, 13, 29, 0.8);\n' +
 '      border-left: 4px solid var(--accent-gold);\n' +
 '      padding: 16px;\n' +
 '      border-radius: 6px;\n' +
@@ -425,8 +506,8 @@ function getGameHtml(initialDataJson) {
 '    .speaker { font-weight: bold; color: var(--accent-gold); font-size: 0.9rem; text-transform: uppercase; margin-bottom: 6px; }\n' +
 '    .options-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }\n' +
 '    .opt-btn {\n' +
-'      background: #334155;\n' +
-'      border: 2px solid #475569;\n' +
+'      background: #1c2d52;\n' +
+'      border: 2px solid #284175;\n' +
 '      color: white;\n' +
 '      padding: 14px 18px;\n' +
 '      border-radius: 8px;\n' +
@@ -435,7 +516,7 @@ function getGameHtml(initialDataJson) {
 '      text-align: left;\n' +
 '      transition: all 0.2s ease;\n' +
 '    }\n' +
-'    .opt-btn:hover { background: #475569; border-color: var(--accent-blue); transform: translateY(-2px); }\n' +
+'    .opt-btn:hover { background: #284175; border-color: var(--accent-blue); transform: translateY(-2px); }\n' +
 '    .opt-btn:disabled { opacity: 0.7; cursor: not-allowed; }\n' +
 '    .feedback-banner {\n' +
 '      padding: 16px;\n' +
@@ -464,7 +545,7 @@ function getGameHtml(initialDataJson) {
 '    .hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }\n' +
 '    @media(max-width: 600px) { .hub-grid { grid-template-columns: 1fr; } }\n' +
 '    .hub-card {\n' +
-'      background: #0f172a;\n' +
+'      background: #0f1c3f;\n' +
 '      border: 1px solid var(--card-border);\n' +
 '      padding: 18px;\n' +
 '      border-radius: 10px;\n' +
@@ -473,6 +554,30 @@ function getGameHtml(initialDataJson) {
 '    }\n' +
 '    .hub-card:hover { border-color: var(--accent-gold); transform: translateY(-3px); }\n' +
 '    .hub-card.completed { opacity: 0.6; border-color: var(--success-green); }\n' +
+'    /* Pista Multijugador Regata */\n' +
+'    .track-container {\n' +
+'      background: #060d1d;\n' +
+'      border: 1px solid var(--card-border);\n' +
+'      border-radius: 10px;\n' +
+'      padding: 16px;\n' +
+'      margin-top: 14px;\n' +
+'    }\n' +
+'    .track-lane {\n' +
+'      background: #0e1938;\n' +
+'      margin-bottom: 10px;\n' +
+'      border-radius: 8px;\n' +
+'      padding: 8px 12px;\n' +
+'      display: flex;\n' +
+'      align-items: center;\n' +
+'      position: relative;\n' +
+'      height: 48px;\n' +
+'      border-left: 4px solid var(--accent-blue);\n' +
+'    }\n' +
+'    .lane-avatar {\n' +
+'      position: absolute;\n' +
+'      font-size: 1.8rem;\n' +
+'      transition: left 0.6s ease-in-out;\n' +
+'    }\n' +
 '    /* Formulario */\n' +
 '    .form-group { margin-bottom: 14px; text-align: left; }\n' +
 '    .form-group label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; color: var(--accent-gold); }\n' +
@@ -481,7 +586,7 @@ function getGameHtml(initialDataJson) {
 '      padding: 10px 12px;\n' +
 '      border-radius: 6px;\n' +
 '      border: 1px solid var(--card-border);\n' +
-'      background: #0f172a;\n' +
+'      background: #0a142e;\n' +
 '      color: #fff;\n' +
 '      font-size: 0.95rem;\n' +
 '    }\n' +
@@ -493,8 +598,9 @@ function getGameHtml(initialDataJson) {
 '  <div id="app">\n' +
 '    <div class="top-nav">\n' +
 '      <div>\n' +
-'        <button class="nav-btn run-pulse" id="btnNavRun" onclick="Sound.click(); activarModo(\\\'run\\\');">▶️ RUN / Previsualizar</button>\n' +
-'        <button class="nav-btn" id="btnNavForm" onclick="Sound.click(); activarModo(\\\'form\\\');">✏️ Proponer Reto (Alumnos)</button>\n' +
+'        <button class="nav-btn run-pulse" id="btnNavRun" onclick="Sound.click(); activarModo(\\\'run\\\');">▶️ RUN / Travesía</button>\n' +
+'        <button class="nav-btn" id="btnNavCarrera" onclick="Sound.click(); activarModo(\\\'carrera\\\');">🏁 Flota en Vivo</button>\n' +
+'        <button class="nav-btn" id="btnNavForm" onclick="Sound.click(); activarModo(\\\'form\\\');">✏️ Proponer Reto</button>\n' +
 '      </div>\n' +
 '      <label style="font-size:0.8rem;color:var(--text-muted);display:flex;align-items:center;gap:6px;">\n' +
 '        <input type="checkbox" id="chkTodos" onchange="alternarFiltroPendientes()"> Ver borradores\n' +
@@ -514,6 +620,7 @@ function getGameHtml(initialDataJson) {
 '    window.GAME_DATA = ' + initialDataJson + ';\n' +
 '    var modoActual = "run";\n' +
 '    var verBorradores = false;\n' +
+'    var timerPoll = null;\n' +
 '\n' +
 '    var Sound = (function() {\n' +
 '      var ctx = null;\n' +
@@ -541,10 +648,15 @@ function getGameHtml(initialDataJson) {
 '    })();\n' +
 '\n' +
 '    var State = {\n' +
+'      jugador: "",\n' +
+'      avatar: "⛵",\n' +
+'      casilla: 0,\n' +
 '      vidas: 3,\n' +
 '      puntos: 0,\n' +
 '      puntosMeta: 80,\n' +
+'      tiempoInicio: Date.now(),\n' +
 '      completados: {},\n' +
+'      aciertosPorMateria: {},\n' +
 '      materiaActual: null,\n' +
 '      indiceReto: 0\n' +
 '    };\n' +
@@ -556,10 +668,16 @@ function getGameHtml(initialDataJson) {
 '\n' +
 '    function activarModo(modo) {\n' +
 '      modoActual = modo;\n' +
+'      if (timerPoll) { clearInterval(timerPoll); timerPoll = null; }\n' +
 '      document.getElementById("btnNavRun").className = (modo === "run") ? "nav-btn run-pulse active" : "nav-btn";\n' +
+'      document.getElementById("btnNavCarrera").className = (modo === "carrera") ? "nav-btn active" : "nav-btn";\n' +
 '      document.getElementById("btnNavForm").className = (modo === "form") ? "nav-btn active" : "nav-btn";\n' +
+'\n' +
 '      if (modo === "run") {\n' +
-'        renderTitle();\n' +
+'        if (!State.jugador) renderRegistroJugador();\n' +
+'        else renderTitle();\n' +
+'      } else if (modo === "carrera") {\n' +
+'        renderPantallaCarrera();\n' +
 '      } else {\n' +
 '        renderFormularioPropuesta();\n' +
 '      }\n' +
@@ -578,20 +696,62 @@ function getGameHtml(initialDataJson) {
 '      return lista.filter(function(r) { return r.Estado_Revision === "APROBADO" || !r.Estado_Revision; });\n' +
 '    }\n' +
 '\n' +
+'    function renderRegistroJugador() {\n' +
+'      var stage = document.getElementById("gameStage");\n' +
+'      stage.innerHTML = \n' +
+'        \'<h2 class="card-title">⚓ Registro de la Flota (3.º ESO)</h2>\' +\n' +
+'        \'<p style="color:var(--text-muted);margin-bottom:16px;">Introduce el nombre de tu tripulación y elige tu navío para la Regata de Indias:</p>\' +\n' +
+'        \'<div class="narrative-box">\' +\n' +
+'          \'<div class="form-group">\' +\n' +
+'            \'<label>Nombre del Alférez o Tripulación:</label>\' +\n' +
+'            \'<input type="text" id="regNombre" class="form-control" placeholder="Ej. Equipo 1 - Los Corsarios" required>\' +\n' +
+'          \'</div>\' +\n' +
+'          \'<div class="form-group">\' +\n' +
+'            \'<label>Navío Insignia:</label>\' +\n' +
+'            \'<select id="regAvatar" class="form-control">\' +\n' +
+'              \'<option value="⛵">⛵ Galeón San Cristóbal</option>\' +\n' +
+'              \'<option value="⚓">⚓ Fragata Fortuna</option>\' +\n' +
+'              \'<option value="🧭">🧭 Nao Victoria</option>\' +\n' +
+'              \'<option value="📜">📜 Carabela del Saber</option>\' +\n' +
+'              \'<option value="🗺️">🗺️ Bergantín Veloz</option>\' +\n' +
+'            \'</select>\' +\n' +
+'          \'</div>\' +\n' +
+'          \'<button class="action-btn" onclick="guardarRegistroLocal()">Zarpar hacia el Océano ➔</button>\' +\n' +
+'        \'</div>\';\n' +
+'    }\n' +
+'\n' +
+'    function guardarRegistroLocal() {\n' +
+'      var n = document.getElementById("regNombre").value.trim();\n' +
+'      if (!n) { alert("Por favor, introduce el nombre de la tripulación."); return; }\n' +
+'      State.jugador = n;\n' +
+'      State.avatar = document.getElementById("regAvatar").value;\n' +
+'      State.tiempoInicio = Date.now();\n' +
+'      Sound.click();\n' +
+'      sincronizarLobby();\n' +
+'      renderTitle();\n' +
+'    }\n' +
+'\n' +
+'    function sincronizarLobby() {\n' +
+'      if (typeof google !== "undefined" && google.script && google.script.run && State.jugador) {\n' +
+'        google.script.run.actualizarPosicionLobby(State.jugador, State.avatar, State.casilla, State.puntos);\n' +
+'      }\n' +
+'    }\n' +
+'\n' +
 '    function renderTitle() {\n' +
 '      var stage = document.getElementById("gameStage");\n' +
 '      var meta = window.GAME_DATA.meta || {};\n' +
 '      State.vidas = parseInt(meta.VIDAS_INICIALES, 10) || 3;\n' +
 '      State.puntosMeta = parseInt(meta.PUNTOS_VICTORIA, 10) || 80;\n' +
-'      document.getElementById("headerTitle").innerText = meta.TITULO_JUEGO || "Aventura Educativa";\n' +
+'      document.getElementById("headerTitle").innerText = meta.TITULO_JUEGO || "La Flota de Indias";\n' +
 '      actualizarStats();\n' +
 '\n' +
 '      var subtitulo = meta.ETAPA_CURSO ? (\'<p style="color:var(--accent-gold);margin-bottom:8px;font-weight:600;">Etapa: \' + meta.ETAPA_CURSO + \'</p>\') : \'\';\n' +
 '      stage.innerHTML = \n' +
 '        \'<h2 class="card-title">📜 \' + (meta.TITULO_JUEGO || "Expedición") + \'</h2>\' +\n' +
 '        subtitulo +\n' +
+'        \'<p style="color:var(--accent-gold);font-weight:700;margin-bottom:12px;">Navío al mando: \' + State.avatar + \' \' + State.jugador + \'</p>\' +\n' +
 '        \'<div class="narrative-box">\' + (meta.DESCRIPCION || "Bienvenido a la aventura.") + \'</div>\' +\n' +
-'        \'<p style="color:var(--text-muted);margin-bottom:16px;">Supera los retos curriculares para alcanzar \' + State.puntosMeta + \' puntos.</p>\' +\n' +
+'        \'<p style="color:var(--text-muted);margin-bottom:16px;">Supera los retos curriculares para alcanzar \' + State.puntosMeta + \' puntos y llevar tu flota a puerto.</p>\' +\n' +
 '        \'<button class="action-btn" onclick="Sound.click(); renderHub();">🚀 Comenzar Travesía (RUN)</button>\';\n' +
 '    }\n' +
 '\n' +
@@ -644,7 +804,7 @@ function getGameHtml(initialDataJson) {
 '\n' +
 '      var reto = lista[State.indiceReto];\n' +
 '      var stage = document.getElementById("gameStage");\n' +
-'      var emisor = reto.Personaje || reto.Enclave || reto.Desafío_Cálculo || "Desafío";\n' +
+'      var emisor = reto.Personaje || reto.Enclave || reto.Desafío_Cálculo || "Oficial de Cubierta";\n' +
 '      var texto = reto.Texto_Narrativo || reto.Situacion_Problema || "";\n' +
 '\n' +
 '      var criterioHtml = reto.Criterio_Evaluacion \n' +
@@ -687,12 +847,15 @@ function getGameHtml(initialDataJson) {
 '        Sound.correct();\n' +
 '        var pts = parseInt(reto.Puntos, 10) || 25;\n' +
 '        State.puntos += pts;\n' +
+'        State.casilla += 1;\n' +
 '        State.completados[reto.ID] = true;\n' +
+'        State.aciertosPorMateria[State.materiaActual] = (State.aciertosPorMateria[State.materiaActual] || 0) + 1;\n' +
 '        actualizarStats();\n' +
+'        sincronizarLobby();\n' +
 '        fb.innerHTML = \'<div class="feedback-banner feedback-correct">\' +\n' +
-'          \'<strong>✅ ¡Acertado! (+\' + pts + \' pts)</strong><br>\' + didactico + saber +\n' +
+'          \'<strong>✅ ¡Acertado! (+\' + pts + \' pts - Tu navío avanza en la regata)</strong><br>\' + didactico + saber +\n' +
 '        \'</div>\' +\n' +
-'        \'<button class="action-btn" onclick="siguienteReto()">Continuar ➔</button>\';\n' +
+'        \'<button class="action-btn" onclick="siguienteReto()">Continuar Travesía ➔</button>\';\n' +
 '      } else {\n' +
 '        Sound.wrong();\n' +
 '        State.vidas -= 1;\n' +
@@ -718,26 +881,98 @@ function getGameHtml(initialDataJson) {
 '      }\n' +
 '    }\n' +
 '\n' +
+'    function registrarFinPartida(resultado) {\n' +
+'      var tSeg = Math.round((Date.now() - State.tiempoInicio) / 1000);\n' +
+'      var desglose = Object.keys(State.aciertosPorMateria).map(function(m){\n' +
+'        return m.replace(\'_\', \' \') + \': \' + State.aciertosPorMateria[m];\n' +
+'      }).join(\', \');\n' +
+'\n' +
+'      if (typeof google !== "undefined" && google.script && google.script.run && State.jugador) {\n' +
+'        google.script.run.registrarPartidaOnline({\n' +
+'          jugador: State.jugador,\n' +
+'          curso: "3.º ESO",\n' +
+'          puntos: State.puntos,\n' +
+'          vidas: State.vidas,\n' +
+'          tiempo: tSeg,\n' +
+'          desglose: desglose,\n' +
+'          resultado: resultado\n' +
+'        });\n' +
+'      }\n' +
+'    }\n' +
+'\n' +
 '    function renderGameOver() {\n' +
 '      Sound.wrong();\n' +
+'      registrarFinPartida("NAUFRAGIO");\n' +
 '      var meta = window.GAME_DATA.meta || {};\n' +
 '      var stage = document.getElementById("gameStage");\n' +
 '      stage.innerHTML = \n' +
-'        \'<h2 class="card-title" style="color:var(--danger-red)">💀 Fin de la Partida</h2>\' +\n' +
-'        \'<div class="narrative-box">\' + (meta.MENSAJE_DERROTA || "Has agotado todas tus vidas en el océano.") + \'</div>\' +\n' +
-'        \'<p style="color:var(--text-muted);margin-bottom:16px;">Puntos: \' + State.puntos + \' pts.</p>\' +\n' +
+'        \'<h2 class="card-title" style="color:var(--danger-red)">💀 Fin de la Travesía</h2>\' +\n' +
+'        \'<div class="narrative-box">\' + (meta.MENSAJE_DERROTA || "Has agotado todas tus vidas en el océano. Tus resultados quedan registrados.") + \'</div>\' +\n' +
+'        \'<p style="color:var(--text-muted);margin-bottom:16px;">Puntos finales: \' + State.puntos + \' pts.</p>\' +\n' +
 '        \'<button class="action-btn" onclick="Sound.click(); renderTitle();">🔄 Intentar de Nuevo (RUN)</button>\';\n' +
 '    }\n' +
 '\n' +
 '    function renderVictory() {\n' +
 '      Sound.win();\n' +
+'      registrarFinPartida("VICTORIA_PUERTO");\n' +
 '      var meta = window.GAME_DATA.meta || {};\n' +
 '      var stage = document.getElementById("gameStage");\n' +
 '      stage.innerHTML = \n' +
 '        \'<h2 class="card-title" style="color:var(--accent-gold)">🏆 ¡Victoria Gloriosa!</h2>\' +\n' +
-'        \'<div class="narrative-box">\' + (meta.MENSAJE_VICTORIA || "¡Has arribado al puerto con éxito!") + \'</div>\' +\n' +
-'        \'<p style="color:var(--text-muted);margin-bottom:16px;">¡Puntuación final: <strong>\' + State.puntos + \' pts</strong>!</p>\' +\n' +
+'        \'<div class="narrative-box">\' + (meta.MENSAJE_VICTORIA || "¡Has arribado al puerto con éxito y honores!") + \'</div>\' +\n' +
+'        \'<p style="color:var(--text-muted);margin-bottom:16px;">¡Puntuación final registrada: <strong>\' + State.puntos + \' pts</strong>!</p>\' +\n' +
 '        \'<button class="action-btn" onclick="Sound.click(); renderTitle();">✨ Volver a Jugar</button>\';\n' +
+'    }\n' +
+'\n' +
+'    /* PANTALLA DE REGATA MULTIJUGADOR EN VIVO */\n' +
+'    function renderPantallaCarrera() {\n' +
+'      var stage = document.getElementById("gameStage");\n' +
+'      stage.innerHTML = \n' +
+'        \'<h2 class="card-title">🏁 Regata de Indias: Flotas en Vivo</h2>\' +\n' +
+'        \'<p style="color:var(--text-muted);margin-bottom:14px;font-size:0.9rem;">Visualización en tiempo real en la pantalla del aula. Cada acierto impulsa el navío:</p>\' +\n' +
+'        \'<div id="pistaContainer" class="track-container">Cargando posiciones de la flota...</div>\';\n' +
+'\n' +
+'      refrescarPista();\n' +
+'      timerPoll = setInterval(refrescarPista, 3000);\n' +
+'    }\n' +
+'\n' +
+'    function refrescarPista() {\n' +
+'      if (typeof google !== "undefined" && google.script && google.script.run) {\n' +
+'        google.script.run.withSuccessHandler(pintarPista).obtenerEstadoLobbyMemoria();\n' +
+'      } else {\n' +
+'        var fake = {\n' +
+'          "Equipo Los Corsarios": { avatar: "⛵", casilla: 8, puntos: 80 },\n' +
+'          "Equipo Fénix": { avatar: "🧭", casilla: 6, puntos: 60 },\n' +
+'          "Galeones del Sur": { avatar: "⚓", casilla: 5, puntos: 50 }\n' +
+'        };\n' +
+'        if (State.jugador) fake[State.jugador] = { avatar: State.avatar, casilla: State.casilla, puntos: State.puntos };\n' +
+'        pintarPista(fake);\n' +
+'      }\n' +
+'    }\n' +
+'\n' +
+'    function pintarPista(lobby) {\n' +
+'      var cont = document.getElementById("pistaContainer");\n' +
+'      if (!cont) return;\n' +
+'      var keys = Object.keys(lobby || {});\n' +
+'      if (keys.length === 0) {\n' +
+'        cont.innerHTML = "<p style=\'color:#94a3b8;\'>Esperando a que las tripulaciones se conecten...</p>";\n' +
+'        return;\n' +
+'      }\n' +
+'      var metaCasillas = 10;\n' +
+'      var html = "";\n' +
+'      keys.forEach(function(k) {\n' +
+'        var j = lobby[k];\n' +
+'        var c = Math.min(metaCasillas, j.casilla || 0);\n' +
+'        var pct = (c / metaCasillas) * 85;\n' +
+'        html += \'<div class="track-lane">\' +\n' +
+'          \'<strong style="color:#fff;font-size:0.9rem;width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">\' + k + \'</strong>\' +\n' +
+'          \'<div style="flex:1;position:relative;height:100%;margin:0 10px;">\' +\n' +
+'            \'<span class="lane-avatar" style="left:\' + pct + \'%;">\' + (j.avatar || "⛵") + \'</span>\' +\n' +
+'          \'</div>\' +\n' +
+'          \'<span style="color:var(--accent-gold);font-weight:bold;font-size:0.85rem;">\' + (j.puntos || 0) + \' pts (C\' + c + \')</span>\' +\n' +
+'        \'</div>\';\n' +
+'      });\n' +
+'      cont.innerHTML = html;\n' +
 '    }\n' +
 '\n' +
 '    /* FORMULARIO DE PROPUESTAS DE RETOS */\n' +
@@ -832,18 +1067,18 @@ function getGameHtml(initialDataJson) {
 '      } else {\n' +
 '        btn.disabled = false;\n' +
 '        btn.innerText = "🚀 Enviar a Revisión Docente";\n' +
-'        msg.innerHTML = \'<span style="color:var(--success-green);">Simulación local: Propuesta registrada (en Apps Script se guarda en Sheets).</span>\';\n' +
+'        msg.innerHTML = \'<span style="color:var(--success-green);">Simulación local: Propuesta registrada en Google Sheets.</span>\';\n' +
 '      }\n' +
 '    }\n' +
 '\n' +
-'    window.onload = function() { renderTitle(); };\n' +
+'    window.onload = function() { renderRegistroJugador(); };\n' +
 '  </script>\n' +
 '</body>\n' +
 '</html>';
 }
 
 /**
- * 7. MÉTODOS AUXILIARES DE SCAFFOLDING
+ * 7. MÉTODOS AUXILIARES DE CREACIÓN DE PESTAÑAS
  */
 function configurarPestana(ss, nombre, tabColor, headerBg, cabeceras, anchos, semillas) {
   var hoja = ss.getSheetByName(nombre);
@@ -895,6 +1130,48 @@ function configurarPestana(ss, nombre, tabColor, headerBg, cabeceras, anchos, se
       .build();
     hoja.getRange(2, colResp, 99, 1).setDataValidation(reglaResp);
   }
+}
+
+function configurarPestanaPuntuaciones(ss) {
+  var hoja = ss.getSheetByName('Puntuaciones_Online');
+  if (!hoja) hoja = ss.insertSheet('Puntuaciones_Online');
+  else hoja.clear();
+
+  hoja.setTabColor('#00897B');
+  var cabeceras = ['Fecha_Hora', 'Jugador_O_Equipo', 'Curso_Grupo', 'Puntuacion_Final', 'Vidas_Restantes', 'Tiempo_Segundos', 'Desglose_Aciertos', 'Resultado_Mision'];
+  var anchos = [150, 180, 110, 110, 110, 120, 260, 130];
+
+  var rHeader = hoja.getRange(1, 1, 1, cabeceras.length);
+  rHeader.setValues([cabeceras]);
+  rHeader.setBackground('#004D40');
+  rHeader.setFontColor('#FFFFFF');
+  rHeader.setFontWeight('bold');
+  rHeader.setHorizontalAlignment('center');
+  rHeader.setVerticalAlignment('middle');
+  hoja.setRowHeight(1, 38);
+  hoja.setFrozenRows(1);
+  for (var i = 0; i < anchos.length; i++) hoja.setColumnWidth(i + 1, anchos[i]);
+}
+
+function configurarPestanaLobby(ss) {
+  var hoja = ss.getSheetByName('Lobby_Multijugador');
+  if (!hoja) hoja = ss.insertSheet('Lobby_Multijugador');
+  else hoja.clear();
+
+  hoja.setTabColor('#D81B60');
+  var cabeceras = ['ID_Sesion', 'Nombre_Equipo', 'Icono_Avatar', 'Posicion_Pista', 'Puntos_Acumulados', 'Ultima_Actualizacion'];
+  var anchos = [110, 180, 100, 110, 120, 160];
+
+  var rHeader = hoja.getRange(1, 1, 1, cabeceras.length);
+  rHeader.setValues([cabeceras]);
+  rHeader.setBackground('#880E4F');
+  rHeader.setFontColor('#FFFFFF');
+  rHeader.setFontWeight('bold');
+  rHeader.setHorizontalAlignment('center');
+  rHeader.setVerticalAlignment('middle');
+  hoja.setRowHeight(1, 38);
+  hoja.setFrozenRows(1);
+  for (var i = 0; i < anchos.length; i++) hoja.setColumnWidth(i + 1, anchos[i]);
 }
 
 function configurarPestanaConfig(ss, filasParametros) {

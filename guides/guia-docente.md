@@ -1,6 +1,6 @@
 # Guía de Implantación para el Claustro Docente (guia-docente)
 
-Esta guía explica paso a paso cómo cualquier equipo docente de **Educación Primaria, Secundaria o Bachillerato** puede generar, desplegar y dinamizar un videojuego educativo interdepartamental, utilizando el **Botón RUN de Previsualización** y el **Flujo de Revisión y Aprobación de Propuestas (Pull Request Escolar)**.
+Esta guía explica paso a paso cómo dinamizar partidas en el aula en cualquiera de las **5 modalidades de juego**, cómo lanzar la **Carrera Multijugador en Línea en la Pizarra Digital** y cómo consultar el **Cuaderno de Evaluación Automático (`Puntuaciones_Online`)**.
 
 ---
 
@@ -9,8 +9,7 @@ Esta guía explica paso a paso cómo cualquier equipo docente de **Educación Pr
 ```
   ┌────────────────────────────────────────────────────────┐
   │ PASO 1: Pedir el instalador a NotebookLM               │
-  │ Cargar el OKF + el Decreto de Currículo Autonómico.    │
-  │ Indicar etapa y materias.                              │
+  │ Indicar materias, temas, Criterios y Modalidad.        │
   └──────────────────────────┬─────────────────────────────┘
                              │ Copiar el bloque Codigo.gs
                              ▼
@@ -19,68 +18,55 @@ Esta guía explica paso a paso cómo cualquier equipo docente de **Educación Pr
   │ Abrir hoja en blanco > Extensiones > Apps Script.       │
   │ Pegar el código y ejecutar 'inicializarEcosistema'.   │
   │ ──► Menú nativo '🎮 open-game-edu' activado.           │
+  │ ──► Pestañas Puntuaciones_Online y Lobby creadas.      │
   └──────────────────────────┬─────────────────────────────┘
-                             │ Pestañas listas con Criterios y Autoría
+                             │
                              ▼
   ┌────────────────────────────────────────────────────────┐
-  │ PASO 3: Publicar la Web App y Probar con RUN           │
-  │ Implementar > Nueva implementación > Aplicación web.  │
-  │ ──► Probar con el botón RUN y compartir con la clase.  │
+  │ PASO 3: Publicar y Lanzar en el Aula                   │
+  │ • Proyectar en la Pizarra Digital (PDI).               │
+  │ • Alumnos se conectan con sus tablets o móviles.       │
+  │ ──► ¡Partida multijugador y registro automático!       │
   └────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 2. El Botón "RUN" de Previsualización Inmediata
+## 2. Cómo Lanzar la Carrera Multijugador en la Pizarra Digital
 
-El ecosistema permite previsualizar y probar el juego de dos formas instantáneas:
+Para una sesión de clase donde toda el aula participa en vivo:
 
-### A. Desde la propia Hoja de Google Sheets
-Sin necesidad de abrir nuevas pestañas del navegador:
-1. En la barra superior de menús de tu hoja de cálculo, haz clic en **`🎮 open-game-edu`**.
-2. Selecciona **`▶️ Run / Previsualizar Juego`**.
-3. Se abrirá una ventana flotante modal interactiva donde podrás jugar y validar las preguntas, los cálculos y los sonidos en vivo.
-
-### B. Desde la Aplicación Web (URL desplegada)
-En la parte superior de la Web App encontrarás la barra de navegación:
-* **`▶️ RUN / Previsualizar`**: Lanza la partida completa con todos los retos aprobados.
-* **Casilla *"Ver borradores"***: Permite al profesorado o a los alumnos previsualizar también los retos que aún están en estado `PENDIENTE` para comprobar cómo quedan en pantalla antes de aprobarlos.
-
----
-
-## 3. Dinámica de Creación y Aprobación de Retos (Pull Request Escolar)
-
-Para que el proyecto fomente el trabajo colaborativo con rigor pedagógico:
-
-```
-[ Alumno / Equipo ] ──► Escribe en Web o Sheets ──► Estado: 'PENDIENTE'
-                                                           │
-                                                           ▼
-[ Docente ] ◄── Menú '📋 Panel de Revisión' ◄── Revisa y retroalimenta
-      │
-      ├── ¿Tiene errores? ──► Estado: 'CORREGIR' + Feedback educativo
-      │
-      └── ¿Está correcto?  ──► Estado: 'APROBADO'
-                                    │
-                                    ▼
-                      ¡Aparece en el Videojuego (RUN)!
-```
-
-### ¿Cómo envían los alumnos sus retos?
-1. **Opción Formulario Web:** Entran en la Web App del juego, pulsan la pestaña **`✏️ Enviar Reto`**, eligen la materia, ponen el nombre de su equipo, el enunciado, las opciones y la explicación pedagógica, y pulsan **`🚀 Enviar a Revisión`**.
-2. **Opción Directa en Google Sheets:** Si el profesor comparte la hoja con permisos de edición en las pestañas de las materias, los alumnos añaden filas directamente seleccionando en la columna `Estado_Revision` el valor `PENDIENTE`.
-
-### ¿Cómo revisa y aprueba el profesorado?
-1. En Google Sheets, ve a **`🎮 open-game-edu > 📋 Panel de Revisión de Propuestas`**.
-2. Verás la lista de todos los retos pendientes enviados por los distintos equipos.
-3. Haz clic en **`✅ Aprobar para el Juego`**. La celda pasará automáticamente a `APROBADO` y el reto quedará integrado en la versión oficial jugable de inmediato.
-4. Si un reto requiere ajustes (por ejemplo, corregir la ortografía o reformular una opción), cambia la celda a `CORREGIR` y escribe en la columna `Feedback_Docente` la indicación de mejora.
+1. **En la Pizarra Digital Interactiva (PDI) o Proyector del aula:**
+   - Abre la hoja de cálculo y haz clic en **`🎮 open-game-edu > 🏁 Abrir Carrera Multijugador`** (o abre la URL de la Web App en modo carrera).
+   - Verás la pista de carrera con las calles numeradas de 0 a 10 casillas.
+2. **En los dispositivos del alumnado (Tablets, Chromebooks o móviles):**
+   - Los alumnos abren el enlace de la Web App.
+   - Escriben el nombre de su equipo (*"Equipo 3: Los Linces"*) y eligen un avatar (*⛵, 🚀, 🦊, 🏎️*).
+3. **Durante la partida en vivo:**
+   - Cada equipo responde los retos curriculares en su pantalla.
+   - **Con cada respuesta correcta, su avatar avanza visualmente una casilla en la pantalla gigante de la clase**.
+   - Toda el aula observa los adelantamientos y la emoción del avance colectivo.
+4. **Al cruzar la meta:**
+   - Suena la fanfarria de victoria y los resultados se registran instantáneamente en la hoja de cálculo del profesor.
 
 ---
 
-## 4. Valor para la Programación Docente e Inspección
+## 3. Cuaderno de Evaluación Automático (`Puntuaciones_Online`)
 
-La presencia de las columnas:
-* **`Criterio_Evaluacion`**: Vincula directamente cada prueba al marco normativo de tu Comunidad Autónoma.
-* **`Autor_O_Equipo`**: Evidencia el trabajo colaborativo y la autoría de cada estudiante.
-* **`Feedback_Docente`**: Registra la evaluación formativa y el seguimiento del aprendizaje realizado por el profesor.
+Al finalizar la sesión, el docente abre la pestaña **`Puntuaciones_Online`** en su Google Sheets y encuentra:
+
+* La lista de todos los alumnos o equipos que han jugado.
+* El tiempo que tardaron en completar los retos.
+* Los corazones o vidas que les sobraron.
+* **El desglose de competencias por materia:**
+  - *¿Acertaron todos en Historia pero tropezaron en la probabilidad de Matemáticas?*
+  - Esta información ofrece un diagnóstico inmediato para reforzar conceptos en las siguientes clases sin necesidad de corregir exámenes tradicionales en papel.
+
+---
+
+## 4. Moderación de Nuevos Retos (Pull Request Escolar)
+
+Si los alumnos crean retos para enriquecer el juego:
+1. Envían la pregunta desde la pestaña **`✏️ Enviar Reto`** de la Web App.
+2. La fila entra en la materia correspondiente con estado `PENDIENTE`.
+3. El profesor abre en Google Sheets el menú **`🎮 open-game-edu > 📋 Panel de Revisión de Propuestas`** y pulsa **`✅ Aprobar`** para que se integre en la carrera oficial.

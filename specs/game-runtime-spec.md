@@ -1,74 +1,115 @@
-# Especificación Técnica: Motor de Juego Vanilla JS (game-runtime-spec)
+# Especificación Técnica: Motor de Juego Vanilla JS y Modalidades (game-runtime-spec)
 
-Esta especificación detalla el diseño del motor de videojuego ligero en JavaScript Vanilla y CSS puro, incluyendo el **conmutador entre el Formulario de Creación de Retos y el botón "RUN" de Previsualización en Vivo**, junto con el reconocimiento de autoría del alumnado.
-
----
-
-## 1. Principios del Motor
-
-1. **Doble Modo (Creación / Run)**:
-   - **Modo Creación (`VIEW_FORM`)**: Los estudiantes o docentes pueden redactar un nuevo reto, asociarlo a un Criterio de Evaluación y enviarlo a Google Sheets como propuesta con estado `PENDIENTE`.
-   - **Modo Previsualización (`VIEW_PLAY` o botón `▶️ RUN`)**: Ejecuta el videojuego al instante con los datos vigentes, simulando la experiencia de partida real.
-2. **Filtrado de Calidad en Tiempo de Ejecución**:
-   - Por defecto, el botón "RUN" solo ejecuta los retos con `Estado_Revision === 'APROBADO'`.
-   - Incluye una casilla opcional para pruebas docentes: *"Previsualizar también retos pendientes"*.
-3. **Reconocimiento de Autoría Estudiantil**:
-   - Cada reto superado muestra el nombre de su creador: `💡 Reto diseñado por: [Autor_O_Equipo]`.
-4. **Cero Dependencias y Sonido Nativo**:
-   - Web Audio API sintética para pitidos, fanfarrias y errores sin descargas de audio externas.
-   - Pila tipográfica del sistema e iconografía temática basada en emojis y SVG puros.
+Esta especificación detalla la arquitectura del motor de videojuego ligero en JavaScript Vanilla y CSS puro, definiendo el **Catálogo de las 5 Modalidades de Juego**, el **Bucle Multijugador Sincronizado en Vivo** y la **Telemetría Educativa**.
 
 ---
 
-## 2. Máquina de Estados y Modos de la Interfaz
+## 1. Catálogo de los 5 Arquetipos de Juego
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ 🎮 open-game-edu            [✏️ Enviar Reto] [▶️ RUN JUEGO] │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  SI SE PULSA [✏️ Enviar Reto]:                               │
-│  Muestra el formulario: Materia, Criterio, Autor, Pregunta, │
-│  Opciones A/B/C, Respuesta Correcta y Feedback Didáctico.   │
-│  Botón: [🚀 Enviar a Revisión de Profesores]                │
-│                                                             │
-│  SI SE PULSA [▶️ RUN JUEGO]:                                 │
-│  Carga datos de Sheets, filtra 'APROBADO' y arranca:        │
-│  TITLE ➔ HUB (Selector) ➔ ENCOUNTER ➔ FEEDBACK ➔ VICTORIA   │
-└─────────────────────────────────────────────────────────────┘
+El motor es modular y soporta 5 modalidades configurables según lo solicite el docente a NotebookLM:
+
+### Modalidad 1: Aventura Narrativa / RPG por Nodos (Por defecto)
+- **Estructura**: Cuaderno de bitácora, retratos de personajes (NPCs), árbol de decisiones y progresión por enclaves.
+- **Flujo**: Diálogo $\rightarrow$ Selección de opción A/B/C $\rightarrow$ Sonido de evaluación $\rightarrow$ Feedback pedagógico $\rightarrow$ Siguiente nodo.
+- **Ideal para**: Letras, Humanidades, comprensión lectora, inmersión histórica y dilemas éticos.
+
+### Modalidad 2: Tablero / Trivial Interdepartamental
+- **Estructura**: Tablero de casillas temáticas (verde = ciencias, naranja = historia, azul = matemáticas, morado = lengua).
+- **Flujo**: El jugador pulsa *"Lanzar Dado"* (generador 1 a 6 con sonido de rodillo), el peón avanza a la casilla correspondiente y se activa el reto de esa materia. Acertar otorga la "insignia" de la asignatura.
+- **Ideal para**: Repasos trimestrales y evaluación lúdica de conocimientos generales.
+
+### Modalidad 3: Escape Room Digital (Contrarreloj)
+- **Estructura**: Habitación o laboratorio virtual con 3 a 5 "candados digitales" y un cronómetro visible regresivo (ej. 15 minutos).
+- **Flujo**: Cada candado pertenece a una asignatura. Al resolver el cálculo matemático o el análisis sintáctico, se desbloquea un dígito de la clave maestra final para escapar de la sala.
+- **Ideal para**: Presión temporal, trabajo en parejas y pensamiento lateral.
+
+### Modalidad 4: Carrera Multijugador en Línea ("La Gran Regata")
+- **Estructura**: Pista horizontal con carriles numerados (casillas 0 a 10) donde se muestran los avatares de todos los equipos del aula (⛵, 🚀, 🏎️, 🦅).
+- **Flujo**: Cada alumno juega desde su tablet/móvil. Cada acierto en una materia avanza su avatar en la pista. La pantalla común del proyector o PDI actualiza las posiciones cada 3 segundos mediante *polling*.
+- **Ideal para**: Competición sana, torneos interclases y dinámicas de activación rápida.
+
+### Modalidad 5: Desafío Colaborativo ("Boss Raid")
+- **Estructura**: Pantalla comunitaria con un "Jefe" o reto ecológico (ej. 1.000 HP de contaminación o amenaza planetaria).
+- **Flujo**: Todos los alumnos colaboran a la vez. Las respuestas correctas en Lengua aportan "hechizos", en Matemáticas "escudos" y en Ciencias "daño crítico". La barra común se reduce con cada aportación hasta la victoria del grupo.
+- **Ideal para**: Cohesión social, inclusión educativa y trabajo sin perdedores individuales.
+
+---
+
+## 2. Bucle Multijugador Sincronizado en Vivo (Modo Carrera)
+
+Para visualizar a los demás jugadores sin librerías externas:
+
+```javascript
+// Bucle de sincronización periódica (Polling cada 3 segundos)
+var MultiplayerLoop = (function() {
+  var timer = null;
+  var salaActiva = true;
+
+  function iniciarSincronizacion(urlApp, callbackRenderPista) {
+    detener();
+    timer = setInterval(function() {
+      if (!salaActiva) return;
+      
+      fetch(urlApp + '?action=lobby')
+        .then(function(r) { return r.json(); })
+        .then(function(lobby) {
+          callbackRenderPista(lobby);
+        })
+        .catch(function(e) {
+          // Silencioso ante pérdidas temporales de red escolar
+        });
+    }, 3000);
+  }
+
+  function detener() {
+    if (timer) clearInterval(timer);
+  }
+
+  return {
+    iniciar: iniciarSincronizacion,
+    detener: detener
+  };
+})();
 ```
 
 ---
 
-## 3. Componentes Visuales del Modo RUN
+## 3. Renderizado de la Pista de Carrera (Avatares en Pantalla)
 
-### Tarjeta de Reto con Criterio y Autoría:
 ```
-┌─────────────────────────────────────────────────────────────┐
-│ 🌿 La Eco-Patrulla                   ❤️ x4   ⭐ 50 pts  🔊 │
-├─────────────────────────────────────────────────────────────┤
-│ 🎯 CRITERIO DE EVALUACIÓN (CE.CMN.5.2)                      │
-│ "Identificar las relaciones tróficas en los ecosistemas..." │
-│                                                             │
-│ 💡 RETO CREADO POR: Equipo 3 - Los Linces de Doñana        │
-│                                                             │
-│ 🦊 GUARDABOSQUES LEO                                        │
-│ "¿Quiénes son los productores de esta cadena trófica?"     │
-│                                                             │
-│ ┌─────────────────────────────────────────────────────────┐ │
-│ │ [ A ]  Los robles y plantas (seres autótrofos)          │ │
-│ ├─────────────────────────────────────────────────────────┤ │
-│ │ [ B ]  Las orugas herbívoras                            │ │
-│ ├─────────────────────────────────────────────────────────┤ │
-│ │ [ C ]  Los pájaros carboneros                           │ │
-│ └─────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🏁 GRAN REGATA DEL SIGLO DE ORO                     ⏱️ 02:45   🔊           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Carril 1 [⛵ Los Galeones - 3.ºA]  ───────► [⛵]                   Casilla 6│
+│ Carril 2 [🚀 Eco-Patrulla - 3.ºB]  ─────────────► [🚀]             Casilla 8│
+│ Carril 3 [🦅 Halcones de Vegueta]  ──► [🦅]                        Casilla 3│
+│ Carril 4 [🏎️ Matemáticos Radiact] ──────────────────► [🏎️] 🏆     Casilla 10│
+├─────────────────────────────────────────────────────────────────────────────┤
+│ 🎯 RETO ACTUAL (Lengua): Completa el verso de Góngora...                   │
+│ [ A ] de oro y sol       [ B ] de sombra y nieve     [ C ] de lirio y rosa  │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 4. Adaptabilidad y Accesibilidad
+## 4. Telemetría y Cuaderno de Evaluación en Vivo
 
-- **Educación Primaria**: Botones táctiles de al menos 52px de altura, vocabulario accesible y colores de alto contraste.
-- **Educación Secundaria**: Tarjetas con mayor soporte de texto, fórmulas matemáticas o referencias documentales históricas.
-- **Envío Asíncrono**: El formulario se conecta a `google.script.run.guardarPropuestaReto(...)` permitiendo insertar filas sin refrescar la ventana.
+Al completarse cualquier partida (individual o multijugador), el cliente invoca:
+
+```javascript
+function enviarPuntuacionFinal(nombreJugador, puntos, vidas, tiempoTotal, aciertosMateria, resultado) {
+  var payload = {
+    jugador: nombreJugador,
+    puntos: puntos,
+    vidas: vidas,
+    tiempo: tiempoTotal,
+    desglose: aciertosMateria,
+    resultado: resultado
+  };
+
+  if (typeof google !== 'undefined' && google.script && google.script.run) {
+    google.script.run.registrarPartidaOnline(payload);
+  }
+}
+```
+Esto escribe una fila instantánea en la pestaña `Puntuaciones_Online` de la hoja de cálculo del profesorado.
