@@ -159,6 +159,9 @@ flowchart TD
 
 Copia este texto y pégalo en la **Guía del cuaderno** (*Notebook Guide*) de NotebookLM (o como *System Instruction* en Gemini, Claude o ChatGPT):
 
+> [!NOTE]
+> **Longitud garantizada (<10.000 caracteres)**: Este bloque contiene exactamente **7.263 caracteres** (dejando más de 2.700 caracteres de margen libre respecto al límite de 10.000 de la *Guía del Cuaderno* de NotebookLM). Puedes copiarlo íntegramente con el botón de copia del bloque.
+
 ````markdown
 Actúa como Diseñador Técnico en Jefe y Arquitecto de Infraestructura como Código (IaC) de "open-game-edu".
 
