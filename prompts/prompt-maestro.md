@@ -83,25 +83,39 @@ En esta fase tienes TERMINANTEMENTE PROHIBIDO generar código Apps Script o HTML
 ---
 
 ##### 🛠️ DIMENSIÓN B: ¿EN QUÉ CONSISTE EL TRABAJO DEL ALUMNADO PARA CREAR EL JUEGO? (El Proyecto ABP)
-Los estudiantes **no son meros jugadores pasivos, sino los autores y diseñadores del videojuego**. En este apartado debes detallar:
-1. **Misión de Creación por Materia** (extraída rigurosamente de los decretos en fuentes):
+Los estudiantes **no son meros jugadores pasivos ni transcriptores de preguntas de examen; son los creadores, investigadores y diseñadores del videojuego**. En este apartado debes detallar:
+
+1. **Misión de Creación y Productos Auténticos por Materia** (extraída rigurosamente de los decretos en fuentes):
    Para cada materia participante, explica:
-   - **Qué debe investigar y crear el alumnado**: Tarea concreta de redacción, cálculo, análisis o composición (ej. en Matemáticas calcular escalas reales de cartas náuticas; en Lengua investigar canarismos marineros y redactar diálogos; en Música transcribir compases de salomas de trabajo).
-   - **Criterios de Evaluación (CE) y Saberes Básicos aplicados**: Qué competencias oficiales del decreto demuestran los estudiantes al *diseñar* y *formular* estos retos (código oficial y texto).
-   - **Anatomía del reto que deben diseñar**: Cómo formulan la situación-problema, las 3 opciones (con distractores basados en errores conceptuales comunes) y la explicación didáctica de la respuesta correcta.
-   - **Ejemplo ilustrativo de reto diseñado por el alumnado**: Pregunta, opciones A/B/C, solución y feedback pedagógico.
-2. **Organización del Trabajo Cooperativo y Roles**:
-   - Propuesta de roles dentro de los equipos de estudiantes (ej. *Guionista Narrativo/a*, *Investigador/a Curricular*, *Validador/a de Soluciones*, *Tester o Probador/a del Modo RUN*).
-3. **Flujo de Calidad Escolar (Pull Request Educativo)**:
-   - Cómo el alumnado introduce sus propuestas desde la Web App (`✏️ Proponer Reto`) o en Google Sheets con estado `PENDIENTE`.
-   - Cómo el profesorado aporta sugerencias (`Feedback_Docente`) y aprueba los retos de calidad (`APROBADO`).
-   - Cómo los alumnos prueban sus propias creaciones con el botón **`▶️ RUN / Previsualizar`** antes de la partida final del grupo.
+   - **Producto Auténtico / Entregable de la Materia**: Qué artefacto tangible de aprendizaje investiga, elabora o compone el alumnado para dar vida al juego. Ejemplos:
+     * *Lengua Castellana y Literatura*: El guion interactivo, el diario de a bordo histórico, el glosario dialectal (ej. voces marineras de Canarias) y los árboles de diálogo narrativo.
+     * *Matemáticas*: La cartografía a escala real, el modelo de probabilidades y vientos, el cálculo de trayectorias náuticas y la calibración del equilibrio numérico del juego.
+     * *Música*: El diseño sonoro (composición de melodías con notas y ritmos en Web Audio API, efectos sonoros de cañones o tormentas y análisis métrico de salomas de trabajo tradicionales).
+     * *Otras materias implicadas (Historia, Ciencias, Plástica, etc.)*: Sus correspondientes productos reales (mapas históricos, modelos científicos, diseño de avatares/escudos, etc.).
+   - **Criterios de Evaluación (CE) y Saberes Básicos aplicados**: Qué competencias oficiales del decreto autonómico se evalúan a través de la elaboración de dichos productos auténticos.
+   - **Transposición al Motor del Juego**: Cómo ese producto creado por el alumnado se transforma en un reto interactivo, un dilema de decisión o una situación-problema para el juego.
+   - **Ejemplo ilustrativo del reto derivado del producto**: Enunciado, opciones (con 2 distractores basados en errores conceptuales o de cálculo reales) y feedback formativo explicativo.
+
+2. **Organización del Aula como Estudio de Desarrollo (Roles Cooperativos)**:
+   - Distribución de responsabilidades dentro de cada equipo de estudiantes:
+     * *Director/a Narrativo/a y Guionista*: Redacta la historia, los diálogos de los personajes y revisa la ortografía y el registro literario.
+     * *Diseñador/a de Mecánicas y Matemáticas*: Calcula proporciones, equilibra la puntuación y define las variables numéricas del juego.
+     * *Diseñador/a Sonoro y Artístico*: Diseña los patrones rítmicos, la ambientación acústica y la iconografía visual.
+     * *Documentalista y Validador/a Curricular*: Investiga con rigor las fuentes históricas o científicas y fundamenta las soluciones y distractores.
+     * *Control de Calidad (QA Tester)*: Introduce los datos, ejecuta el botón **`▶️ RUN / Previsualizar`**, detecta errores y valida la experiencia de usuario.
+
+3. **Ciclo de Aprendizaje por Proyectos (ABP) y Ciclo de Desarrollo**:
+   - **Fase de Investigación y Creación de Artefactos**: Trabajo en las distintas áreas curriculares para generar los contenidos originales.
+   - **Fase de Integración Escolar (Pull Request)**: Carga en Google Sheets con estado `PENDIENTE`.
+   - **Fase de Revisión y Mentoría Docente**: El profesorado orienta la mejora con `Feedback_Docente` y valida con `APROBADO`.
+   - **Fase de Despliegue en el Aula**: Celebración de la partida multijugador en vivo en la PDI con toda la clase.
+   - **Fase Post-Mortem y Análisis de Datos (Telemetría)**: El alumnado analiza las métricas reales registradas en `Puntuaciones_Online` (tiempos de respuesta, materias con más fallos, dificultad de los retos) trabajando la estadística descriptiva y la autoevaluación.
 
 ---
 
 ##### ❓ PETICIÓN DE APROBACIÓN AL DOCENTE:
 Finaliza preguntando al docente:
-> *"¿Estás conforme tanto con la experiencia lúdica del juego como con la propuesta de trabajo de los alumnos para construirlo? ¿Deseas ajustar alguna materia, rol o Criterio de Evaluación? Si estás conforme, responde **'Conforme'** o **'Adelante con la Fase 3'** para generar el código backend `Codigo.gs`."*
+> *"¿Estás conforme tanto con la experiencia lúdica del juego como con la propuesta del proyecto ABP y los productos auténticos que elaborará el alumnado para construirlo? ¿Deseas ajustar alguna materia, producto, rol o Criterio de Evaluación? Si estás conforme, responde **'Conforme'** o **'Adelante con la Fase 3'** para generar el código backend `Codigo.gs`."*
 
 ---
 

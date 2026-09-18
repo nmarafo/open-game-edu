@@ -95,21 +95,27 @@ Al finalizar la sesión, el docente abre la pestaña **`Puntuaciones_Online`** e
 
 ---
 
-## 4. El Proyecto ABP: El Alumnado como Diseñador del Videojuego
+## 4. El Proyecto ABP: El Alumnado como Creador y Diseñador del Videojuego
 
-En `open-game-edu`, los estudiantes **no son meros jugadores pasivos, sino los autores y diseñadores del videojuego**. En lugar de resolver fichas tradicionales, cada equipo asume la misión de investigar y crear los retos curriculares que conformarán la partida del aula.
+En `open-game-edu`, los estudiantes **no son meros jugadores pasivos ni redactores de tests; son los creadores integrales del videojuego**. En lugar de resolver fichas tradicionales, el alumnado genera productos auténticos de aprendizaje en cada materia que dan vida al mundo interactivo:
 
-### 4.1. Roles Cooperativos en el Equipo de Creación
-Para asegurar la participación activa de todo el grupo, se recomiendan cuatro roles rotativos:
-* **Guionista Narrativo/a**: Integra la pregunta en la ambientación temática (ej. diálogos de corsarios, bitácoras de navegantes).
-* **Investigador/a Curricular**: Consulta los apuntes o libros de texto para asegurar la veracidad del contenido y formula la respuesta correcta.
-* **Validador/a de Opciones**: Diseña los 2 distractores incorrectos basados en errores conceptuales comunes y redacta la explicación didáctica formativa.
-* **Tester (Probador/a del Modo RUN)**: Previsualiza el reto en la Web App pulsando **`▶️ RUN / Previsualizar`** para comprobar la legibilidad y coherencia antes del envío definitivo.
+### 4.1. Productos Auténticos por Materia (Entregables Reales)
+* **Lengua Castellana y Literatura**: Redacción del guion narrativo, entradas de la bitácora o diario de a bordo, árboles de diálogo interactivo y recopilación del glosario dialectal o voces de época.
+* **Matemáticas**: Elaboración de maquetas cartográficas a escala real, modelización de probabilidades de navegación/combate, calibración de curvas de dificultad y balanza de recursos del juego.
+* **Música**: Creación de la identidad sonora del juego (diseño de frecuencias y timbres en Web Audio API, efectos de sonido de colisiones o victoria y transcripción de patrones rítmicos de cantos de trabajo tradicionales).
+* **Otras materias (Historia, Ciencias, Plástica)**: Recreación documental de fuentes primarias, mapas cronológicos, diseño de avatares o banderas heráldicas.
 
-### 4.2. Flujo de Calidad Escolar (Pull Request Educativo)
-1. **Envío de la propuesta**: El equipo introduce su reto desde el formulario **`✏️ Proponer Reto`** de la Web App (o directamente en su hoja de trabajo).
-2. **Estado PENDIENTE**: El reto se almacena en la hoja de la materia con el estado inicial `PENDIENTE`.
-3. **Revisión Docente**: El profesorado revisa las propuestas abriendo el menú **`🎮 open-game-edu > 📋 Panel de Revisión de Propuestas`** en Google Sheets:
-   - Si requiere correcciones, introduce sugerencias en la columna `Feedback_Docente` para que el equipo investigue de nuevo.
-   - Si cumple los criterios de calidad curricular y redacción, pulsa **`✅ Aprobar`** (cambiando el estado a `APROBADO`).
-4. **Integración en la Partida**: Solo los retos con estado `APROBADO` se cargan en la experiencia oficial del aula y en la Carrera Multijugador.
+### 4.2. Organización del Aula: Roles de Estudio de Desarrollo
+Para asegurar una dinámica cooperativa eficaz, los equipos funcionan como estudios de desarrollo indie con roles rotativos:
+* **Director/a Narrativo/a y Guionista**: Redacta el lore, los diálogos de los personajes y vela por la corrección estilística y ortográfica.
+* **Diseñador/a de Mecánicas y Matemáticas**: Modela las ecuaciones de puntuación, comprueba las escalas y calibra las probabilidades numéricas.
+* **Diseñador/a Sonoro y Artístico**: Define los esquemas rítmicos, sintetiza o selecciona efectos de sonido y cuida la estética visual.
+* **Documentalista y Validador/a Curricular**: Contrasta la veracidad histórica o científica con los libros de texto y fundamenta las soluciones y distractores.
+* **Control de Calidad (QA Tester)**: Introduce los datos, previsualiza el juego con **`▶️ RUN / Previsualizar`**, comprueba la jugabilidad y detecta inconsistencias.
+
+### 4.3. Ciclo de Desarrollo Escolar y Calidad (Pull Request Educativo)
+1. **Investigación y Creación de Artefactos**: Cada departamento guía a los alumnos en la producción de sus contenidos curriculares.
+2. **Transposición a Retos Jugables y Envío**: Los alumnos sintetizan sus hallazgos en situaciones-problema y las envían con estado `PENDIENTE`.
+3. **Revisión y Mentoría Docente**: En Google Sheets (**`🎮 open-game-edu > 📋 Panel de Revisión de Propuestas`**), el profesorado introduce sugerencias en `Feedback_Docente` para refinar el trabajo o pulsa **`✅ Aprobar`** si el reto está listo.
+4. **Despliegue y Partida en Vivo**: Toda la clase juega la versión oficial en la PDI o proyector del aula.
+5. **Sesión Post-Mortem y Análisis de Telemetría**: El alumnado abre en Matemáticas la pestaña **`Puntuaciones_Online`** y analiza estadísticamente los datos de la partida grupal (gráficas de dispersión, medias de tiempo, retos con mayor índice de error), cerrando el ciclo con una reflexión metacognitiva real.

@@ -47,9 +47,17 @@ El motor no solo divierte: genera **evidencias de aprendizaje formativas** de fo
 
 ---
 
-## 4. El Alumnado como Diseñador de Retos (Pedagogía de la Co-Creación)
+## 4. El Alumnado como Creador Integral: De los Productos Auténticos al Reto Jugable
 
-El motor pedagógico de `open-game-edu` trasciende el modelo del estudiante como simple receptor lúdico. Al involucrar al alumnado en el diseño y autoría de los retos:
-1. **Activación de Niveles Superiores de Bloom**: Diseñar una pregunta exige comprender a fondo el concepto; formular distractores plausibles exige prever los errores conceptuales típicos; redactar el feedback formativo consolida la metacognición.
-2. **Autoría Interdisciplinar**: Los equipos investigan en los apuntes de cada materia, calculan datos reales (ej. escalas en mapas marinos, métricas poéticas, física de proyectiles) y los traducen a situaciones de juego.
-3. **Validación y Previsualización**: Mediante el flujo de Pull Request escolar (`PENDIENTE` -> `APROBADO`) y el botón `▶️ RUN`, los estudiantes iteran y testean sus propuestas antes de verlas en acción en la pantalla gigante de la clase.
+El motor pedagógico de `open-game-edu` supera el modelo superficial del "quiz escolar". El alumnado no redacta fichas de preguntas aisladas, sino que desarrolla un **proyecto interdisciplinar con productos auténticos** que articulan el videojuego:
+1. **Artefactos Reales de Aprendizaje**:
+   - En *Lengua*: Escriben el guion interactivo, el diario de a bordo del personaje, árboles de decisión ética y glosarios léxicos de época.
+   - En *Matemáticas*: Modelan escalas cartográficas, calculan probabilidades de navegación y calibran la economía numérica del juego.
+   - En *Música*: Diseñan la identidad acústica (frecuencias sintetizadas con Web Audio API, efectos de sonido y patrones métricos de salomas y cantos de trabajo).
+2. **Transposición Didáctica (Niveles Superiores de Bloom)**:
+   - El reto interactivo del juego surge como *cristalización* de ese artefacto previo.
+   - Formular distractores obliga a anticipar los sesgos cognitivos y fallos de cálculo habituales; redactar el feedback formativo afianza la metacognición.
+3. **Roles de Estudio de Desarrollo**:
+   - Equipos cooperativos que asumen perfiles reales: Dirección Narrativa, Diseño de Sistemas/Matemáticas, Diseño de Audio, Documentación Curricular y Control de Calidad (QA).
+4. **Cierre Metacognitivo con Telemetría**:
+   - Tras jugar la partida grupal en la PDI, los alumnos analizan en la pestaña `Puntuaciones_Online` los datos de aciertos, tiempos de respuesta y áreas de mejora colectiva.
