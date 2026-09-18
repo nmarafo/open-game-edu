@@ -1,11 +1,13 @@
 {
-  "okfVersion": "1.0.0",
+  "okfVersion": "1.1.0",
   "name": "open-game-edu",
-  "title": "Open Game Edu: Motor de Videojuegos Interdepartamentales con Google Sheets y Apps Script",
-  "description": "Especificación de Infrastructure as Code (IaC) educativa para generar videojuegos web interactivos multi-materia usando Google Sheets como base de datos y Google Apps Script como backend/frontend monolítico sin servidores externos, orquestado por NotebookLM.",
+  "title": "Open Game Edu: Motor de Videojuegos Interdepartamentales con Google Sheets, Apps Script y Decretos Curriculares Autonómicos",
+  "description": "Especificación de Infrastructure as Code (IaC) educativa para generar videojuegos web interactivos multi-materia para Educación Primaria, Secundaria y Bachillerato. Utiliza Google Sheets como base de datos curricular alineada con los Decretos Autonómicos (Criterios de Evaluación) y Google Apps Script como backend/frontend monolítico sin servidores externos, orquestado por NotebookLM.",
   "repository": "https://github.com/nmarafo/open-game-edu",
-  "license": "MIT",
+  "license": "CC-BY-SA-4.0",
+  "author": "Norberto Martín Afonso",
   "targetAudience": [
+    "Docentes de Educación Primaria (1.º a 6.º)",
     "Docentes de Educación Secundaria Obligatoria (ESO)",
     "Docentes de Bachillerato",
     "Equipos directivos y coordinadores TIC / Innovación Educativa",
@@ -15,12 +17,12 @@
     {
       "path": "prompts/prompt-maestro.md",
       "type": "system_prompt",
-      "description": "Instrucción maestra para NotebookLM que define el rol de Diseñador Técnico en Jefe y las restricciones de generación monolítica."
+      "description": "Instrucción maestra para NotebookLM que define el rol de Diseñador Técnico en Jefe, la extracción de Criterios de Evaluación de Decretos Autonómicos y las restricciones de generación monolítica."
     },
     {
       "path": "specs/sheets-scaffold-spec.md",
       "type": "specification",
-      "description": "Especificación de la API SpreadsheetApp, estructura de pestañas por materia, paletas cromáticas, validación y datos semilla."
+      "description": "Especificación de la API SpreadsheetApp, estructura de pestañas por materia (Primaria y Secundaria), columnas de Criterio de Evaluación, paletas cromáticas y validación."
     },
     {
       "path": "specs/apps-script-api.md",
@@ -30,23 +32,23 @@
     {
       "path": "specs/game-runtime-spec.md",
       "type": "specification",
-      "description": "Especificación del motor en Vanilla JavaScript y CSS: máquina de estados, renderizado modular, sonido Web Audio API y compatibilidad offline/proxy escolar."
+      "description": "Especificación del motor en Vanilla JavaScript y CSS: adaptabilidad para Primaria y Secundaria, visualización de Criterios de Evaluación, sonido Web Audio API y modo offline/red escolar."
     },
     {
       "path": "guides/catalogo-mecanicas.md",
       "type": "guide",
-      "description": "Matriz curricular que mapea cada asignatura escolar a mecánicas de juego específicas (narrativa, cálculo, combate, inventario)."
+      "description": "Matriz curricular que mapea cada asignatura escolar de Primaria y Secundaria a mecánicas de juego específicas (narrativa, cálculo, exploración, crafteo)."
     },
     {
       "path": "guides/guia-docente.md",
       "type": "guide",
-      "description": "Manual de implantación en 3 pasos para el claustro docente, gestión de permisos en Google Workspace y trabajo colaborativo con estudiantes."
+      "description": "Manual de implantación en 3 pasos para el claustro docente, integración con Decretos Autonómicos en NotebookLM y dinamización en el aula de Primaria y Secundaria."
     }
   ],
   "llmRecommendations": {
     "temperature": 0.2,
     "topP": 0.95,
-    "instructionsRole": "Técnico en Jefe de Desarrollo de Videojuegos Educativos e Infraestructura como Código (IaC) para Google Workspace."
+    "instructionsRole": "Diseñador Técnico en Jefe de Desarrollo de Videojuegos Educativos e Infraestructura como Código (IaC) para Google Workspace con soporte curricular LOMLOE / Decretos Autonómicos."
   },
   "tags": [
     "educational-gaming",
@@ -54,9 +56,14 @@
     "google-sheets",
     "notebooklm",
     "infrastructure-as-code",
+    "educacion-primaria",
+    "educacion-secundaria",
+    "lomloe",
+    "criterios-de-evaluacion",
+    "decretos-autonomicos",
     "gamificacion-educativa",
-    "gamification",
     "interdepartamental",
-    "vanilla-js"
+    "vanilla-js",
+    "open-knowledge-framework"
   ]
 }

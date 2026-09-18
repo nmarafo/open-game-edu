@@ -1,49 +1,62 @@
 # Catálogo Curricular de Mecánicas de Juego (catalogo-mecanicas)
 
-Este catálogo actúa como la **matriz de diseño lúdico-pedagógico** para el modelo de lenguaje y el profesorado. Describe cómo traducir los saberes básicos de cualquier asignatura de Secundaria o Bachillerato a mecánicas jugables operativas en Google Sheets.
+Este catálogo actúa como la **matriz de diseño lúdico-pedagógico** para NotebookLM y el profesorado. Describe cómo traducir los saberes básicos y los **Criterios de Evaluación (CE)** de los Decretos Autonómicos tanto en **Educación Primaria** como en **Educación Secundaria y Bachillerato** a mecánicas jugables operativas en Google Sheets.
 
 ---
 
-## 1. Matriz de Traducción: Asignatura ↔ Mecánica de Videojuego
+## 1. Matriz para Educación Primaria (1.º a 6.º)
 
-| Asignatura | Mecánica Lúdica en el Motor | Equivalente en la Hoja de Sheets | Rol en el Videojuego |
+En Primaria, las mecánicas deben apoyarse fuertemente en la narrativa vivencial, la intuición espacial, la visualización mediante iconos y la retroalimentación constructiva inmediata.
+
+### A. Asignaturas LOMLOE de Primaria y Mecánicas de Juego
+
+| Asignatura de Primaria | Mecánica en el Videojuego | Equivalente en la Hoja de Sheets | Criterios de Evaluación Típicos (Decretos Autonómicos) |
 | :--- | :--- | :--- | :--- |
-| **Lengua Castellana y Literatura** | Diálogos narrativos, acertijos de rima, descifrado de figuras retóricas, detección de falacias. | Columnas de opciones múltiples con citas literarias, versos o fragmentos teatrales. | Desbloqueo de puertas, persuasión de NPCs, diplomacia. |
-| **Matemáticas** | Cálculo de probabilidades en combates/tormentas, proporciones de recursos, economía comercial. | Columnas con fórmulas esperadas, porcentajes, márgenes de tolerancia numérica. | Gestión de inventario, supervivencia económica, apuestas de éxito. |
-| **Geografía e Historia** | Mapa de rutas, eventos cronológicos, dilemas históricos, relaciones con facciones. | Columnas de etapas/ciudades, costes de viaje en oro/tiempo, facciones aliadas. | Navegación espacial/geográfica, progresión temporal del mundo. |
-| **Biología y Geología** | Bestiario de criaturas, relaciones tróficas, resistencia a estados (veneno, clima), estratigrafía. | Columnas con taxonomía de seres vivos, debilidades biológicas, hábitats. | Combate táctico contra criaturas, recolección de plantas curativas. |
-| **Física y Química** | Sistema de crafteo/alquimia, balance de energía, leyes del movimiento, circuitos. | Columnas de recetas: Reactivo A + Reactivo B = Producto + Calor/Energía. | Elaboración de pociones, reparación de motores o naves, resolución de puzzles. |
-| **Lengua Extranjera (Inglés/Francés)** | Mensajes cifrados de radio, contraseñas idiomáticas, traducción de pistas críticas. | Columnas en idioma meta con glosario o preguntas de comprensión auditiva/lectora. | Comunicación con aliados extranjeros, desactivación de trampas con palabras clave. |
-| **Filosofía / Valores Éticos** | Árboles de dilemas morales, medidor de karma o reputación de facciones. | Columnas de decisiones sin respuesta única correcta, pero con impacto en estadísticas. | Definición del final de la historia (héroe, diplomático, tirano). |
-| **Educación Plástica y Dibujo** | Identificación de estilos artísticos, teoría del color, perspectiva y proporciones. | Columnas con códigos cromáticos, descripción de murales y símbolos heráldicos. | Inspección de artefactos antiguos, puzzles visuales y heráldica. |
-| **Música** | Puzzles rítmicos, secuencias de intervalos, afinación de mecanismos antiguos. | Columnas de secuencias sonoras reproducidas por la Web Audio API (Do-Re-Mi). | Apertura de cajas fuertes melódicas, conjuros sonoros. |
-| **Educación Física** | Gestión de fatiga/estamina, cálculo de calorías, planificación de rutas saludables. | Columnas de coste de energía por acción y recuperación mediante descanso/alimentos. | Medidor de resistencia para evitar el agotamiento físico. |
+| **Conocimiento del Medio Natural, Social y Cultural** | Clasificación de seres vivos, cadenas tróficas, orientación espacial en mapas locales, reciclaje y patrimonio histórico. | Retos con identificación de hábitats, deducción de causas ambientales, etapas históricas de la localidad. | *Identificar las características de los seres vivos, valorar el patrimonio natural y social, aplicar pautas de consumo responsable.* |
+| **Lengua Castellana y Literatura (o Cooficial)** | Adivinanzas lingüísticas, identificación de palabras (sustantivos, adjetivos, verbos), comprensión de noticias, rimas sencillas. | Diálogos con personajes que piden la palabra correcta, ordenación de frases o deducción de significados en contexto. | *Comprender e interpretar textos orales y escritos, producir textos sencillos, identificar las clases de palabras.* |
+| **Matemáticas** | Enigmas de cálculo mental, resolución de situaciones cotidianas (compras, recetas con fracciones, medición de distancias). | Columnas con problemas numéricos contextualizados, opciones de cantidades o cálculo de áreas/perímetros de recintos. | *Resolver problemas cotidianos mediante operaciones básicas, interpretar datos en tablas, reconocer figuras y cuerpos geométricos.* |
+| **Educación Artística (Plástica y Música)** | Identificación de mezclas cromáticas, texturas, familias de instrumentos musicales, ritmos y melodías sintetizadas. | Opciones con ruedas de color, instrumentos tradicionales y secuencias de notas de la Web Audio API. | *Explorar las posibilidades del sonido y la imagen, reconocer manifestaciones culturales y artísticas.* |
+| **Lengua Extranjera (Inglés/Francés)** | Pistas en el idioma meta, saludos, descripciones físicas de personajes, identificación de animales y colores. | Diálogos bilingües donde el alumno elige la traducción o respuesta adecuada para abrir un paso. | *Comprender mensajes breves en lengua extranjera, utilizar vocabulario temático contextualizado.* |
+| **Educación Física y Hábitos Saludables** | Gestión de barrita de energía/estamina, elección de menús saludables (pirámide alimentaria), calentamiento previo. | Preguntas sobre descanso, hidratación y elecciones nutricionales antes de superar un esfuerzo físico. | *Adoptar hábitos de vida activa y saludable, gestionar la energía y el trabajo en equipo.* |
+| **Educación en Valores Cívicos y Éticos** | Dilemas de convivencia escolar, resolución pacífica de conflictos, empatía con compañeros y cuidado del entorno. | Árboles de decisiones sociales sin penalización punitiva, pero con recompensas de karma/convivencia. | *Desarrollar actitudes de respeto, empatía, inclusión e igualdad en el ámbito escolar y comunitario.* |
 
 ---
 
-## 2. Ejemplos de Sinergias Interdepartamentales
+### B. Progresión por Ciclos de Primaria
 
-### Sinergia 1: "La Expedición del Siglo de Oro" (3.º ESO)
-- **Lengua**: Declamar versos de Lope o Quevedo para convencer al corregidor de que firme el permiso de zarpar.
-- **Historia**: Elegir la ruta del comercio triangular evitando puertos hostiles y tormentas estacionales.
-- **Matemáticas**: Calcular la ración de víveres por tripulante y la probabilidad de motín si escasea el agua.
-
-### Sinergia 2: "El Puesto Científico en Marte" (1.º Bachillerato / 4.º ESO)
-- **Física y Química**: Ajustar la presión de los tanques de oxígeno y calcular la energía solar captada.
-- **Biología**: Cultivar plantas en el biorreactor controlando el ciclo del nitrógeno y plagas bacterianas.
-- **Inglés**: Leer y descifrar los manuales técnicos de la estación espacial enviados por el centro de control en Houston.
-- **Filosofía**: Decidir cómo distribuir los suministros médicos limitados entre la tripulación (utilitarismo vs. deontología).
-
-### Sinergia 3: "El Misterio de la Catedral Gótica" (2.º ESO)
-- **Geografía e Historia**: Descubrir la influencia de los gremios medievales y la peste negra en la ciudad.
-- **Matemáticas**: Calcular las alturas y proporciones de los arcos apuntados y rosetones.
-- **Plástica**: Reconocer los símbolos religiosos y los colores de los vitrales.
-- **Música**: Resolver un enigma armónico en el órgano de la catedral para encontrar un pasadizo secreto.
+1. **Primer Ciclo (1.º y 2.º de Primaria)**:
+   - *Foco*: Conciencia fonológica, ortografía natural, conteo, sumas y restas con objetos, seres vivos del entorno inmediato.
+   - *Interfaz*: Frases muy breves, abundancia de iconos/emojis (🦁, 🍎, 🏠, 🔢) y opciones con palabras claras.
+2. **Segundo Ciclo (3.º y 4.º de Primaria)**:
+   - *Foco*: Comprensión lectora de textos descriptivos, tablas de multiplicar, unidades de medida (kg, l, km), ecosistemas locales y profesiones.
+   - *Interfaz*: Retos estructurados con pistas amables en caso de error.
+3. **Tercer Ciclo (5.º y 6.º de Primaria)**:
+   - *Foco*: Fracciones sencillas, porcentajes de descuento, cadenas tróficas complejas, épocas históricas (Prehistoria, Al-Ándalus, etc.) y ortografía (acentuación, b/v, g/j).
+   - *Interfaz*: Rutas de exploración no lineales, con contador de puntuación y misiones secundarias.
 
 ---
 
-## 3. Instrucción para el Modelo al Generar Semillas Curriculares
+## 2. Matriz para Educación Secundaria y Bachillerato
 
-Al generar las filas iniciales en `inicializarEcosistema()`:
-1. **Rigor Curricular**: El contenido no debe ser ficticio o infantil si el nivel es secundaria; debe corresponderse con los estándares reales de aprendizaje (LOMLOE u homólogos internacionales).
-2. **Explicación Pedagógica Obligatoria**: Cada reto debe incluir una justificación educativa clara en la columna `Feedback_Didactico` para que el error sea una oportunidad de aprendizaje guiado.
+| Asignatura | Mecánica Lúdica en el Motor | Criterios de Evaluación Típicos |
+| :--- | :--- | :--- |
+| **Geografía e Historia** | Cartografía interactiva, gestión de convoyes comerciales, cronología y relaciones geopolíticas entre facciones. | *Analizar procesos históricos, interpretar fuentes cartográficas y documentales, valorar la causalidad múltiple.* |
+| **Lengua Castellana y Literatura** | Análisis de fragmentos literarios, declamación de métricas, identificación de falacias argumentativas y registros. | *Interpretar textos literarios de distintas épocas, analizar la estructura sintáctica y el uso pragmático de la lengua.* |
+| **Matemáticas** | Probabilidad de sucesos (Laplace), proporciones, sistemas de ecuaciones, optimización económica de recursos. | *Modelizar situaciones reales mediante el lenguaje algebraico y probabilístico, justificar razonamientos matemáticos.* |
+| **Biología y Geología** | Resistencia a estados alterados (venenos, temperaturas), cadenas de herencia genética, dinámica de poblaciones. | *Aplicar principios de genética y evolución, analizar el impacto humano en la biosfera.* |
+| **Física y Química** | Sistema de alquimia y crafteo, estequiometría de reacciones, cálculo de velocidades, fuerzas y energía mecánica. | *Formular y balancear ecuaciones químicas, aplicar las leyes de Newton y la conservación de la energía.* |
+| **Filosofía** | Árboles de dilemas morales (utilitarismo, deontología, relativismo) que alteran el rumbo de la trama. | *Argumentar con rigor filosófico, detectar contradicciones lógicas y evaluar posturas éticas encontradas.* |
+
+---
+
+## 3. Ejemplos de Sinergias Interdepartamentales
+
+### Sinergia Primaria: "La Eco-Patrulla del Parque Natural" (5.º Primaria)
+- **Conocimiento del Medio**: Salvar una especie en peligro identificando su hábitat y depredadores (Criterio: *relaciones en los ecosistemas*).
+- **Matemáticas**: Calcular la superficie repoblada con árboles usando fracciones y áreas de rectángulos (Criterio: *fracciones y medidas de superficie*).
+- **Lengua Castellana**: Redactar un bando municipal informativo con adjetivos y conectores lógicos (Criterio: *producción de textos expositivos*).
+
+### Sinergia Secundaria: "El Galeón del Siglo de Oro" (3.º ESO)
+- **Lengua**: Superar duelos poéticos y desafíos de teatro barroco (Criterio: *análisis del teatro barroco*).
+- **Historia**: Trazar las rutas atlánticas de la Flota de Indias y la Casa de Contratación (Criterio: *el comercio de ultramar en la Edad Moderna*).
+- **Matemáticas**: Calcular la probabilidad de sufrir averías y repartir víveres mediante fracciones y porcentajes (Criterio: *cálculo de probabilidades simples*).

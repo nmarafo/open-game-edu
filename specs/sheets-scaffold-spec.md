@@ -1,97 +1,91 @@
 # Especificación Técnica: Scaffolding en Google Sheets (sheets-scaffold-spec)
 
-Esta especificación detalla las reglas de diseño, la sintaxis exacta de Google Apps Script y las convenciones visuales requeridas para que el código generado cree automáticamente la base de datos distribuida en Google Sheets.
+Esta especificación detalla las reglas de diseño, la sintaxis exacta de Google Apps Script y las convenciones visuales requeridas para que el código generado construya automáticamente la base de datos distribuida en Google Sheets, **incorporando los Criterios de Evaluación oficiales de los Decretos Autonómicos** tanto para **Educación Primaria** como para **Secundaria y Bachillerato**.
 
 ---
 
 ## 1. Principios de Diseño del Scaffolding
 
-1. **Idempotencia Absoluta**: Ejecutar `inicializarEcosistema()` más de una vez jamás debe lanzar un error de "Sheet already exists". Si la pestaña ya existe, se limpia (`sheet.clear()`) y se repuebla.
-2. **Jerarquía Visual y Accesibilidad**: Cada pestaña debe tener:
+1. **Idempotencia Absoluta**: Ejecutar `inicializarEcosistema()` más de una vez jamás debe duplicar pestañas ni fallar. Si la pestaña ya existe, se limpia (`sheet.clear()`) y se repuebla.
+2. **Justificación Curricular Integrada (LOMLOE / Decretos Autonómicos)**: Cada fila de reto debe contener obligatoriamente su **Criterio de Evaluación (CE)** oficial y el **Saber Básico** correspondiente del Decreto Autonómico cargado en NotebookLM. De este modo, la hoja sirve simultáneamente como motor del juego y como **cuaderno de programación y evaluación formal** del profesorado.
+3. **Jerarquía Visual y Accesibilidad**:
    - Color distintivo en la pestaña (`setTabColor`).
    - Fila 1 congelada (`setFrozenRows(1)`).
    - Encabezados contrastados (fondo oscuro/color sólido, texto blanco y negrita).
-   - Anchos de columna explícitos para evitar que el texto quede cortado.
-3. **Pestaña Global de Configuración**: Siempre debe existir una primera pestaña llamada `Config_Juego` con parámetros globales.
+   - Anchos de columna explícitos para evitar texto truncado.
+4. **Pestaña Global de Configuración**: Siempre debe existir una primera pestaña llamada `Config_Juego` con parámetros globales.
 
 ---
 
 ## 2. Convención de Nomenclatura y Código Cromático por Materia
 
-| Departamento / Materia | Nombre de Pestaña Sugerido | Color Hexadecimal Pestaña | Fondo de Encabezado |
+### A. Educación Primaria (1.º a 6.º)
+| Materia de Primaria | Nombre de Pestaña Sugerido | Color Hex Pestaña | Fondo Encabezado |
 | :--- | :--- | :--- | :--- |
-| **Configuración** | `Config_Juego` | `#4285F4` (Azul Google) | `#1A73E8` |
-| **Lengua y Literatura** | `Lengua_Dialogos` / `Lengua_Retos` | `#9C27B0` (Púrpura) | `#6A1B9A` |
-| **Historia y Geografía** | `Historia_Rutas` / `Historia_Misiones`| `#E65100` (Ámbar oscuro) | `#BF360C` |
-| **Matemáticas** | `Mates_Probabilidad` / `Mates_Enigmas`| `#1565C0` (Azul zafiro) | `#0D47A1` |
-| **Biología y Geología** | `Biologia_Bestiario` / `Ciencias_Eco` | `#2E7D32` (Verde bosque) | `#1B5E20` |
-| **Física y Química** | `FyQ_Reacciones` / `FyQ_Energia` | `#00838F` (Cian petróleo) | `#006064` |
-| **Lenguas Extranjeras** | `Ingles_Traduccion` / `Idiomas_Claves`| `#F9A825` (Mostaza) | `#F57F17` |
-| **Educación Artística / Música**| `Arte_Galeria` / `Musica_Secuencias` | `#AD1457` (Magenta) | `#880E4F` |
+| **Configuración Global** | `Config_Juego` | `#1A73E8` (Azul Google) | `#1557B0` |
+| **Conocimiento del Medio Natural, Social y Cultural** | `ConoMedio_Naturaleza` / `ConoMedio_Sociedad` | `#2E7D32` (Verde bosque) | `#1B5E20` |
+| **Lengua Castellana y Literatura (o Cooficial)** | `Lengua_Aventura` / `Lengua_Palabras` | `#7B1FA2` (Púrpura) | `#4A148C` |
+| **Matemáticas** | `Mates_Enigmas` / `Mates_Calculo` | `#0288D1` (Azul cielo) | `#01579B` |
+| **Educación Artística (Plástica y Música)** | `Artistica_Taller` / `Musica_Ritmos` | `#D81B60` (Rosa fucsia) | `#880E4F` |
+| **Lengua Extranjera (Inglés/Francés)** | `Ingles_Mision` / `Idiomas_Vocab` | `#F57F17` (Mostaza) | `#E65100` |
+| **Educación Física / Hábitos Saludables** | `EdFisica_Energia` / `Salud_Retos` | `#00897B` (Verde azulado) | `#004D40` |
+| **Educación en Valores Cívicos y Éticos** | `Valores_Dilemas` / `Convivencia_Paz` | `#5D4037` (Marrón tierra)| `#3E2723` |
+
+### B. Educación Secundaria y Bachillerato
+| Departamento / Materia | Nombre de Pestaña Sugerido | Color Hex Pestaña | Fondo Encabezado |
+| :--- | :--- | :--- | :--- |
+| **Geografía e Historia** | `Historia_Rutas` / `Historia_Misiones` | `#E65100` (Ámbar oscuro) | `#BF360C` |
+| **Biología y Geología** | `Biologia_Bestiario` / `Ciencias_Eco` | `#388E3C` (Verde) | `#1B5E20` |
+| **Física y Química** | `FyQ_Reacciones` / `FyQ_Laboratorio` | `#0097A7` (Turquesa) | `#006064` |
 | **Filosofía / Valores Éticos** | `Filo_Dilemas` / `Etica_Decisiones` | `#4E342E` (Tierra) | `#3E2723` |
+| **Tecnología y Digitalización** | `Tecno_Circuitos` / `Digital_Logica` | `#455A64` (Gris azulado) | `#263238` |
 
 ---
 
-## 3. Esquemas de Columnas Estándar
+## 3. Esquemas de Columnas Estándar con Criterios de Evaluación
 
 ### A. Pestaña de Control: `Config_Juego`
-Organizada en formato Clave-Valor (2 columnas):
+Organizada en formato Clave-Valor (3 columnas):
 
 | Columna A (Parametro) | Columna B (Valor) | Columna C (Descripcion_Docente) |
 | :--- | :--- | :--- |
-| `TITULO_JUEGO` | Las Crónicas del Galeón Perdido | Nombre visible en la barra superior |
-| `DESCRIPCION` | Una travesía por el Atlántico en 1588 | Sinopsis mostrada en la pantalla de bienvenida |
-| `VIDAS_INICIALES` | 3 | Número de intentos o vidas antes del Game Over |
-| `PUNTOS_VICTORIA` | 100 | Puntuación requerida para ganar la partida |
-| `MENSAJE_VICTORIA` | ¡Has arribado a puerto con éxito! | Texto al completar todos los retos |
-| `MENSAJE_DERROTA` | El galeón no ha superado las adversidades | Texto al perder todas las vidas |
+| `TITULO_JUEGO` | El Tesoro del Parque Natural | Título visible en la cabecera del juego |
+| `ETAPA_CURSO` | 5.º de Primaria | Nivel escolar al que va dirigido |
+| `COMUNIDAD_AUTONOMA`| Andalucía | Normativa autonómica de referencia |
+| `DESCRIPCION` | Una misión ecológica por Doñana y Sierra Nevada | Sinopsis de bienvenida |
+| `VIDAS_INICIALES` | 3 | Vidas o intentos disponibles |
+| `PUNTOS_VICTORIA` | 80 | Puntos necesarios para ganar |
+| `MENSAJE_VICTORIA` | ¡Misión cumplida! Eres Guardián Mayor de la Biodiversidad. | Mensaje al superar la meta |
+| `MENSAJE_DERROTA` | La expedición no ha resistido los peligros. ¡Revisa tus pistas! | Mensaje al perder |
 
-### B. Pestaña de Retos / Diálogos Narrativos (ej. Lengua / Historia)
-Permite preguntas con opciones múltiples o árboles de decisión con feedback pedagógico:
+### B. Pestaña Estándar de Materia (Educación Primaria y Secundaria)
 
-| Columna | Nombre Cabecera | Ancho (px) | Propósito |
+Cada pestaña de materia incluye doce columnas normalizadas:
+
+| Columna | Cabecera | Ancho (px) | Propósito Pedagógico / Funcional |
 | :--- | :--- | :--- | :--- |
-| **A** | `ID` | 60 | Identificador único (ej. `LENG_01`) |
-| **B** | `Etapa_O_Lugar` | 120 | En qué fase o localización aparece |
-| **C** | `Emisor` | 110 | Personaje que habla (ej. Capitán, Monje, Marinero) |
-| **D** | `Texto_Narrativo` | 300 | Pregunta, diálogo o dilema planteado |
-| **E** | `Opcion_A` | 180 | Primera alternativa |
-| **F** | `Opcion_B` | 180 | Segunda alternativa |
-| **G** | `Opcion_C` | 180 | Tercera alternativa |
-| **H** | `Respuesta_Correcta` | 140 | Debe coincidir exactamente con A, B o C |
-| **I** | `Feedback_Didactico` | 260 | Explicación educativa tras responder |
-| **J** | `Puntos` | 70 | Puntos sumados si acierta |
-
-### C. Pestaña de Retos Cuantitativos / Fórmulas (ej. Matemáticas / Física)
-
-| Columna | Nombre Cabecera | Ancho (px) | Propósito |
-| :--- | :--- | :--- | :--- |
-| **A** | `ID` | 60 | Identificador único (ej. `MAT_01`) |
-| **B** | `Situacion_Problema` | 280 | Planteamiento del cálculo o dilema de probabilidad |
-| **C** | `Formula_O_Concepto` | 140 | Pista teórica curricular (ej. Casos favorables / posibles) |
-| **D** | `Valor_Esperado` | 100 | Resultado numérico o texto exacto |
-| **E** | `Tolerancia` | 80 | Margen de error aceptado (ej. 0 o 0.05) |
-| **F** | `Pistas` | 220 | Pista si el alumno falla el primer intento |
-| **G** | `Impacto_Salud` | 90 | Daño al jugador si falla |
+| **A** | `ID` | 70 | Código único del reto (ej. `MED_01`, `MAT_01`, `LENG_01`) |
+| **B** | `Etapa_O_Lugar` | 130 | Localización narrativa o nivel del mapa |
+| **C** | `Criterio_Evaluacion` | 240 | **Código y redacción del CE oficial del Decreto Autonómico** (ej. `CE 3.2: Identificar las relaciones en ecosistemas...`) |
+| **D** | `Saber_Basico` | 170 | **Saber curricular del Decreto** (ej. `Ecosistemas y cadenas tróficas`) |
+| **E** | `Emisor_O_Personaje` | 120 | Personaje o entidad que habla (ej. Guardabosques, Sabio) |
+| **F** | `Texto_Narrativo` | 320 | Planteamiento del reto, enigma o pregunta contextualizada |
+| **G** | `Opcion_A` | 190 | Alternativa A |
+| **H** | `Opcion_B` | 190 | Alternativa B |
+| **I** | `Opcion_C` | 190 | Alternativa C |
+| **J** | `Respuesta_Correcta` | 120 | Debe ser exactamente `A`, `B` o `C` |
+| **K** | `Feedback_Didactico` | 280 | Justificación pedagógica inmediata tras responder |
+| **L** | `Puntos` | 70 | Puntos sumados al acertar (ej. 25, 30) |
 
 ---
 
 ## 4. Patrón Canónico de Código Apps Script
 
-Todo generador en el modelo de lenguaje debe utilizar este patrón exacto:
-
 ```javascript
 /**
- * Crea o reinicia una pestaña con formato visual institucional y datos semilla.
- * @param {GoogleAppsScript.Spreadsheet.Spreadsheet} ss - Hoja de cálculo activa.
- * @param {string} nombreHoja - Nombre de la pestaña.
- * @param {string} colorPestanaHex - Color de la pestaña (ej. "#6A1B9A").
- * @param {string} colorCabeceraHex - Color de fondo de los encabezados.
- * @param {Array<string>} cabeceras - Array con los nombres de las columnas.
- * @param {Array<number>} anchosColumnas - Ancho en píxeles de cada columna.
- * @param {Array<Array<any>>} datosSemilla - Filas de contenido inicial.
+ * Configura una pestaña de materia con cabeceras curriculares y datos semilla.
  */
-function configurarPestana(ss, nombreHoja, colorPestanaHex, colorCabeceraHex, cabeceras, anchosColumnas, datosSemilla) {
+function configurarPestanaMateria(ss, nombreHoja, colorPestana, colorCabecera, cabeceras, anchos, semillas) {
   var hoja = ss.getSheetByName(nombreHoja);
   if (!hoja) {
     hoja = ss.insertSheet(nombreHoja);
@@ -100,68 +94,50 @@ function configurarPestana(ss, nombreHoja, colorPestanaHex, colorCabeceraHex, ca
   }
 
   // 1. Color de la pestaña
-  hoja.setTabColor(colorPestanaHex);
+  hoja.setTabColor(colorPestana);
 
-  // 2. Inserción y formato de encabezados
-  var filaCabecera = [cabeceras];
-  var rangoCabecera = hoja.getRange(1, 1, 1, cabeceras.length);
-  rangoCabecera.setValues(filaCabecera);
-  rangoCabecera.setBackground(colorCabeceraHex);
-  rangoCabecera.setFontColor('#FFFFFF');
-  rangoCabecera.setFontWeight('bold');
-  rangoCabecera.setHorizontalAlignment('center');
-  rangoCabecera.setVerticalAlignment('middle');
-  hoja.setRowHeight(1, 36);
+  // 2. Encabezados con formato institucional
+  var rHeader = hoja.getRange(1, 1, 1, cabeceras.length);
+  rHeader.setValues([cabeceras]);
+  rHeader.setBackground(colorCabecera);
+  rHeader.setFontColor('#FFFFFF');
+  rHeader.setFontWeight('bold');
+  rHeader.setHorizontalAlignment('center');
+  rHeader.setVerticalAlignment('middle');
+  hoja.setRowHeight(1, 38);
 
-  // 3. Inserción de datos semilla
-  if (datosSemilla && datosSemilla.length > 0) {
-    var rangoDatos = hoja.getRange(2, 1, datosSemilla.length, cabeceras.length);
-    rangoDatos.setValues(datosSemilla);
-    rangoDatos.setVerticalAlignment('middle');
+  // 3. Inserción de semillas con bandas alternadas
+  if (semillas && semillas.length > 0) {
+    var rData = hoja.getRange(2, 1, semillas.length, cabeceras.length);
+    rData.setValues(semillas);
+    rData.setVerticalAlignment('middle');
     
-    // Bandas alternadas sutiles para legibilidad
-    for (var i = 0; i < datosSemilla.length; i++) {
+    for (var i = 0; i < semillas.length; i++) {
       if (i % 2 === 1) {
-        hoja.getRange(i + 2, 1, 1, cabeceras.length).setBackground('#F8F9FA');
+        hoja.getRange(i + 2, 1, 1, cabeceras.length).setBackground('#F8FAFC');
       }
     }
   }
 
-  // 4. Congelar la fila 1
+  // 4. Congelar la fila 1 y ajustar anchos
   hoja.setFrozenRows(1);
-
-  // 5. Ajuste de anchos de columna
-  if (anchosColumnas && anchosColumnas.length === cabeceras.length) {
-    for (var col = 0; col < anchosColumnas.length; col++) {
-      hoja.setColumnWidth(col + 1, anchosColumnas[col]);
+  if (anchos && anchos.length === cabeceras.length) {
+    for (var c = 0; c < anchos.length; c++) {
+      hoja.setColumnWidth(c + 1, anchos[c]);
     }
   }
 
+  // 5. Validación desplegable en la columna de Respuesta_Correcta (Columna J = 10)
+  var colRespuesta = cabeceras.indexOf('Respuesta_Correcta') + 1;
+  if (colRespuesta > 0) {
+    var regla = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['A', 'B', 'C'], true)
+      .setAllowInvalid(false)
+      .setHelpText('Selecciona A, B o C según la opción correcta.')
+      .build();
+    hoja.getRange(2, colRespuesta, 99, 1).setDataValidation(regla);
+  }
+
   return hoja;
-}
-```
-
----
-
-## 5. Validaciones de Datos Automáticas
-
-Para garantizar que los estudiantes no introduzcan valores inválidos en ciertas columnas clave:
-
-```javascript
-/**
- * Añade validación desplegable a una columna de la hoja.
- * @param {GoogleAppsScript.Spreadsheet.Sheet} hoja 
- * @param {number} colIndex (1-indexed)
- * @param {Array<string>} opcionesValidas 
- */
-function aplicarValidacionColumna(hoja, colIndex, opcionesValidas) {
-  var regla = SpreadsheetApp.newDataValidation()
-    .requireValueInList(opcionesValidas, true)
-    .setAllowInvalid(false)
-    .setHelpText('Selecciona una opción válida de la lista.')
-    .build();
-  
-  // Aplica la regla desde la fila 2 hasta la fila 100
-  hoja.getRange(2, colIndex, 99, 1).setDataValidation(regla);
 }
 ```

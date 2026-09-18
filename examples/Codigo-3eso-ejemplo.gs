@@ -1,8 +1,9 @@
 // ====================================================================
 // open-game-edu: Instalador y Motor Monolítico de Referencia
-// Nivel: 3.º de ESO
-// Materias: Lengua Castellana (Teatro y Siglo de Oro), Historia (Comercio s.XVI), Matemáticas (Probabilidad)
-// Licencia: MIT - Proyecto Open Game Edu
+// Etapa: 3.º de ESO (Secundaria) - Decreto Curricular LOMLOE
+// Materias: Lengua Castellana (Siglo de Oro), Geografía e Historia (Comercio s.XVI), Matemáticas (Probabilidad)
+// Licencia: Creative Commons Atribución-CompartirIgual 4.0 (CC BY-SA 4.0)
+// Basado en proyectos de Norberto Martín Afonso (OpenDidactia / open-game-edu)
 // ====================================================================
 
 /**
@@ -15,6 +16,8 @@ function inicializarEcosistema() {
   // --- A. Pestaña de Configuración Global ---
   configurarPestanaConfig(ss, [
     ['TITULO_JUEGO', 'La Flota de Indias: Crónicas del Siglo de Oro', 'Título mostrado en la cabecera del juego'],
+    ['ETAPA_CURSO', '3.º de ESO', 'Etapa y curso educativo'],
+    ['COMUNIDAD_AUTONOMA', 'Canarias / Andalucía / Madrid (Referencia LOMLOE)', 'Decreto autonómico de currículo aplicado'],
     ['DESCRIPCION', 'Zarpa desde Sevilla en 1588. Supera enigmas literarios, calcula probabilidades náuticas y gestiona rutas comerciales.', 'Sinopsis de bienvenida'],
     ['VIDAS_INICIALES', 3, 'Número de intentos disponibles para el alumno'],
     ['PUNTOS_VICTORIA', 80, 'Puntuación mínima para completar la expedición'],
@@ -28,19 +31,25 @@ function inicializarEcosistema() {
     'Lengua_Teatro',
     '#7B1FA2', // Púrpura
     '#4A148C',
-    ['ID', 'Etapa', 'Personaje', 'Texto_Narrativo', 'Opcion_A', 'Opcion_B', 'Opcion_C', 'Respuesta_Correcta', 'Feedback_Didactico', 'Puntos'],
-    [80, 130, 120, 320, 200, 200, 200, 130, 280, 70],
+    ['ID', 'Etapa', 'Criterio_Evaluacion', 'Saber_Basico', 'Personaje', 'Texto_Narrativo', 'Opcion_A', 'Opcion_B', 'Opcion_C', 'Respuesta_Correcta', 'Feedback_Didactico', 'Puntos'],
+    [80, 130, 240, 180, 120, 320, 190, 190, 190, 120, 280, 70],
     [
       [
-        'LENG_01', 'Puerto de Sevilla', 'Dramaturgo Callejero',
+        'LENG_01', 'Puerto de Sevilla',
+        'CE.LCL.3.2: Leer e interpretar textos literarios identificando convenciones métricas y figuras retóricas.',
+        'Métrica y rima del Siglo de Oro',
+        'Dramaturgo Callejero',
         'Para conseguir el pasaje, un cómico te reta a completar el verso octosílabo en rima asonante:\n"En un rincón de la nave / cantaba alegre el..."',
         'A) jilguero', 'B) soldado', 'C) marinero',
         'A',
-        '¡Exacto! "Nave" y "jilguero" comparten la rima asonante en las vocales a-e en posición par.',
+        '¡Exacto! "Nave" y "jilguero" comparten rima asonante en las vocales a-e en posición par.',
         25
       ],
       [
-        'LENG_02', 'Alta Mar', 'Fraile Cronista',
+        'LENG_02', 'Alta Mar',
+        'CE.LCL.3.7: Conocer los autores y obras cumbre de la literatura española del Barroco.',
+        'El teatro de Lope de Vega y la comedia nueva',
+        'Fraile Cronista',
         '¿A qué célebre autor del Siglo de Oro, apodado "Fénix de los Ingenios", debemos el tratado "Arte nuevo de hacer comedias"?',
         'A) Francisco de Quevedo', 'B) Lope de Vega', 'C) Pedro Calderón de la Barca',
         'B',
@@ -48,7 +57,10 @@ function inicializarEcosistema() {
         25
       ],
       [
-        'LENG_03', 'Llegada a las Antillas', 'Gobernador de Cuba',
+        'LENG_03', 'Llegada a las Antillas',
+        'CE.LCL.3.3: Explicar la evolución de los personajes y los grandes temas teatrales clásicos.',
+        'El drama filosófico calderoniano',
+        'Gobernador de Cuba',
         'En la obra "La vida es sueño", ¿cuál de estos personajes pronuncia el famoso monólogo sobre la libertad encadenada?',
         'A) Clarín', 'B) Segismundo', 'C) Basilio',
         'B',
@@ -64,19 +76,25 @@ function inicializarEcosistema() {
     'Historia_Rutas',
     '#D84315', // Ámbar / Fuego
     '#BF360C',
-    ['ID', 'Etapa', 'Enclave', 'Texto_Narrativo', 'Opcion_A', 'Opcion_B', 'Opcion_C', 'Respuesta_Correcta', 'Feedback_Didactico', 'Puntos'],
-    [80, 130, 140, 320, 200, 200, 200, 130, 280, 70],
+    ['ID', 'Etapa', 'Criterio_Evaluacion', 'Saber_Basico', 'Enclave', 'Texto_Narrativo', 'Opcion_A', 'Opcion_B', 'Opcion_C', 'Respuesta_Correcta', 'Feedback_Didactico', 'Puntos'],
+    [80, 130, 240, 180, 140, 320, 190, 190, 190, 120, 280, 70],
     [
       [
-        'HIST_01', 'Aduana de Indias', 'Casa de la Contratación',
+        'HIST_01', 'Aduana de Indias',
+        'CE.GH.3.4: Analizar las instituciones de control del comercio marítimo en la Edad Moderna.',
+        'La Casa de la Contratación y el monopolio de Sevilla',
+        'Casa de la Contratación',
         '¿Qué institución fundada en Sevilla en 1503 monopolizaba el registro de mercancías, mapas y pilotos hacia el Nuevo Mundo?',
         'A) El Consejo de Indias', 'B) La Casa de la Contratación', 'C) El Consulado del Mar',
         'B',
-        '¡Históricamente riguroso! La Casa de la Contratación custodiaba además el Padrón Real (mapa secreto).',
+        '¡Históricamente riguroso! La Casa de la Contratación custodiaba además el Padrón Real (mapa náutico secreto).',
         25
       ],
       [
-        'HIST_02', 'Paso de las Canarias', 'Isla de La Gomera',
+        'HIST_02', 'Paso de las Canarias',
+        'CE.GH.3.2: Interpretar mapas y factores meteorológicos y geográficos en las exploraciones oceánicas.',
+        'Rutas transatlánticas y vientos alisios',
+        'Isla de La Gomera',
         'Las flotas españolas aprovechaban un sistema constante de vientos para cruzar el océano Atlántico hacia América. ¿Cuáles eran?',
         'A) Vientos Alisios', 'B) Vientos Polares del Este', 'C) Corriente de Humboldt',
         'A',
@@ -84,7 +102,10 @@ function inicializarEcosistema() {
         25
       ],
       [
-        'HIST_03', 'Mar Caribe', 'Cayo Sombrío',
+        'HIST_03', 'Mar Caribe',
+        'CE.GH.3.5: Comprender la rivalidad colonial y los sistemas de defensa naval en el Atlántico.',
+        'La piratería caribeña y el sistema de convoyes',
+        'Cayo Sombrío',
         '¿Qué sistema defensivo se instauró para proteger los navíos cargados de plata de los ataques de corsarios y piratas?',
         'A) La Armada Invencible', 'B) El Régimen de Navegación Libre', 'C) El Sistema de Flotas y Galeones',
         'C',
@@ -100,11 +121,14 @@ function inicializarEcosistema() {
     'Mates_Probabilidad',
     '#1565C0', // Azul Océano
     '#0D47A1',
-    ['ID', 'Etapa', 'Desafío_Cálculo', 'Texto_Narrativo', 'Opcion_A', 'Opcion_B', 'Opcion_C', 'Respuesta_Correcta', 'Feedback_Didactico', 'Puntos'],
-    [80, 130, 140, 320, 200, 200, 200, 130, 280, 70],
+    ['ID', 'Etapa', 'Criterio_Evaluacion', 'Saber_Basico', 'Desafío_Cálculo', 'Texto_Narrativo', 'Opcion_A', 'Opcion_B', 'Opcion_C', 'Respuesta_Correcta', 'Feedback_Didactico', 'Puntos'],
+    [80, 130, 240, 180, 140, 320, 190, 190, 190, 120, 280, 70],
     [
       [
-        'MAT_01', 'Bodega del Galeón', 'Reparto de Víveres',
+        'MAT_01', 'Bodega del Galeón',
+        'CE.MAT.3.1: Utilizar fracciones y proporciones para resolver problemas de inventario y pérdidas.',
+        'Operaciones con fracciones y números racionales',
+        'Reparto de Víveres',
         'De 60 quintales de grano almacenados, las ratas han dañado 15 quintales. ¿Qué fracción del cargamento de grano sigue intacta?',
         'A) 1/4', 'B) 3/4', 'C) 2/3',
         'B',
@@ -112,7 +136,10 @@ function inicializarEcosistema() {
         25
       ],
       [
-        'MAT_02', 'Tormenta en el Atlántico', 'Cálculo de Rumbo',
+        'MAT_02', 'Tormenta en el Atlántico',
+        'CE.MAT.3.7: Calcular probabilidades de sucesos aleatorios simples mediante la regla de Laplace.',
+        'Probabilidad simple y regla de Laplace',
+        'Cálculo de Rumbo',
         'Un anemómetro rudimentario indica 4 vientos probables de tempestad de un total de 16 cuadrantes de la rosa. Según la regla de Laplace, ¿cuál es la probabilidad de entrar en temporal?',
         'A) 1/4 (25%)', 'B) 1/2 (50%)', 'C) 1/8 (12.5%)',
         'A',
@@ -120,7 +147,10 @@ function inicializarEcosistema() {
         30
       ],
       [
-        'MAT_03', 'Mercado de Veracruz', 'Venta de Especias',
+        'MAT_03', 'Mercado de Veracruz',
+        'CE.MAT.3.2: Resolver problemas financieros de costes, ingresos y porcentajes de beneficio.',
+        'Variaciones porcentuales y márgenes comerciales',
+        'Venta de Especias',
         'Una carga de canela y clavo se vende por 800 reales con un beneficio neto del 20%. ¿Cuál fue el coste original de compra en Sevilla?',
         'A) 640 reales', 'B) 666.67 reales', 'C) 700 reales',
         'B',
@@ -130,10 +160,10 @@ function inicializarEcosistema() {
     ]
   );
 
-  // Aplicar validaciones en columnas de Respuesta_Correcta (columna 8 = H)
-  aplicarValidacionRespuesta(ss.getSheetByName('Lengua_Teatro'), 8);
-  aplicarValidacionRespuesta(ss.getSheetByName('Historia_Rutas'), 8);
-  aplicarValidacionRespuesta(ss.getSheetByName('Mates_Probabilidad'), 8);
+  // Aplicar validaciones en columnas de Respuesta_Correcta (columna 10 = J)
+  aplicarValidacionRespuesta(ss.getSheetByName('Lengua_Teatro'), 10);
+  aplicarValidacionRespuesta(ss.getSheetByName('Historia_Rutas'), 10);
+  aplicarValidacionRespuesta(ss.getSheetByName('Mates_Probabilidad'), 10);
 
   SpreadsheetApp.flush();
 }
@@ -245,7 +275,7 @@ function getGameHtml(initialDataJson) {
 '    }\n' +
 '    #app {\n' +
 '      width: 100%;\n' +
-'      max-width: 760px;\n' +
+'      max-width: 780px;\n' +
 '      background: var(--card-bg);\n' +
 '      border: 1px solid var(--card-border);\n' +
 '      border-radius: var(--radius);\n' +
@@ -268,8 +298,18 @@ function getGameHtml(initialDataJson) {
 '    .heart-icon { color: var(--danger-red); }\n' +
 '    .score-badge { background: #0284c7; color: white; padding: 4px 10px; border-radius: 20px; }\n' +
 '    /* Main Stage */\n' +
-'    main { padding: 24px; min-height: 380px; display: flex; flex-direction: column; justify-content: center; }\n' +
+'    main { padding: 24px; min-height: 400px; display: flex; flex-direction: column; justify-content: center; }\n' +
 '    .card-title { font-size: 1.4rem; color: var(--accent-blue); margin-bottom: 10px; }\n' +
+'    .curriculum-pill {\n' +
+'      background: rgba(56, 189, 248, 0.1);\n' +
+'      border-left: 3px solid var(--accent-blue);\n' +
+'      padding: 8px 12px;\n' +
+'      border-radius: 4px;\n' +
+'      font-size: 0.83rem;\n' +
+'      color: var(--accent-blue);\n' +
+'      margin-bottom: 12px;\n' +
+'      line-height: 1.4;\n' +
+'    }\n' +
 '    .narrative-box {\n' +
 '      background: rgba(15, 23, 42, 0.7);\n' +
 '      border-left: 4px solid var(--accent-gold);\n' +
@@ -412,10 +452,13 @@ function getGameHtml(initialDataJson) {
 '      document.getElementById("headerTitle").innerText = meta.TITULO_JUEGO || "Aventura Educativa";\n' +
 '      actualizarStats();\n' +
 '\n' +
+'      var subtitulo = meta.ETAPA_CURSO ? (\'<p style="color:var(--accent-gold);margin-bottom:8px;font-weight:600;">Etapa: \' + meta.ETAPA_CURSO + \'</p>\') : \'\';\n' +
+'\n' +
 '      stage.innerHTML = \n' +
 '        \'<h2 class="card-title">📜 \' + (meta.TITULO_JUEGO || "Expedición") + \'</h2>\' +\n' +
+'        subtitulo +\n' +
 '        \'<div class="narrative-box">\' + (meta.DESCRIPCION || "Bienvenido a la aventura.") + \'</div>\' +\n' +
-'        \'<p style="color:var(--text-muted);margin-bottom:16px;">Supera los retos de cada departamento para alcanzar la meta de \' + State.puntosMeta + \' puntos.</p>\' +\n' +
+'        \'<p style="color:var(--text-muted);margin-bottom:16px;">Supera los retos curriculares para alcanzar la meta de \' + State.puntosMeta + \' puntos.</p>\' +\n' +
 '        \'<button class="action-btn" onclick="Sound.click(); renderHub();">🚀 Comenzar Travesía</button>\';\n' +
 '    }\n' +
 '\n' +
@@ -425,7 +468,6 @@ function getGameHtml(initialDataJson) {
 '      var materias = window.GAME_DATA.materias || {};\n' +
 '      var keys = Object.keys(materias);\n' +
 '\n' +
-'      // Verificar si ya ganó o perdió\n' +
 '      if (State.vidas <= 0) { renderGameOver(); return; }\n' +
 '      if (State.puntos >= State.puntosMeta) { renderVictory(); return; }\n' +
 '\n' +
@@ -437,7 +479,7 @@ function getGameHtml(initialDataJson) {
 '        var lista = materias[m] || [];\n' +
 '        var done = lista.every(function(item) { return State.completados[item.ID]; });\n' +
 '        var cssClass = done ? "hub-card completed" : "hub-card";\n' +
-'        var tag = done ? "✅ Superada" : ("📌 " + lista.length + " retos disponibles");\n' +
+'        var tag = done ? "✅ Superada" : ("📌 " + lista.length + " retos curriculares");\n' +
 '        \n' +
 '        html += \'<div class="\' + cssClass + \'" onclick="Sound.click(); abrirMateria(\\\'\' + m + \'\\\')">\' +\n' +
 '                  \'<h3 style="color:var(--accent-gold);margin-bottom:6px;">\' + m.replace("_", " ") + \'</h3>\' +\n' +
@@ -451,7 +493,6 @@ function getGameHtml(initialDataJson) {
 '    function abrirMateria(nombreMateria) {\n' +
 '      State.materiaActual = nombreMateria;\n' +
 '      var lista = window.GAME_DATA.materias[nombreMateria] || [];\n' +
-'      // Encontrar el primer reto no completado\n' +
 '      var idx = 0;\n' +
 '      for (var i = 0; i < lista.length; i++) {\n' +
 '        if (!State.completados[lista[i].ID]) { idx = i; break; }\n' +
@@ -469,7 +510,12 @@ function getGameHtml(initialDataJson) {
 '      var emisor = reto.Personaje || reto.Enclave || reto.Desafío_Cálculo || "Desafío";\n' +
 '      var texto = reto.Texto_Narrativo || reto.Situacion_Problema || "";\n' +
 '\n' +
+'      var criterioHtml = reto.Criterio_Evaluacion \n' +
+'        ? (\'<div class="curriculum-pill">🎯 <strong>Criterio Curricular:</strong> \' + reto.Criterio_Evaluacion + \'</div>\')\n' +
+'        : \'\';\n' +
+'\n' +
 '      var html = \'<h2 class="card-title">⚓ \' + (reto.Etapa || State.materiaActual) + \'</h2>\' +\n' +
+'        criterioHtml +\n' +
 '        \'<div class="narrative-box">\' +\n' +
 '          \'<div class="speaker">🗣️ \' + emisor + \'</div>\' +\n' +
 '          \'<div>\' + texto + \'</div>\' +\n' +
@@ -489,12 +535,12 @@ function getGameHtml(initialDataJson) {
 '      var reto = lista[State.indiceReto];\n' +
 '      var fb = document.getElementById("feedbackContainer");\n' +
 '      \n' +
-'      // Desactivar botones de opciones\n' +
 '      var btns = document.querySelectorAll(".opt-btn");\n' +
 '      btns.forEach(function(b) { b.disabled = true; });\n' +
 '\n' +
 '      var correcta = String(reto.Respuesta_Correcta || "").trim().toUpperCase();\n' +
 '      var didactico = reto.Feedback_Didactico || "";\n' +
+'      var saber = reto.Saber_Basico ? (\'<br><small style="color:#94a3b8">📚 Saber básico: \' + reto.Saber_Basico + \'</small>\') : \'\';\n' +
 '\n' +
 '      if (opcion === correcta) {\n' +
 '        Sound.correct();\n' +
@@ -503,7 +549,7 @@ function getGameHtml(initialDataJson) {
 '        State.completados[reto.ID] = true;\n' +
 '        actualizarStats();\n' +
 '        fb.innerHTML = \'<div class="feedback-banner feedback-correct">\' +\n' +
-'          \'<strong>✅ ¡Acertado! (+\' + pts + \' pts)</strong><br>\' + didactico +\n' +
+'          \'<strong>✅ ¡Acertado! (+\' + pts + \' pts)</strong><br>\' + didactico + saber +\n' +
 '        \'</div>\' +\n' +
 '        \'<button class="action-btn" onclick="siguienteReto()">Continuar ➔</button>\';\n' +
 '      } else {\n' +
@@ -511,7 +557,7 @@ function getGameHtml(initialDataJson) {
 '        State.vidas -= 1;\n' +
 '        actualizarStats();\n' +
 '        fb.innerHTML = \'<div class="feedback-banner feedback-wrong">\' +\n' +
-'          \'<strong>❌ Respuesta incorrecta (-1 vida)</strong><br>\' + didactico +\n' +
+'          \'<strong>❌ Respuesta incorrecta (-1 vida)</strong><br>\' + didactico + saber +\n' +
 '        \'</div>\' +\n' +
 '        \'<button class="action-btn" onclick="siguienteReto()">Avanzar ➔</button>\';\n' +
 '      }\n' +
@@ -578,7 +624,7 @@ function configurarPestana(ss, nombre, tabColor, headerBg, cabeceras, anchos, se
   rHeader.setFontWeight('bold');
   rHeader.setHorizontalAlignment('center');
   rHeader.setVerticalAlignment('middle');
-  hoja.setRowHeight(1, 36);
+  hoja.setRowHeight(1, 38);
 
   if (semillas && semillas.length > 0) {
     var rData = hoja.getRange(2, 1, semillas.length, cabeceras.length);
@@ -610,14 +656,14 @@ function configurarPestanaConfig(ss, filasParametros) {
   rHeader.setBackground('#1A73E8');
   rHeader.setFontColor('#FFFFFF');
   rHeader.setFontWeight('bold');
-  hoja.setRowHeight(1, 36);
+  hoja.setRowHeight(1, 38);
 
   var rData = hoja.getRange(2, 1, filasParametros.length, 3);
   rData.setValues(filasParametros);
   hoja.setFrozenRows(1);
-  hoja.setColumnWidth(1, 180);
-  hoja.setColumnWidth(2, 280);
-  hoja.setColumnWidth(3, 340);
+  hoja.setColumnWidth(1, 200);
+  hoja.setColumnWidth(2, 320);
+  hoja.setColumnWidth(3, 360);
 }
 
 function aplicarValidacionRespuesta(hoja, numColumna) {
