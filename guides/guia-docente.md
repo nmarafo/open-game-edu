@@ -30,8 +30,11 @@ Esta guía explica paso a paso cómo dinamizar partidas en el aula en cualquiera
                              ▼
   ┌────────────────────────────────────────────────────────┐
   │ FASE 2: Propuesta Pedagógica de NotebookLM (Sin Código)│
-  │ • Explica la narrativa y mecánica del juego.           │
-  │ • Concreta Criterios LOMLOE y Saberes por materia.     │
+  │ • Dimensión A: El Videojuego (narrativa, dinámica, PDI)│
+  │ • Dimensión B: Trabajo del Alumnado para Crearlo (ABP):│
+  │   - Investigación, redacción de retos y distractores.  │
+  │   - Criterios LOMLOE y Saberes Básicos aplicados.      │
+  │   - Roles cooperativos y Pull Request escolar.         │
   │ • El docente revisa y responde "Conforme".             │
   └──────────────────────────┬─────────────────────────────┘
                              │ Docente conforme
@@ -92,9 +95,21 @@ Al finalizar la sesión, el docente abre la pestaña **`Puntuaciones_Online`** e
 
 ---
 
-## 4. Moderación de Nuevos Retos (Pull Request Escolar)
+## 4. El Proyecto ABP: El Alumnado como Diseñador del Videojuego
 
-Si los alumnos crean retos para enriquecer el juego:
-1. Envían la pregunta desde la pestaña **`✏️ Enviar Reto`** de la Web App.
-2. La fila entra en la materia correspondiente con estado `PENDIENTE`.
-3. El profesor abre en Google Sheets el menú **`🎮 open-game-edu > 📋 Panel de Revisión de Propuestas`** y pulsa **`✅ Aprobar`** para que se integre en la carrera oficial.
+En `open-game-edu`, los estudiantes **no son meros jugadores pasivos, sino los autores y diseñadores del videojuego**. En lugar de resolver fichas tradicionales, cada equipo asume la misión de investigar y crear los retos curriculares que conformarán la partida del aula.
+
+### 4.1. Roles Cooperativos en el Equipo de Creación
+Para asegurar la participación activa de todo el grupo, se recomiendan cuatro roles rotativos:
+* **Guionista Narrativo/a**: Integra la pregunta en la ambientación temática (ej. diálogos de corsarios, bitácoras de navegantes).
+* **Investigador/a Curricular**: Consulta los apuntes o libros de texto para asegurar la veracidad del contenido y formula la respuesta correcta.
+* **Validador/a de Opciones**: Diseña los 2 distractores incorrectos basados en errores conceptuales comunes y redacta la explicación didáctica formativa.
+* **Tester (Probador/a del Modo RUN)**: Previsualiza el reto en la Web App pulsando **`▶️ RUN / Previsualizar`** para comprobar la legibilidad y coherencia antes del envío definitivo.
+
+### 4.2. Flujo de Calidad Escolar (Pull Request Educativo)
+1. **Envío de la propuesta**: El equipo introduce su reto desde el formulario **`✏️ Proponer Reto`** de la Web App (o directamente en su hoja de trabajo).
+2. **Estado PENDIENTE**: El reto se almacena en la hoja de la materia con el estado inicial `PENDIENTE`.
+3. **Revisión Docente**: El profesorado revisa las propuestas abriendo el menú **`🎮 open-game-edu > 📋 Panel de Revisión de Propuestas`** en Google Sheets:
+   - Si requiere correcciones, introduce sugerencias en la columna `Feedback_Docente` para que el equipo investigue de nuevo.
+   - Si cumple los criterios de calidad curricular y redacción, pulsa **`✅ Aprobar`** (cambiando el estado a `APROBADO`).
+4. **Integración en la Partida**: Solo los retos con estado `APROBADO` se cargan en la experiencia oficial del aula y en la Carrera Multijugador.

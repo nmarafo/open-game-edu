@@ -44,3 +44,12 @@ El motor no solo divierte: genera **evidencias de aprendizaje formativas** de fo
 - **Biología y Geología**: Genética, dinámicas poblacionales y redes tróficas complejas.
 - **Física y Química**: Leyes de Newton, estequiometría y cambios de estado.
 - **Filosofía**: Dilemas morales (utilitarismo vs. deontología) y lógica formal.
+
+---
+
+## 4. El Alumnado como Diseñador de Retos (Pedagogía de la Co-Creación)
+
+El motor pedagógico de `open-game-edu` trasciende el modelo del estudiante como simple receptor lúdico. Al involucrar al alumnado en el diseño y autoría de los retos:
+1. **Activación de Niveles Superiores de Bloom**: Diseñar una pregunta exige comprender a fondo el concepto; formular distractores plausibles exige prever los errores conceptuales típicos; redactar el feedback formativo consolida la metacognición.
+2. **Autoría Interdisciplinar**: Los equipos investigan en los apuntes de cada materia, calculan datos reales (ej. escalas en mapas marinos, métricas poéticas, física de proyectiles) y los traducen a situaciones de juego.
+3. **Validación y Previsualización**: Mediante el flujo de Pull Request escolar (`PENDIENTE` -> `APROBADO`) y el botón `▶️ RUN`, los estudiantes iteran y testean sus propuestas antes de verlas en acción en la pantalla gigante de la clase.
