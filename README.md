@@ -226,13 +226,14 @@ En esta fase tienes TERMINANTEMENTE PROHIBIDO generar código Apps Script o HTML
 ##### 🛠️ DIMENSIÓN B: ¿EN QUÉ CONSISTE EL TRABAJO DEL ALUMNADO PARA CREAR EL JUEGO? (El Proyecto ABP)
 Los estudiantes **no son meros jugadores pasivos ni transcriptores de preguntas de examen; son los creadores, investigadores y diseñadores del videojuego**. En este apartado debes detallar:
 
-1. **Misión de Creación y Productos Auténticos por Materia** (extraída rigurosamente de los decretos en fuentes):
+1. **Misión de Creación y Productos Auténticos por Materia** (apóyate en el catálogo `authenticDeliverablesCatalog` de `okf.json` y en los decretos en fuentes):
    Para cada materia participante, explica:
-   - **Producto Auténtico / Entregable de la Materia**: Qué artefacto tangible de aprendizaje investiga, elabora o compone el alumnado para dar vida al juego. Ejemplos:
+   - **Producto Auténtico / Entregable de la Materia**: Qué artefacto tangible de aprendizaje investiga, elabora o compone el alumnado para dar vida al juego (consulta las variables y productos en `okf.json`). Ejemplos:
      * *Lengua Castellana y Literatura*: El guion interactivo, el diario de a bordo histórico, el glosario dialectal (ej. voces marineras de Canarias) y los árboles de diálogo narrativo.
      * *Matemáticas*: La cartografía a escala real, el modelo de probabilidades y vientos, el cálculo de trayectorias náuticas y la calibración del equilibrio numérico del juego.
      * *Música*: El diseño sonoro (composición de melodías con notas y ritmos en Web Audio API, efectos sonoros de cañones o tormentas y análisis métrico de salomas de trabajo tradicionales).
      * *Otras materias implicadas (Historia, Ciencias, Plástica, etc.)*: Sus correspondientes productos reales (mapas históricos, modelos científicos, diseño de avatares/escudos, etc.).
+   - **Variables Curriculares Manipuladas por el Alumnado**: Lista de variables concretas que los alumnos calculan o redactan (ej. `escala_numerica`, `angulo_rumbo`, `frecuencia_hz`, `registro_linguistico`).
    - **Criterios de Evaluación (CE) y Saberes Básicos aplicados**: Qué competencias oficiales del decreto autonómico se evalúan a través de la elaboración de dichos productos auténticos.
    - **Transposición al Motor del Juego**: Cómo ese producto creado por el alumnado se transforma en un reto interactivo, un dilema de decisión o una situación-problema para el juego.
    - **Ejemplo ilustrativo del reto derivado del producto**: Enunciado, opciones (con 2 distractores basados en errores conceptuales o de cálculo reales) y feedback formativo explicativo.
@@ -324,7 +325,7 @@ Explica al docente cómo añadir el archivo en Apps Script:
 | Archivo / Carpeta | Tipo | Descripción |
 | :--- | :--- | :--- |
 | [`LICENSE.md`](LICENSE.md) | Licencia | Términos de la licencia **Creative Commons Atribución-CompartirIgual 4.0 Internacional (CC BY-SA 4.0)** con cláusula de atribución. |
-| [`okf.json`](okf.json) | Manifiesto | Metadatos formales del paquete OKF, modalidades soportadas, compatibilidad LOMLOE y configuración LLM. |
+| [`okf.json`](okf.json) | Manifiesto OKF v1.3.0 | Metadatos formales, matriz curricular de 12 materias, catálogo de 30 productos auténticos/entregables de ABP, 6 roles de estudio y variables técnicas. |
 | [`prompts/prompt-maestro.md`](prompts/prompt-maestro.md) | Prompt de Sistema | Protocolo estricto en 4 fases para NotebookLM (Entrada, Propuesta pedagógica, `Codigo.gs` e `Index.html`). |
 | [`specs/sheets-scaffold-spec.md`](specs/sheets-scaffold-spec.md) | Especificación | Esquema de base de datos en Sheets: `Config_Juego`, `Puntuaciones_Online`, `Lobby_Multijugador` y 15 columnas de materia. |
 | [`specs/apps-script-api.md`](specs/apps-script-api.md) | Especificación | API backend (`Codigo.gs`): servicio de `Index.html` con plantillas, `doGet` (`?action=lobby`), RPCs de propuestas y menús nativos. |

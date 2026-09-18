@@ -1,5 +1,5 @@
 {
-  "okfVersion": "1.2.0",
+  "okfVersion": "1.3.0",
   "name": "open-game-edu",
   "title": "Open Game Edu: Motor de Videojuegos Interdepartamentales con Google Sheets, Apps Script y Decretos Curriculares Autonómicos",
   "description": "Especificación de Infrastructure as Code (IaC) educativa para generar videojuegos web interactivos multi-materia para Educación Primaria, Secundaria y Bachillerato. Utiliza un protocolo en 4 fases en NotebookLM, Google Sheets como base de datos curricular alineada con los Decretos Autonómicos (Criterios de Evaluación) y Google Apps Script (Codigo.gs + Index.html) como backend y frontend sin servidores externos.",
@@ -65,5 +65,988 @@
     "interdepartamental",
     "vanilla-js",
     "open-knowledge-framework"
-  ]
+  ],
+  "authenticDeliverablesCatalog": {
+    "metadata": {
+      "pedagogicalFramework": "Aprendizaje Basado en Proyectos (ABP / PBL) y Aprendizaje Servicio (ApS)",
+      "targetParadigm": "El alumnado como estudio desarrollador de videojuegos y creador de artefactos de aprendizaje interdisciplinares auténticos, superando el modelo pasivo de tests de opción múltiple.",
+      "bloomTaxonomyLevels": [
+        "Crear (Create)",
+        "Evaluar (Evaluate)",
+        "Analizar (Analyze)",
+        "Aplicar (Apply)"
+      ],
+      "assessmentStyle": "Formativa, auténtica, competencial y procesual con telemetría en vivo"
+    },
+    "studioRoles": [
+      {
+        "id": "ROLE-NARRATIVA",
+        "name": "Dirección Narrativa y Guion (Narrative Lead)",
+        "responsibilities": "Redactar el argumento global, las bitácoras históricas, los árboles de diálogo interactivos, el glosario terminológico y supervisar el estilo, tono y corrección ortotipográfica.",
+        "coreCompetencies": [
+          "CCL1",
+          "CCL2",
+          "CC1",
+          "CCEC1"
+        ],
+        "recommendedTools": [
+          "Google Docs",
+          "Twine",
+          "Diccionario Histórico / Academia Canaria de la Lengua"
+        ]
+      },
+      {
+        "id": "ROLE-MATEMATICAS",
+        "name": "Diseño de Sistemas, Balística y Matemáticas (Systems & Balance Designer)",
+        "responsibilities": "Modelar las cartas náuticas a escala real, ecuaciones balísticas, probabilidades de combate/clima (Laplace) y calibrar la economía y curvas de progresión del juego.",
+        "coreCompetencies": [
+          "STEM1",
+          "STEM2",
+          "CD2",
+          "CPSAA4"
+        ],
+        "recommendedTools": [
+          "GeoGebra",
+          "Google Sheets",
+          "Calculadora gráfica"
+        ]
+      },
+      {
+        "id": "ROLE-AUDIO",
+        "name": "Diseño Sonoro y Acústica (Audio Lead)",
+        "responsibilities": "Definir frecuencias en Hz y ondas en Web Audio API, crear efectos de sonido (SFX procedimentales) y analizar métricas y compases de cantos de trabajo tradicionales (salomas).",
+        "coreCompetencies": [
+          "CCEC1",
+          "CCEC2",
+          "CD1",
+          "STEM3"
+        ],
+        "recommendedTools": [
+          "Web Audio Synthesizer",
+          "Audacity",
+          "Partituras / Editores MIDI"
+        ]
+      },
+      {
+        "id": "ROLE-DOCUMENTALISTA",
+        "name": "Documentación Histórica y Científica (Curricular Researcher & Fact Checker)",
+        "responsibilities": "Investigar en fuentes primarias, contrastar datos curriculares oficiales, redactar la justificación de soluciones y formular distractores fundamentados en errores conceptuales típicos.",
+        "coreCompetencies": [
+          "CCL3",
+          "CD1",
+          "CC2",
+          "CPSAA1"
+        ],
+        "recommendedTools": [
+          "Archivos históricos digitales",
+          "Portal PARES",
+          "Libros de texto y Decretos"
+        ]
+      },
+      {
+        "id": "ROLE-ARTE",
+        "name": "Diseño Visual, Heráldica y Accesibilidad (Art & UI Lead)",
+        "responsibilities": "Crear avatares en pixel art, banderas y escudos de facciones, fondos de escenarios y verificar el contraste cromático y la accesibilidad visual (WCAG).",
+        "coreCompetencies": [
+          "CCEC3",
+          "CD3",
+          "CPSAA3"
+        ],
+        "recommendedTools": [
+          "Piskel",
+          "Canva",
+          "Verificador de contraste de color"
+        ]
+      },
+      {
+        "id": "ROLE-QA-TESTER",
+        "name": "Control de Calidad, UX y Telemetría (QA Tester & Data Analyst)",
+        "responsibilities": "Probar el juego con el botón RUN, detectar bugs, verificar legibilidad y, tras la partida en vivo, analizar estadísticamente la telemetría en Puntuaciones_Online.",
+        "coreCompetencies": [
+          "CD2",
+          "STEM4",
+          "CPSAA5"
+        ],
+        "recommendedTools": [
+          "Modal RUN de Apps Script",
+          "Google Sheets (Gráficas y Estadística)"
+        ]
+      }
+    ],
+    "pblWorkflowPhases": [
+      {
+        "step": 1,
+        "phaseName": "Investigación y Creación de Artefactos Curriculares",
+        "description": "El alumnado elabora en cada materia su producto tangible (diarios, escalas cartográficas, frecuencias sonoras, fuentes primarias)."
+      },
+      {
+        "step": 2,
+        "phaseName": "Transposición Didáctica a Retos Jugables",
+        "description": "Los hallazgos se condensan en retos interactivos con opciones A/B/C, distractores fundamentados y retroalimentación formativa."
+      },
+      {
+        "step": 3,
+        "phaseName": "Pull Request Escolar y Moderación Docente",
+        "description": "Envío desde la app con estado PENDIENTE, revisión en Sheets mediante Feedback_Docente y aprobación final (APROBADO)."
+      },
+      {
+        "step": 4,
+        "phaseName": "Despliegue y Partida Multijugador en la PDI",
+        "description": "Celebración de la regata / aventura en vivo con toda la clase en pantalla gigante sincronizada."
+      },
+      {
+        "step": 5,
+        "phaseName": "Sesión Post-Mortem y Análisis Estadístico de Telemetría",
+        "description": "Estudio de los datos reales de Puntuaciones_Online en Matemáticas y TIC para autoevaluación y propuesta de mejoras."
+      }
+    ],
+    "subjects": {
+      "lenguaCastellanaYLiteratura": {
+        "areaName": "Lengua Castellana y Literatura",
+        "etapas": [
+          "Primaria",
+          "ESO",
+          "Bachillerato"
+        ],
+        "deliverables": [
+          {
+            "id": "DELIV-LCL-BITACORA",
+            "name": "Diario de a Bordo / Bitácora Histórica en Prosa de Época",
+            "deliverableType": "Narrativa histórica y literaria",
+            "description": "Redacción de entradas de bitácora en primera persona ambientadas en el contexto temporal y territorial, respetando el léxico y registros formales de la época.",
+            "keyVariables": [
+              "registro_linguistico_formal",
+              "punto_de_vista_narrativo_primera_persona",
+              "canarismos_maritimos_historicos",
+              "figuras_retoricas_cronicas",
+              "coherencia_cohesion_textual"
+            ],
+            "lomloeCompetencies": [
+              "CCL1",
+              "CCL2",
+              "CCL3",
+              "CC1"
+            ],
+            "gameIntegrationMechanism": "Texto inmersivo que introduce el enclave náutico; el jugador debe leer críticamente para deducir la ruta correcta.",
+            "evaluationRubricIndicators": [
+              "Rigor léxico y ausencia de anacronismos",
+              "Riqueza expresiva y adecuación pragmática",
+              "Corrección sintáctica y ortotipográfica"
+            ]
+          },
+          {
+            "id": "DELIV-LCL-DIALOGOS",
+            "name": "Árbol de Diálogos Ramificados y Dilemas Morales",
+            "deliverableType": "Guion interactivo y toma de decisiones",
+            "description": "Diseño de un diagrama de flujo de conversación con personajes no jugadores (PNJ) donde cada respuesta produce consecuencias de reputación o rumbo.",
+            "keyVariables": [
+              "nodos_decision_ramificados",
+              "arcos_dramaticos_personaje",
+              "dilemas_morales_eticos",
+              "argumentacion_persuasiva",
+              "variaciones_dialectales_contextualizadas"
+            ],
+            "lomloeCompetencies": [
+              "CCL1",
+              "CCL5",
+              "CPSAA1",
+              "CC3"
+            ],
+            "gameIntegrationMechanism": "Estructura de decisiones narrativas (estilo novela visual / RPG) que desbloquea rutas alternativas.",
+            "evaluationRubricIndicators": [
+              "Complejidad y coherencia lógica de las ramas narrativas",
+              "Caracterización verosímil de las voces de los personajes",
+              "Profundidad de la reflexión ética planteada"
+            ]
+          },
+          {
+            "id": "DELIV-LCL-GLOSARIO",
+            "name": "Glosario Dialectal y Lexicografía Tradicional",
+            "deliverableType": "Diccionario temático comentado",
+            "description": "Recopilación, definición y contextualización de variantes dialectales marítimas (especialmente del español de Canarias o del ámbito atlántico).",
+            "keyVariables": [
+              "etimologia_termino",
+              "geosinonimos_canarios",
+              "acepciones_marineras",
+              "ejemplos_uso_contextual",
+              "distractores_semanticos_plausibles"
+            ],
+            "lomloeCompetencies": [
+              "CCL2",
+              "CCL3",
+              "CCEC1"
+            ],
+            "gameIntegrationMechanism": "Enigmas de descifrado léxico necesarios para comprender órdenes náuticas del contramaestre.",
+            "evaluationRubricIndicators": [
+              "Rigor lexicográfico y fuentes consultadas",
+              "Capacidad para formular distractores basados en confusiones reales",
+              "Claridad de la retroalimentación formativa"
+            ]
+          },
+          {
+            "id": "DELIV-LCL-CANCIONERO",
+            "name": "Romancero y Décimas Náuticas Rimadas",
+            "deliverableType": "Composición poética tradicional",
+            "description": "Composición de romances o décimas espinelas con temática marítima, respetando la métrica silábica y la rima asonante o consonante.",
+            "keyVariables": [
+              "metro_octosilabo_arte_menor",
+              "esquema_rima_abba_cddc",
+              "simbologia_maritima",
+              "pistas_poeticas_ocultas",
+              "cadencia_ritmica_recitado"
+            ],
+            "lomloeCompetencies": [
+              "CCL1",
+              "CCEC1",
+              "CCEC2"
+            ],
+            "gameIntegrationMechanism": "Acertijos poéticos que ocultan contraseñas o claves para desbloquear cofres de navegación.",
+            "evaluationRubricIndicators": [
+              "Precisión métrica y rima regular",
+              "Creatividad lírica y coherencia temática",
+              "Efectividad del acertijo como desafío didáctico"
+            ]
+          }
+        ]
+      },
+      "matematicas": {
+        "areaName": "Matemáticas",
+        "etapas": [
+          "Primaria",
+          "ESO",
+          "Bachillerato"
+        ],
+        "deliverables": [
+          {
+            "id": "DELIV-MAT-CARTA",
+            "name": "Carta Náutica Analítica y Modelo Cartográfico Escalar",
+            "deliverableType": "Cartografía matemática y modelización geométrica",
+            "description": "Construcción de un mapa sobre plano cartesiano calculando razones de semejanza, escalas numéricas (1:250.000) y trayectorias vectoriales entre puertos.",
+            "keyVariables": [
+              "escala_numerica_ratio",
+              "escala_grafica_barra",
+              "coordenadas_cartesianas_x_y",
+              "distancia_real_km_millas_nauticas",
+              "vector_desplazamiento_modulo_direccion",
+              "angulo_rumbo_grados_sexagesimales"
+            ],
+            "lomloeCompetencies": [
+              "STEM1",
+              "STEM2",
+              "CD2"
+            ],
+            "gameIntegrationMechanism": "Retos de derrota y pilotaje naval donde el alumno debe calcular la distancia real o la posición para fijar el rumbo del barco.",
+            "evaluationRubricIndicators": [
+              "Exactitud en los cálculos de proporcionalidad y escalas",
+              "Precisión en la representación geométrica y vectorial",
+              "Diseño de distractores que reflejen errores típicos de conversión"
+            ]
+          },
+          {
+            "id": "DELIV-MAT-PROBABILIDAD",
+            "name": "Modelo Estocástico de Vientos, Tormentas y Abordajes",
+            "deliverableType": "Simulación probabilística y árboles de decisión",
+            "description": "Diseño de matrices y árboles de probabilidad mediante la regla de Laplace para prever la probabilidad de temporales, calma chicha o combates navales.",
+            "keyVariables": [
+              "espacio_muestral_omega",
+              "sucesos_favorables_posibles_laplace",
+              "arbol_probabilidad_compuesta",
+              "frecuencia_relativa_empirica",
+              "valor_esperado_ganancia_riesgo"
+            ],
+            "lomloeCompetencies": [
+              "STEM1",
+              "STEM2",
+              "CPSAA4"
+            ],
+            "gameIntegrationMechanism": "Mecánicas de apuestas tácticas y riesgo donde los equipos deciden rutas evaluando su rentabilidad probabilística.",
+            "evaluationRubricIndicators": [
+              "Formalización rigurosa del espacio muestral",
+              "Cálculo exacto de probabilidades simples y condicionadas",
+              "Pertinencia de la situación-problema gamificada"
+            ]
+          },
+          {
+            "id": "DELIV-MAT-BALANCEO",
+            "name": "Modelo de Equilibrio Numérico y Economía del Juego (Game Balancing)",
+            "deliverableType": "Hoja de balance y optimización de recursos",
+            "description": "Diseño de la ecuación de puntuación, progresión de daño, gasto de provisiones y curva de dificultad para garantizar una experiencia de juego equilibrada.",
+            "keyVariables": [
+              "tasa_consumo_recursos_por_turno",
+              "ecuacion_progresion_puntuacion",
+              "coeficiente_dificultad_dinamica",
+              "vida_hp_resistencia_casco",
+              "matriz_coste_beneficio_recompensas"
+            ],
+            "lomloeCompetencies": [
+              "STEM1",
+              "STEM3",
+              "CD2"
+            ],
+            "gameIntegrationMechanism": "Variables globales en Config_Juego y lógica de cómputo en Codigo.gs.",
+            "evaluationRubricIndicators": [
+              "Equilibrio matemático sin estrategias dominantes o inviables",
+              "Claridad de las funciones algebraicas empleadas",
+              "Documentación del proceso de calibración"
+            ]
+          },
+          {
+            "id": "DELIV-MAT-TELEMETRIA",
+            "name": "Estudio Estadístico Post-Partida (Post-Mortem Analytics)",
+            "deliverableType": "Informe de análisis de datos y estadística descriptiva",
+            "description": "Explotación de los datos reales volcados en Puntuaciones_Online tras la sesión grupal, elaborando tablas de frecuencias, medidas de centralización y dispersión.",
+            "keyVariables": [
+              "media_aritmetica_tiempos",
+              "mediana_puntuaciones",
+              "desviacion_tipica_aciertos",
+              "rango_intercuartilico_iqr",
+              "diagrama_cajas_bigotes_boxplot",
+              "histograma_distribucion_errores"
+            ],
+            "lomloeCompetencies": [
+              "STEM1",
+              "STEM4",
+              "CD2",
+              "CPSAA5"
+            ],
+            "gameIntegrationMechanism": "Cierre del proyecto ABP con informe evaluativo que retroalimenta la mejora del juego.",
+            "evaluationRubricIndicators": [
+              "Interpretación correcta de parámetros estadísticos",
+              "Representación gráfica limpia y adecuada",
+              "Conclusiones fundamentadas para el rediseño del ecosistema"
+            ]
+          },
+          {
+            "id": "DELIV-MAT-CRIPTOGRAFIA",
+            "name": "Cifrado Algorítmico y Candados Numéricos de Escape Room",
+            "deliverableType": "Lógica matemática y criptografía clásica",
+            "description": "Diseño de sistemas de cifrado modular (César, Vigenère, matrices de Hill o secuencias numéricas) para custodiar las pistas maestras.",
+            "keyVariables": [
+              "modulo_aritmetica_congruencias",
+              "secuencia_fibonacci_recurrentes",
+              "clave_matriz_2x2_determinante",
+              "criba_eratostenes_primos",
+              "patron_algoritmico_desbloqueo"
+            ],
+            "lomloeCompetencies": [
+              "STEM1",
+              "STEM2",
+              "CD1"
+            ],
+            "gameIntegrationMechanism": "Mecanismo de validación de contraseñas y candados lógicos en la modalidad Escape Room.",
+            "evaluationRubricIndicators": [
+              "Solidez algorítmica sin ambigüedades",
+              "Nivel de desafío cognitivo ajustado al nivel educativo",
+              "Instrucciones precisas para la resolución"
+            ]
+          }
+        ]
+      },
+      "musica": {
+        "areaName": "Música",
+        "etapas": [
+          "Primaria",
+          "ESO",
+          "Bachillerato"
+        ],
+        "deliverables": [
+          {
+            "id": "DELIV-MUS-SINTESIS",
+            "name": "Paisaje Acústico Procedimental con Web Audio API",
+            "deliverableType": "Diseño y síntesis de sonido procedural",
+            "description": "Definición de las propiedades físicas del sonido (frecuencias fundamentales en Hz, envolventes de amplitud ADSR y tipos de onda) para programar los efectos de sonido.",
+            "keyVariables": [
+              "frecuencia_fundamental_hz",
+              "tipo_onda_oscilador_sine_square_sawtooth_triangle",
+              "tiempo_ataque_attack_ms",
+              "tiempo_decae_decay_ms",
+              "nivel_sostenido_sustain_ratio",
+              "tiempo_relajacion_release_ms",
+              "ganancia_volumen_amplitud"
+            ],
+            "lomloeCompetencies": [
+              "CCEC1",
+              "CCEC2",
+              "STEM3",
+              "CD1"
+            ],
+            "gameIntegrationMechanism": "Funciones JavaScript reproducidas directamente por el navegador (sin archivos de audio pesados) al acertar, fallar, disparar o ganar.",
+            "evaluationRubricIndicators": [
+              "Coherencia psicoacústica entre el sonido y la acción de juego",
+              "Dominio de los conceptos físicos de frecuencia y timbre",
+              "Implementación limpia en sintaxis Web Audio API"
+            ]
+          },
+          {
+            "id": "DELIV-MUS-SALOMA",
+            "name": "Cancionero Náutico y Transcripción Métrica de Salomas",
+            "deliverableType": "Investigación musicológica y análisis rítmico",
+            "description": "Transcripción y análisis de cantos marineros de trabajo tradicionales, examinando cómo la métrica y acentuación acompasaban el esfuerzo de izar velas o fondear.",
+            "keyVariables": [
+              "compas_ritmico_2_4_3_4_6_8",
+              "tempo_metronomico_bpm",
+              "patron_acentual_tesis_arsis",
+              "subdivision_binaria_ternaria",
+              "figuras_ritmicas_silencios_duraciones"
+            ],
+            "lomloeCompetencies": [
+              "CCEC1",
+              "CCEC3",
+              "CCL1"
+            ],
+            "gameIntegrationMechanism": "Retos auditivos donde reconocer el compás o el patrón rítmico otorga impulso adicional al navío.",
+            "evaluationRubricIndicators": [
+              "Precisión en la transcripción rítmico-métrica",
+              "Capacidad de contextualización histórica y social del canto",
+              "Didáctica en la explicación de las respuestas"
+            ]
+          },
+          {
+            "id": "DELIV-MUS-LEITMOTIV",
+            "name": "Células Melódicas y Leitmotivs de Facciones Náuticas",
+            "deliverableType": "Composición melódica temática",
+            "description": "Creación de motivos musicales breves y reconocibles que identifican a cada bando (corsarios, armada real, bucaneros, tormenta).",
+            "keyVariables": [
+              "intervalos_melodicos_ascendentes_descendentes",
+              "modalidad_mayor_menor_modos_griegos",
+              "ambito_melodico_tesitura",
+              "resolucion_cadencial",
+              "expresion_emocional_caracter"
+            ],
+            "lomloeCompetencies": [
+              "CCEC1",
+              "CCEC2",
+              "CD1"
+            ],
+            "gameIntegrationMechanism": "Pistas sonoras que alertan de la cercanía de un evento o identifican al emisor del reto.",
+            "evaluationRubricIndicators": [
+              "Carácter identificativo e idoneidad del leitmotiv",
+              "Coherencia en el uso de la armonía y modalidad",
+              "Capacidad evocadora"
+            ]
+          }
+        ]
+      },
+      "geografiaEHistoria": {
+        "areaName": "Geografía e Historia",
+        "etapas": [
+          "Primaria",
+          "ESO",
+          "Bachillerato"
+        ],
+        "deliverables": [
+          {
+            "id": "DELIV-HIS-FUENTES",
+            "name": "Dossier Crítico de Fuentes Primarias y Cartografía Antigua",
+            "deliverableType": "Investigación histórica documental y análisis crítico",
+            "description": "Selección, transcripción comentada y análisis de documentos históricos auténticos (cédulas reales, tratados, mapas del siglo XVI-XVIII, diarios de navegación).",
+            "keyVariables": [
+              "tipo_fuente_primaria_documental_iconografica",
+              "datacion_historica_contextual",
+              "intencionalidad_sesgo_autor",
+              "terminologia_politico_juridica_epoca",
+              "rutas_comerciales_carrera_indias"
+            ],
+            "lomloeCompetencies": [
+              "CC1",
+              "CC2",
+              "CCL2",
+              "CD1"
+            ],
+            "gameIntegrationMechanism": "Retos de interpretación de fragmentos documentales para deducir contraseñas o coordenadas.",
+            "evaluationRubricIndicators": [
+              "Rigor metodológico en el análisis de fuentes",
+              "Ausencia de juicios presentistas o anacronismos",
+              "Calidad pedagógica en el feedback explicativo"
+            ]
+          },
+          {
+            "id": "DELIV-HIS-CRONO",
+            "name": "Eje Cronológico Multicapa Sincronizado",
+            "deliverableType": "Línea del tiempo comparada",
+            "description": "Construcción de un friso cronológico que sincroniza acontecimientos canarios, peninsulares y americanos del periodo corsario.",
+            "keyVariables": [
+              "sincronia_acontecimientos_locales_globales",
+              "periodizacion_etapas_historicas",
+              "relaciones_causalidad_consecuencia",
+              "personajes_relevantes_amaro_pargo_nelson_drake",
+              "hitos_tratados_paz_guerra"
+            ],
+            "lomloeCompetencies": [
+              "CC1",
+              "CC2",
+              "CPSAA1"
+            ],
+            "gameIntegrationMechanism": "Pruebas de ordenación cronológica necesarias para calibrar el astrolabio de la nave.",
+            "evaluationRubricIndicators": [
+              "Exactitud cronológica y selección de hitos clave",
+              "Comprensión de la multicausalidad histórica",
+              "Claridad visual y conceptual"
+            ]
+          },
+          {
+            "id": "DELIV-HIS-DILEMAS",
+            "name": "Dossier de Casos de Justicia Marítima y Corsarismo",
+            "deliverableType": "Simulación jurídica y debate histórico",
+            "description": "Formulación de casos de estudio sobre la diferencia jurídica entre corsarios con patente y piratas, y debates sobre el monopolio comercial de Indias.",
+            "keyVariables": [
+              "patente_de_corso_estipulaciones_legales",
+              "tribunal_de_presas_maritimas",
+              "monopolio_comercial_casa_contratacion",
+              "derecho_gentes_maritimo",
+              "perspectivas_socioeconomicas_enfrentadas"
+            ],
+            "lomloeCompetencies": [
+              "CC1",
+              "CC2",
+              "CC3",
+              "CCL5"
+            ],
+            "gameIntegrationMechanism": "Tribunales de puerto donde el jugador debe dictaminar conforme al derecho de la época.",
+            "evaluationRubricIndicators": [
+              "Profundidad conceptual en la distinción legal",
+              "Argumentación fundamentada en fuentes",
+              "Fomento del pensamiento crítico"
+            ]
+          }
+        ]
+      },
+      "biologiaYGeologia": {
+        "areaName": "Biología y Geología",
+        "etapas": [
+          "ESO",
+          "Bachillerato"
+        ],
+        "deliverables": [
+          {
+            "id": "DELIV-BIO-CLAVE",
+            "name": "Clave Dicotómica de Biodiversidad Marina y Costera",
+            "deliverableType": "Guía de identificación taxonómica",
+            "description": "Creación de un árbol dicotómico con pares de caracteres morfológicos para clasificar especies marinas autóctonas o vulnerables.",
+            "keyVariables": [
+              "criterios_morfologicos_taxonomicos",
+              "especies_pelagicas_bentonicas",
+              "endemismos_fauna_marina",
+              "categoria_amenaza_conservacion",
+              "claves_dicotomicas_ramificadas"
+            ],
+            "lomloeCompetencies": [
+              "STEM1",
+              "STEM2",
+              "STEM4"
+            ],
+            "gameIntegrationMechanism": "Identificación correcta de avistamientos marinos que proporcionan víveres o guías de navegación.",
+            "evaluationRubricIndicators": [
+              "Rigor en la terminología biológica",
+              "Estructura dicotómica coherente y sin ambigüedades",
+              "Valoración de la biodiversidad"
+            ]
+          },
+          {
+            "id": "DELIV-BIO-RED",
+            "name": "Modelo de Red Trófica Marina y Huella Ecológica",
+            "deliverableType": "Diagrama de flujo ecológico y balance de biomasa",
+            "description": "Modelización de las relaciones tróficas oceánicas (fitoplancton, zooplancton, pequeños pelágicos, grandes depredadores) y el impacto de la actividad humana.",
+            "keyVariables": [
+              "niveles_troficos_productores_consumidores",
+              "flujo_materia_energia_eficiencia",
+              "bioacumulacion_toxicos_metales",
+              "capacidad_carga_ecosistema",
+              "impacto_sobrepesca_actividad_humana"
+            ],
+            "lomloeCompetencies": [
+              "STEM1",
+              "STEM5",
+              "CC4"
+            ],
+            "gameIntegrationMechanism": "Retos de gestión de recursos náuticos donde agotar un recurso desencadena penalizaciones ecológicas.",
+            "evaluationRubricIndicators": [
+              "Exactitud en las cadenas y redes ecológicas",
+              "Conciencia ambiental y sostenibilidad demostrada",
+              "Calidad explicativa del impacto antropogénico"
+            ]
+          },
+          {
+            "id": "DELIV-GEO-VULCANISMO",
+            "name": "Atlas Geológico Insular, Orografía y Dinámica Costera",
+            "deliverableType": "Cartografía geológica comentada",
+            "description": "Estudio de la formación volcánica de las islas, batimetría de los fondos marinos y dinámica de corrientes y vientos alisios.",
+            "keyVariables": [
+              "origen_volcanico_islas_puntos_calientes",
+              "perfil_batimetrico_plataforma_insular",
+              "morfologia_costera_acantilados_rasas_playas",
+              "corriente_fria_canarias_afloramiento",
+              "mar_de_nubes_inversion_termica"
+            ],
+            "lomloeCompetencies": [
+              "STEM1",
+              "STEM2",
+              "CD1"
+            ],
+            "gameIntegrationMechanism": "Planificación de navegación costera esquivando bajos fondos rocosos o aprovechando surgencias marinas.",
+            "evaluationRubricIndicators": [
+              "Comprensión de los procesos geológicos insulares",
+              "Precisión en los perfiles batimétricos",
+              "Conexión entre geología y navegación"
+            ]
+          }
+        ]
+      },
+      "fisicaYQuimica": {
+        "areaName": "Física y Química",
+        "etapas": [
+          "ESO",
+          "Bachillerato"
+        ],
+        "deliverables": [
+          {
+            "id": "DELIV-FYQ-BALISTICA",
+            "name": "Simulador Cinemático de Balística y Tiro Parabólico Naval",
+            "deliverableType": "Modelización cinemática y cálculo vectorial",
+            "description": "Cálculo del alcance, ángulo de tiro y tiempo de vuelo de proyectiles navales aplicando las ecuaciones del movimiento parabólico.",
+            "keyVariables": [
+              "velocidad_inicial_v0_m_s",
+              "angulo_elevacion_alza_grados",
+              "aceleracion_gravedad_g",
+              "alcance_horizontal_maximo_x",
+              "altura_maxima_y_vertice",
+              "tiempo_vuelo_proyectil"
+            ],
+            "lomloeCompetencies": [
+              "STEM1",
+              "STEM2",
+              "CD2"
+            ],
+            "gameIntegrationMechanism": "Minijuego de defensa costera o abordaje donde fijar el ángulo correcto neutraliza la amenaza enemiga.",
+            "evaluationRubricIndicators": [
+              "Resolución algebraica rigurosa",
+              "Uso correcto de unidades en el Sistema Internacional",
+              "Diseño de distractores basados en confusiones seno/coseno"
+            ]
+          },
+          {
+            "id": "DELIV-FYQ-POLVORA",
+            "name": "Dossier Estequiométrico de Propelentes y Reacciones Químicas",
+            "deliverableType": "Formulación y balanceo de reacciones químicas",
+            "description": "Estudio de la combustión de la pólvora negra, formulación química de sus reactivos y cálculo de volúmenes de gas y masas mediante estequiometría.",
+            "keyVariables": [
+              "ecuacion_quimica_combustion_polvora",
+              "proporcion_estequiometrica_moles",
+              "reactivo_limitante_en_exceso",
+              "volumen_gases_condiciones_normales",
+              "entalpia_reaccion_exotermica"
+            ],
+            "lomloeCompetencies": [
+              "STEM1",
+              "STEM2"
+            ],
+            "gameIntegrationMechanism": "Retos de recarga de municiones donde mezclar la proporción correcta asegura la eficacia del disparo.",
+            "evaluationRubricIndicators": [
+              "Ajuste exacto de la ecuación química",
+              "Cálculo de masas molares sin errores",
+              "Aplicación de las leyes ponderales de la química"
+            ]
+          },
+          {
+            "id": "DELIV-FYQ-ARQUIMEDES",
+            "name": "Simulador de Hidrostática y Principio de Arquímedes",
+            "deliverableType": "Cálculo de densidad, empuje y flotabilidad",
+            "description": "Cálculo del calado, peso del buque, volumen sumergido y densidad del agua de mar para determinar la capacidad de carga máxima.",
+            "keyVariables": [
+              "densidad_agua_mar_salinidad",
+              "volumen_carena_sumergido",
+              "fuerza_empuje_hidrostatico_arquimedes",
+              "peso_total_buque_arqueo",
+              "condicion_flotabilidad_equilibrio"
+            ],
+            "lomloeCompetencies": [
+              "STEM1",
+              "STEM2",
+              "STEM3"
+            ],
+            "gameIntegrationMechanism": "Decisiones de estiba de carga de botín sin poner en peligro la flotabilidad de la nave.",
+            "evaluationRubricIndicators": [
+              "Aplicación correcta del principio de Arquímedes",
+              "Diferenciación entre masa, peso y densidad",
+              "Contextualización náutica realista"
+            ]
+          }
+        ]
+      },
+      "educacionPlasticaVisualYAudiovisual": {
+        "areaName": "Educación Plástica, Visual y Audiovisual",
+        "etapas": [
+          "Primaria",
+          "ESO",
+          "Bachillerato"
+        ],
+        "deliverables": [
+          {
+            "id": "DELIV-EPV-PIXEL",
+            "name": "Sprite Sheet y Banco de Avatares en Pixel Art",
+            "deliverableType": "Diseño gráfico digital y animación en cuadrícula",
+            "description": "Diseño de avatares de barcos, personajes y elementos de la pista en cuadrícula pixelada (16x16 o 32x32) con paleta restringida y formato SVG.",
+            "keyVariables": [
+              "resolucion_rejilla_pixeles_16x16_32x32",
+              "paleta_cromatica_restringida_8_16_colores",
+              "contraste_wcag_accesibilidad",
+              "animacion_fotogramas_avance",
+              "vectorizacion_svg_css"
+            ],
+            "lomloeCompetencies": [
+              "CCEC3",
+              "CD3",
+              "CPSAA3"
+            ],
+            "gameIntegrationMechanism": "Iconos visuales interactivos que se mueven en la pista multijugador proyectada en la PDI.",
+            "evaluationRubricIndicators": [
+              "Claridad visual y legibilidad en pantalla pequeña y grande",
+              "Dominio del color, luces y sombras en baja resolución",
+              "Optimización en formato SVG ligero"
+            ]
+          },
+          {
+            "id": "DELIV-EPV-HERALDICA",
+            "name": "Manual de Identidad Visual, Banderas y Heráldica Naval",
+            "deliverableType": "Diseño heráldico y simbología gráfica",
+            "description": "Creación de las insignias, pabellones marítimos y escudos de armas de cada facción corsaria o institucional, respetando las leyes del blasón.",
+            "keyVariables": [
+              "esmaltes_colores_gules_azur_sinople",
+              "metales_oro_plata",
+              "piezas_geometricas_fajas_cruces",
+              "figuras_simbolicas_animales_navios",
+              "ley_de_plenitud_heraldica"
+            ],
+            "lomloeCompetencies": [
+              "CCEC1",
+              "CCEC3",
+              "CC1"
+            ],
+            "gameIntegrationMechanism": "Estandartes que los equipos desbloquean y ondean al conseguir rachas de respuestas correctas.",
+            "evaluationRubricIndicators": [
+              "Respeto por la gramática heráldica tradicional",
+              "Potencia comunicativa de los símbolos",
+              "Calidad plástica en la ejecución"
+            ]
+          }
+        ]
+      },
+      "tecnologiaYDigitalizacion": {
+        "areaName": "Tecnología y Digitalización",
+        "etapas": [
+          "ESO",
+          "Bachillerato"
+        ],
+        "deliverables": [
+          {
+            "id": "DELIV-TEC-LOGICA",
+            "name": "Diagrama de Flujo y Máquina de Estados del Motor de Juego",
+            "deliverableType": "Modelado algorítmico y diagramación BPMN",
+            "description": "Diseño del algoritmo de estados del juego (Lobby -> Carrera -> Reto -> Feedback -> Victoria/Derrota -> Telemetría) con condicionales y bucles.",
+            "keyVariables": [
+              "maquina_estados_finitos",
+              "condicionales_decision_if_then_else",
+              "bucle_sincronizacion_polling_ms",
+              "gestion_eventos_asincronos",
+              "control_errores_excepciones"
+            ],
+            "lomloeCompetencies": [
+              "CD1",
+              "CD2",
+              "STEM1"
+            ],
+            "gameIntegrationMechanism": "Plano técnico base sobre el que se estructuran Codigo.gs e Index.html.",
+            "evaluationRubricIndicators": [
+              "Sintaxis formal de diagramas de flujo sin ramas huérfanas",
+              "Anticipación de todos los estados posibles",
+              "Optimización algorítmica"
+            ]
+          },
+          {
+            "id": "DELIV-TEC-DATOS",
+            "name": "Esquema de Base de Datos y Fórmulas Avanzadas en Sheets",
+            "deliverableType": "Arquitectura de datos y automatización",
+            "description": "Definición de claves primarias, validaciones de datos por lista, formato condicional y fórmulas matriciales (ARRAYFORMULA, QUERY) en Google Sheets.",
+            "keyVariables": [
+              "modelo_datos_relacional_pestanas",
+              "reglas_validacion_entradas_datos",
+              "formulas_query_filter_estadistica",
+              "formato_condicional_semaforizacion",
+              "seguridad_rangos_permisos_escritura"
+            ],
+            "lomloeCompetencies": [
+              "CD2",
+              "CD3",
+              "STEM2"
+            ],
+            "gameIntegrationMechanism": "Estructura de pestañas curriculares y tabla Puntuaciones_Online del backend.",
+            "evaluationRubricIndicators": [
+              "Estructura limpia sin redundancias de datos",
+              "Fórmulas eficientes que no ralentizan la hoja",
+              "Configuración adecuada de permisos"
+            ]
+          },
+          {
+            "id": "DELIV-TEC-QA",
+            "name": "Plan de Pruebas de Calidad (QA), Edge Cases y Registro de Incidencias",
+            "deliverableType": "Protocolo de pruebas y aseguramiento de calidad",
+            "description": "Diseño y ejecución de una matriz de casos de prueba (entradas nulas, tiempos límite, respuestas concurrentes) y depuración con el botón RUN.",
+            "keyVariables": [
+              "matriz_casos_prueba_caja_negra",
+              "casos_limite_edge_cases_concurrencia",
+              "registro_incidencias_severidad_bug_tracker",
+              "verificacion_tiempos_respuesta_latencia",
+              "checklist_accesibilidad_usabilidad_ux"
+            ],
+            "lomloeCompetencies": [
+              "CD2",
+              "CPSAA5",
+              "STEM4"
+            ],
+            "gameIntegrationMechanism": "Informe de pruebas previo al despliegue oficial de la partida en el aula.",
+            "evaluationRubricIndicators": [
+              "Exhaustividad en la cobertura de pruebas",
+              "Identificación de fallos antes del usuario final",
+              "Claridad en la redacción de los informes de incidencia"
+            ]
+          }
+        ]
+      },
+      "lenguaExtranjera": {
+        "areaName": "Lengua Extranjera (Inglés / Francés)",
+        "etapas": [
+          "Primaria",
+          "ESO",
+          "Bachillerato"
+        ],
+        "deliverables": [
+          {
+            "id": "DELIV-LEX-LOGBOOK",
+            "name": "Bilingual Ship Logbook & Intercepted Naval Messages",
+            "deliverableType": "Escritura formal bilingüe y comprensión lectora",
+            "description": "Redacción de fragmentos de correspondencia diplomática o bitácoras en la lengua extranjera, utilizando vocabulario náutico y tiempos verbales del pasado.",
+            "keyVariables": [
+              "past_narrative_tenses_simple_past_perfect",
+              "nautical_maritime_vocabulary",
+              "geographical_prepositions_directions",
+              "idiomatic_expressions_historical_register",
+              "reading_comprehension_inference"
+            ],
+            "lomloeCompetencies": [
+              "CP1",
+              "CP2",
+              "CCL2"
+            ],
+            "gameIntegrationMechanism": "Mensajes secretos interceptados al enemigo que deben traducirse e interpretarse para obtener ventaja de rumbo.",
+            "evaluationRubricIndicators": [
+              "Uso adecuado y preciso de los tiempos verbales narrativos",
+              "Riqueza del vocabulario temático específico",
+              "Eficacia del texto como enigma comprensible"
+            ]
+          }
+        ]
+      },
+      "educacionFisica": {
+        "areaName": "Educación Física",
+        "etapas": [
+          "Primaria",
+          "ESO",
+          "Bachillerato"
+        ],
+        "deliverables": [
+          {
+            "id": "DELIV-EFI-ESTAMINA",
+            "name": "Modelo Fisiológico del Esfuerzo Náutico y Curva de Fatiga",
+            "deliverableType": "Fisiología del esfuerzo y hábitos saludables",
+            "description": "Estudio del gasto energético, frecuencia cardíaca de remeros y marineros, hidratación y prevención de enfermedades nutricionales (escorbuto).",
+            "keyVariables": [
+              "gasto_calorico_paleo_intensidad",
+              "zonas_frecuencia_cardiaca_aerobica_anaerobica",
+              "balance_hidrico_deshidratacion",
+              "requerimientos_vitamina_c_nutricion_maritima",
+              "curva_fatiga_recuperacion_vigilia"
+            ],
+            "lomloeCompetencies": [
+              "CPSAA2",
+              "STEM2",
+              "CC4"
+            ],
+            "gameIntegrationMechanism": "Gestión de la barra de estamina de la tripulación en travesías largas.",
+            "evaluationRubricIndicators": [
+              "Comprensión de los principios fisiológicos del esfuerzo",
+              "Promoción de hábitos de salud y nutrición",
+              "Realismo del modelo energético aplicado al juego"
+            ]
+          }
+        ]
+      },
+      "filosofia": {
+        "areaName": "Filosofía",
+        "etapas": [
+          "ESO",
+          "Bachillerato"
+        ],
+        "deliverables": [
+          {
+            "id": "DELIV-FIL-DILEMAS",
+            "name": "Dossier de Filosofía Moral y Dilemas Éticos en Alta Mar",
+            "deliverableType": "Dilemas éticos y pensamiento crítico normativo",
+            "description": "Construcción de situaciones límite de supervivencia marítima analizadas desde el utilitarismo, la ética deontológica kantiana y el contractualismo.",
+            "keyVariables": [
+              "utilitarismo_maximizacion_bienestar",
+              "deontologia_kantiana_imperativo_categorico",
+              "etica_del_cuidado_vulnerabilidad",
+              "estado_de_naturaleza_hobbes_derecho_supervivencia",
+              "falacias_eticas_justificacion_moral"
+            ],
+            "lomloeCompetencies": [
+              "CC1",
+              "CC2",
+              "CC3",
+              "CCL5"
+            ],
+            "gameIntegrationMechanism": "Encrucijadas narrativas donde los equipos deben someter su decisión a juicio argumentado.",
+            "evaluationRubricIndicators": [
+              "Rigurosa identificación de las corrientes éticas",
+              "Capacidad de argumentación filosófica sin dogmatismos",
+              "Calidad del debate propiciado"
+            ]
+          }
+        ]
+      },
+      "conocimientoDelMedio": {
+        "areaName": "Conocimiento del Medio Natural, Social y Cultural",
+        "etapas": [
+          "Primaria"
+        ],
+        "deliverables": [
+          {
+            "id": "DELIV-PRI-MEDIO",
+            "name": "Cuaderno de Exploración del Patrimonio Natural e Insular",
+            "deliverableType": "Cuaderno de campo y patrimonio local",
+            "description": "Investigación sobre la flora y fauna marina canaria, los oficios tradicionales del mar y la protección del entorno litoral.",
+            "keyVariables": [
+              "fauna_flora_litoral_canaria",
+              "oficios_marineros_salinas_pesca_artesanal",
+              "cuidado_del_medio_marino_residuos",
+              "puntos_cardinales_orientacion_basica",
+              "leyendas_costeras_tradicion_oral"
+            ],
+            "lomloeCompetencies": [
+              "STEM1",
+              "CC1",
+              "CCEC1",
+              "CCL2"
+            ],
+            "gameIntegrationMechanism": "Descubrimiento de islas, puertos y reservas marinas en la pista interactiva.",
+            "evaluationRubricIndicators": [
+              "Curiosidad científica y respeto medioambiental",
+              "Identificación correcta de elementos del patrimonio insular",
+              "Expresión clara y adaptada a Primaria"
+            ]
+          }
+        ]
+      }
+    }
+  }
 }
